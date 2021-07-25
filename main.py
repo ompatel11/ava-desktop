@@ -33,12 +33,13 @@ class TranscriptModifier(object):
         self.languages = ["html", "py", "js", "css", "cpp"]
         self.extension = extension
 
+        commands = self.fetch_commands(self.extension)
         if self.extension == "py":
-            t1 = threading.Thread(target=self.modify_python())
+            t1 = threading.Thread(target=self.modify_transcript(commands))
             t1.start()
 
         if self.extension == "cpp":
-            t1 = threading.Thread(target=self.modify_cpp())
+            t1 = threading.Thread(target=self.modify_transcript(commands))
             t1.start()
 
     def fetch_commands(self, language):
@@ -47,8 +48,78 @@ class TranscriptModifier(object):
         with open("programming_commands.yaml") as f:
             data = yaml.load(f, Loader=SafeLoader)
             commands = data[language]
-
         return commands
+
+    def modify_transcript(self, commands):
+        self.transcript = self.transcript.lower()
+        words = self.transcript.split(' ')
+        length = len(words)
+        print("Transcript= " + self.transcript)
+        print(f"Length= {length}")
+
+        skipNxtItr = False
+        for i, val in enumerate(words):
+            print(f"I = {i}")
+            if skipNxtItr:
+                skipNxtItr = False
+                print("Skipped")
+                continue
+            if length != 1 and i != (length - 1):
+                if val + words[i + 1] == "elsa" or val == "elsafe" or val + words[i + 1] == "elsea" or val + words[i + 1] == "elseif":
+                    simulatekeys("else if(){\n\n}")
+                    simulatekeys("\t")
+                    self.moveLeft(5)
+                    skipNxtItr = True
+                    continue
+
+            if val == "text":
+                for j, value in enumerate(words):
+                    if j == 0:
+                        continue
+                    try:
+                        simulatekeys(value)
+                    except Exception as e:
+                        print(e)
+                        break
+                break
+
+            try:
+                simulatekeys(commands[val][0])
+                print(commands[val][0])
+                print("Try Block")
+                if len(commands[val]) > 1:
+                    for j in range(len(commands[val][1]['direction'])):
+                        if j % 2 != 0:
+                            continue
+                        if commands[val][1]['direction'][j] == "ctrl+right":
+                            self.move_ctrl_right(commands[val][1]['direction'][j + 1])
+
+                        if commands[val][1]['direction'][j] == "ctrl+left":
+                            self.move_ctrl_left(commands[val][1]['direction'][j + 1])
+
+                        if commands[val][1]['direction'][j] == "up":
+                            # Up def ():
+                            print("Here is UP")
+                            self.moveUp(commands[val][1]["direction"][j + 1])
+                            continue
+                        if commands[val][1]['direction'][j] == "down":
+                            # Down def ():
+                            self.moveDown(commands[val][1]["direction"][j + 1])
+                            continue
+                        if commands[val][1]['direction'][j] == "left":
+                            # Left
+                            print("LEFT")
+                            self.moveLeft(int(commands[val][1]["direction"][j + 1]))
+
+                            if commands[val][1]['direction'][j] == "right":
+                                # Right
+                                self.moveRight(commands[val][1]["direction"][j + 1])
+                                continue
+                continue
+            except Exception as e:
+                print("Exception = ", e)
+                simulatekeys(val)
+                continue
 
     def modify_cpp(self):
         commands = self.fetch_commands("cpp")
@@ -63,168 +134,42 @@ class TranscriptModifier(object):
 
         print("Transcript= " + self.transcript)
 
-        skipItr = False
-        skipNxtItr = False
-        moveLeft = 0
-        moveRight = 0
-
         for i, val in enumerate(words):
-            print(val, i)
             if val == "text":
-                j = 0
                 for j, value in enumerate(words):
-                    if value == "text":
+                    if j == 0:
                         continue
-                    simulatekeys(words[j])
+                    try:
+                        simulatekeys(value)
+                    except Exception as e:
+                        print(e)
+                        break
                 break
-            if skipNxtItr:
-                skipNxtItr = False
-                continue
-            if skipItr:
-                skipItr = False
-                continue
-            if val == "up":
-                pyautogui.press("up")
-                continue
-            if val == "down":
-                pyautogui.press("down")
-                continue
-            if val == "left":
-                pyautogui.press("left")
-                continue
-            if val == "right":
-                pyautogui.press("right")
-                continue
-            if i == (len(words) - 1):
-                print("Do nothing")
-            else:
-                if words[i] + words[i + 1] == "dictionaryitem":
-                    skipItr = True
-                    skipNxtItr = True
-                    simulatekeys('"":""')
-                    self.moveLeft(4)
-                    continue
-                if words[i] + words[i + 1] == "copystatement" or words[i] + words[i + 1] == "ctrl" or words[i] + words[
-                    i + 1] == "controlc":
-                    pyautogui.hotkey("shift", "end")
-                    pyautogui.hotkey("ctrl", "c")
-                    skipItr = True
-                    continue
-                if words[i] + words[i + 1] == "pastestatement" or words[i] + words[i + 1] == "ctrl-v" or words[i] + \
-                        words[i + 1] == "controlv":
-                    pyautogui.hotkey("ctrl", "v")
-                    print("Paste")
-                    skipItr = True
-                    continue
-                if words[i] + words[i + 1] == "doublequotes" or words[i] + words[i + 1] == "doublecoats" or words[i] + \
-                        words[i + 1] == "doublecode" or words[i] + words[i + 1] == "doublecourts":
-                    skipItr = True
-                    simulatekeys('""')
-                    self.moveLeft(1)
-                    continue
-                if words[i] + words[i + 1] == "singlequotes" or words[i] + words[i + 1] == "singlecoats" or words[i] + \
-                        words[i + 1] == "singlecode":
-                    skipItr = True
-                    simulatekeys("''")
-                    self.moveLeft(1)
-                    continue
-                if words[i] + words[i + 1] == "stringitem":
-                    skipItr = True
-                    simulatekeys("'',")
-                    self.moveLeft(2)
-                    moveRight = 1
-                    continue
-                if words[i] + words[i + 1] == "callme" or words[i] + words[i + 1] == "callme":
-                    skipItr = True
-                    simulatekeys(",")
-                    continue
-                if words[i] + words[i + 1] == "goto":
-                    self.gotoLine(words[i + 2])
-                    skipItr = True
-                    skipNxtItr = True
-                    continue
-                if words[i] + words[i + 1] == "capslock":
-                    pyautogui.press("capslock")
-                if words[i] + words[i + 1] == "moveup":
-                    self.moveUp(1)
-                    skipItr = True
-                    continue
-                if words[i] + words[i + 1] == "movedown":
-                    self.moveDown(1)
-                    skipItr = True
-                    continue
-                if words[i] + words[i + 1] == "moveleft":
-                    self.moveLeft(1)
-                    skipItr = True
-                    continue
-                if words[i] + words[i + 1] == "moveright":
-                    self.moveRight(1)
-                    skipItr = True
-                    continue
-                if words[i] + words[i + 1] == "skipright":
-                    self.skipRight()
-                    skipItr = True
-                    continue
-                if words[i] + words[i + 1] == "skipleft":
-                    self.skipLeft()
-                    skipItr = True
-                    continue
-                if words[i] + words[i + 1] == "scrollup":
-                    self.mouseScrollUp()
-                    skipItr = True
-                    continue
-                if words[i] + words[i + 1] == "scrolldown":
-                    self.mouseScrollDown()
-                    skipItr = True
-                    continue
-                if words[i] + words[i + 1] == "init":
-                    simulatekeys("__init__")
-                    skipItr = True
-                    continue
-            print("Val = ", commands)
+
             try:
-                # backslash
-                print("Here" + commands[val])
-                simulatekeys(commands[val])
-                if val == "if":
-                    self.moveLeft(1)
-                if val == "list":
-                    self.moveLeft(1)
-                if val == "function":
-                    self.moveLeft(3)
+                simulatekeys(commands[val][0])
+                if commands[val][1]['direction'] == "up":
+                    # Up def ():
+                    print("Here is UP")
+                    self.moveUp(commands[val][1])
                     continue
-                if val == "askew":
-                    self.moveLeft(1)
-                if val == "print":
-                    self.moveLeft(2)
-                if val == "class":
-                    self.moveLeft(2)
+                if commands[val][1]['direction'] == "down":
+                    # Down def ():
+                    self.moveDown(commands[val][2])
+                    continue
+                if commands[val][1]['direction'] == "left":
+                    # Left
+                    print("LEFT")
+                    self.moveLeft(commands[val][2])
+                    continue
+                if commands[val][1]['direction'] == "right":
+                    # Right
+                    self.moveRight(commands[val][2])
                     continue
 
             except Exception as e:
-                print(e)
-                if val == "backspace":
-                    pyautogui.press("backspace")
-                    continue
-                if val == "capitalize" or val == "capitalized":
-                    words[i + 1] = words[i + 1].capitalize()
-                    continue
-                if val == "undo":
-                    pyautogui.hotkey("ctrl", "z")
-                    continue
-                if val == "end" or val == "and":
-                    self.gotoEnd()
-                    continue
-                if val == "end" or val == "and":
-                    self.gotoEnd()
-                    continue
+                print("Exception")
                 simulatekeys(val)
-                if moveLeft != 0:
-                    self.moveLeft(1)
-                if moveRight != 0:
-                    print(moveRight)
-                    moveRight = 0
-                    self.moveRight(2)
 
     def moveLeft(self, index):
         print("Inside moveLeft")
@@ -242,6 +187,14 @@ class TranscriptModifier(object):
     def moveDown(self, index):
         for i in range(index):
             pyautogui.press("down")
+
+    def move_ctrl_right(self, index):
+        for i in range(index):
+            pyautogui.hotkey("ctrl", "right")
+
+    def move_ctrl_left(self, index):
+        for i in range(index):
+            pyautogui.hotkey("ctrl", "right")
 
     def skipLeft(self):
         pyautogui.hotkey("ctrl", "left")

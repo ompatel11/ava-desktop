@@ -1,33 +1,57 @@
-python:
+py:
   backslash: "\\"
   slash: "/"
   divide: "/"
   multiply: "*"
   minus: "-"
   plus: "+"
-  Minus: "-"
-  Plus: "+"
-  if: "if :"
-  else: "else:"
-  elif: "elif :"
+  if:
+    - "if :"
+    - direction:
+      - "left"
+      - 1
+  else: "else:\n"
+  elif:
+    - "elif :"
+    - direction:
+      - "left"
+      - 1
   not: "!"
-  list: "[]"
-  word: ""
-  delete: ""
-  left: ""
-  right: ""
-  write: ""
-  equals: "=" 
+  list:
+    - "[]"
+    - direction:
+      - "left"
+      - 1
+  dictionary:
+    - "{}"
+    - direction:
+      - "left"
+      - 1
+  string: '""'
+  equals: "="
   equal: "="
-  class: "class ()"
-  arc: "()"
-  arguments: "()"
-  argument: "()"
+  class:
+    - "class ()"
+    - direction:
+      - "left"
+      - 2
+  arc:
+    - "()"
+    - direction:
+      - "left"
+      - 1
+  arguments:
+    - "()"
+    - direction:
+      - "left"
+      - 1
+  argument:
+    - "()"
+    - direction: "left"
+    - 1
   colon: ":"
   dot: "."
-  Dot: "."
-  dictionary: "{}"
-  return: "return" 
+  return: "return "
   import: "import "
   from: "from "
   coma: ","
@@ -36,10 +60,115 @@ python:
   space:  " "
   tab:   "\t"
   enter: "\n"
-  print: 'print()'
-  function: "def ():"
+  print:
+    - 'print("")'
+    - direction: "left"
+    - 2
+  function:
+    - "def ():"
+    - direction: "left"
+    - 3
   comment: "#"
+  move:
+    - up: 1
+    - down: 1
+    - left: 1
+    - right: 1
 
 cpp:
   class:
-    "private class (){}"
+    - "class (){\n}"
+    - direction:
+      - "up"
+      - 1
+      - "ctrl+right"
+      - 2
+      - "right"
+
+  private:
+    - "private "
+  public:
+    - "public "
+  protected:
+    - "protected"
+  include:
+    - "#include <>"
+    - direction:
+        - "left"
+        - 1
+  arguments:
+    - "()"
+    - direction:
+      - "left"
+      - 1
+  argument:
+    - "()"
+    - direction: "left"
+    - 1
+  import:
+    - '#include ""'
+    - direction:
+        - "left"
+        - 1
+  if:
+    - "if (){\n}"
+    - direction:
+        - "left"
+        - 4
+  else:
+    - "else {\n\n}"
+    - direction:
+        - "left"
+        - 2
+  elif:
+    - "else if(){\n}"
+    - direction:
+        - "left"
+        - 3
+  print:
+    - 'cout<<"";'
+    - direction:
+        - "left"
+        - 2
+  scan:
+    - "cin>>;"
+    - direction:
+        - "left"
+        - 1
+  string:
+    - '""'
+    - direction:
+        - "left"
+        - 1
+  integer: "int "
+  float: "float "
+  double: "double "
+  list:
+    - "[]"
+    - direction:
+        - "left"
+        - 1
+  backslash: "\\"
+  slash: "/"
+  divide: "/"
+  multiply: "*"
+  minus: "-"
+  plus: "+"
+  and: "&"
+  or: " || "
+  return: "return "
+  colon: ":"
+  dot: "."
+  coma: ","
+  underscore: "_"
+  semicolon: ";"
+  space:  " "
+  tab:   "\t"
+  enter: "\n"
+  equal: " = "
+  equals: " = "
+  move:
+    - up: 1
+    - down: 1
+    - left: 1
+    - right: 1
