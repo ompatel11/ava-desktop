@@ -84,13 +84,18 @@ cpp:
       - "ctrl+right"
       - 2
       - "right"
-
+      - 1
+  function:
+    - "(){\n}"
+    - direction:
+        - "ctrl+left"
+        - 4
   private:
     - "private "
   public:
     - "public "
   protected:
-    - "protected"
+    - "protected "
   include:
     - "#include <>"
     - direction:
