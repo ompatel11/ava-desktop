@@ -33,9 +33,10 @@ RED = "\033[0;31m"
 GREEN = "\033[0;32m"
 YELLOW = "\033[0;33m"
 istyping = False
+
 # Service Account Info
-credential_path = "ava-daemon-4ce53760f667.json"
-os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = credential_path
+# credential_path = "ava-daemon-4ce53760f667.json"
+# os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = credential_path
 
 
 class TranscriptModifier(object):
@@ -87,7 +88,8 @@ class TranscriptModifier(object):
                 print("Skipped")
                 continue
             if length != 1 and i != (length - 1):
-                if val + words[i + 1] == "elsa" or val == "elsafe" or val + words[i + 1] == "elsea" or val + words[i + 1] == "elseif":
+                if val + words[i + 1] == "elsa" or val == "elsafe" or val + words[i + 1] == "elsea" or val + words[
+                    i + 1] == "elseif":
                     simulatekeys("else if(){\n\n}")
                     simulatekeys("\t")
                     self.moveLeft(5)
@@ -438,8 +440,21 @@ class AudioManager:
     """
 
     def __init__(self):
+        cred = {
+            "type": "service_account",
+            "project_id": "ava-daemon",
+            "private_key_id": "4ce53760f66722d399600fe21a614b2794ea25b6",
+            "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQC4WWZLLFJXVLaF\nxLbb8wB9mCH9EPIzcvpBiCOU9gzE13bVdq1XBBmiKwHksMEhdEOHSKVMk4Az7NFI\nqpZKDp6sSYkIVvn8r4Pkcts5jaraHlxmIJwEvZsSFhM25kYL8VPC35Gb6fH3ZNJY\ntxe/QrAN87PKnqlItcw1n0ignvSNmPNCasR69W1uW3G1/hHcxmn8qOBcMfRLo3qp\nHHsLQqPGPdovJUGpsItXiYyCKzyZcWctWt86N3ZiSH5khGTqLEGa7zf6/cAy8xs6\nNk00x5RsyKDsWuYGv3/GjBFXuL1hZkMvQeFqH3qSNJYmAx5JpbkwqaMeJGDPtQzw\nnILfTi3jAgMBAAECggEAFP1o3kpPnc3xck2xnF2QwrwdspjJWv5ObEO5+W4Cii8W\nQrvehLfcy1AmSQmvE8YPIkotOAjbYg4mziVOM2RywJ8m0SJGGHVLiSliuKzetTMb\nxi0UVp3YGDkXOvsBIr75kIiwJZZ/jHGYWa2PMKHBNfV3lSx3jeXVOI3IUTGIGs8L\n0wDx/0Jq/IzLAleD0TuX3v1njxtP3UrPA3w9z35oonw7gFz8WIq1g0VOlTgMRFq7\n3WolvClDBGNfV81hb/vHq6kmO69dBKq4ZDmWokXM/cfEpMTjEH4Zxi3dInORAmH0\n4TqJU4RXDVlsdLRB/qHCKzzVsx8Awci8g1oTarhwEQKBgQDrPXdpWU72MaiWzJbs\nEy10rUaFQI2UAl76d6+qX7/F2i1y0wlCg/SJPC/9lG/tpMppeF89aRz4bwZFrkIe\ninRrcrCHw/4UDuglDW7bNi3iwaRizQn4j5FUq4lOT3N+1udNAN5/6ll8ds74TFZp\nXsTQLXl0vmdW06zysbUElZlCZQKBgQDInjVlsOcXjjhTOOivm6Vofldb2F7ElGCN\nszNFmQvioDcr2ctIK1MYVqxP7DNVHf4OGcblmN/JTP4qVM0+tf4/KALKq9zcYCht\n8W2rFh7DLfaH7tJolLaQggNnJZ0FP/KaIPW3VXMn1c5ClsBOciA2t+JFkS9sWbUj\nOy3L7peGpwKBgBfqlORiDxQasmA6hrGTtZBiOYQ8rug4YX2ng3WX7IBqESrWZ9+a\nWNdHBj4KxGJt2aJleZFdyXM8nm+hKtm+C94MuAPlmkRhy5pQxk+FL58ZPuRIolXi\nCs2H7xrGGyDvKm76wqRQqC5uSdaWtEZcOzhLF0kWPp1mQfQeux+vMfi9AoGAd9TY\nfFeAkbdnuX4irtI/qPzeXYQOh0lBqyJBG+9hBAtDKTQ8km0eg0kyP8MMnmj92ZpY\nDciU037jypFAz5aRuVPC5yBlGlVtkM5G/YyG73rC6Usj70f1DLg8JB55fitGU/4g\nB1RJJqA1Rd0aHUFaMJUB2R/xvbyPz+2HW2q2o70CgYEAwKUlTanxB8yDej92OwCi\nRNhKaK0bBlRZpdJLz80bBLbI31Ffziib9NPdnUHnxRnf4tkghzC2pIWtsfErEnZS\nh0HXlvZ1ucXA42t0KyrMlieZMUbjUIH2tEt9WHXgnBY+kM+6dqPoMzQjRbZREpxU\nRHosnXBXmgpHDJYzT2Yy7Hc=\n-----END PRIVATE KEY-----\n",
+            "client_email": "ava-desktop-demo@ava-daemon.iam.gserviceaccount.com",
+            "client_id": "116614411031984579551",
+            "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+            "token_uri": "https://oauth2.googleapis.com/token",
+            "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+            "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/ava-desktop-demo%40ava-daemon.iam.gserviceaccount.com"
+        }
+
         self.language_code = "en-US"  # a BCP-47 language tag
-        self.client = speech.SpeechClient()
+        self.client = speech.SpeechClient.from_service_account_info(cred)
         self.config = speech.RecognitionConfig(
             encoding=speech.RecognitionConfig.AudioEncoding.LINEAR16,
             sample_rate_hertz=SAMPLE_RATE,
