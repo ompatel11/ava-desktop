@@ -2,12 +2,15 @@
 <ui version="4.0">
  <class>main</class>
  <widget class="QWidget" name="main">
+  <property name="windowModality">
+   <enum>Qt::ApplicationModal</enum>
+  </property>
   <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
     <width>500</width>
-    <height>579</height>
+    <height>689</height>
    </rect>
   </property>
   <property name="font">
@@ -21,14 +24,29 @@
   <property name="windowTitle">
    <string>main</string>
   </property>
+  <property name="styleSheet">
+   <string notr="true">background-color: rgb(255, 255, 255);</string>
+  </property>
   <widget class="QStackedWidget" name="stackPanel">
    <property name="geometry">
     <rect>
      <x>10</x>
-     <y>10</y>
-     <width>481</width>
-     <height>561</height>
+     <y>50</y>
+     <width>471</width>
+     <height>621</height>
     </rect>
+   </property>
+   <property name="font">
+    <font>
+     <family>Segoe UI Semibold</family>
+     <pointsize>16</pointsize>
+     <weight>50</weight>
+     <bold>false</bold>
+    </font>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">border:none
+</string>
    </property>
    <property name="currentIndex">
     <number>1</number>
@@ -38,15 +56,15 @@
      <property name="geometry">
       <rect>
        <x>81</x>
-       <y>240</y>
+       <y>270</y>
        <width>311</width>
        <height>41</height>
       </rect>
      </property>
      <property name="styleSheet">
       <string notr="true">border-style: outset;
-background-color: rgb(194, 194, 194);
 border-width: 1px;
+background-color: rgb(231, 231, 231);
 border-radius: 8px;
 border-color: rgb(194,194,194);
 padding: 4px;</string>
@@ -56,22 +74,6 @@ padding: 4px;</string>
      </property>
      <property name="placeholderText">
       <string>email@example.com</string>
-     </property>
-    </widget>
-    <widget class="Line" name="line_5">
-     <property name="geometry">
-      <rect>
-       <x>60</x>
-       <y>180</y>
-       <width>121</width>
-       <height>20</height>
-      </rect>
-     </property>
-     <property name="styleSheet">
-      <string notr="true">color: rgb(194, 194, 194);</string>
-     </property>
-     <property name="orientation">
-      <enum>Qt::Horizontal</enum>
      </property>
     </widget>
     <widget class="QLabel" name="label_3">
@@ -110,24 +112,38 @@ padding: 4px;</string>
        <height>50</height>
       </rect>
      </property>
+     <property name="cursor">
+      <cursorShape>PointingHandCursor</cursorShape>
+     </property>
      <property name="autoFillBackground">
       <bool>false</bool>
      </property>
      <property name="styleSheet">
       <string notr="true">color: #333;
-border: 2px solid  rgb(231, 231, 231);
-border-radius: 14px;
-background-color: rgb(194, 194, 194);</string>
+border: 0px solid  rgb(231, 231, 231);
+background-color: rgb(231, 231, 231);
+border-radius: 8px;
+color:rgb(240, 240, 240)</string>
      </property>
      <property name="text">
-      <string>F</string>
+      <string/>
+     </property>
+     <property name="icon">
+      <iconset>
+       <normaloff>Icons/icons8-facebook-circled-48.png</normaloff>Icons/icons8-facebook-circled-48.png</iconset>
+     </property>
+     <property name="iconSize">
+      <size>
+       <width>32</width>
+       <height>32</height>
+      </size>
      </property>
     </widget>
     <widget class="QCheckBox" name="chkRememberme">
      <property name="geometry">
       <rect>
        <x>90</x>
-       <y>380</y>
+       <y>410</y>
        <width>111</width>
        <height>19</height>
       </rect>
@@ -176,32 +192,19 @@ font-weight: 600;</string>
       <set>Qt::AlignCenter</set>
      </property>
     </widget>
-    <widget class="Line" name="line_6">
-     <property name="geometry">
-      <rect>
-       <x>290</x>
-       <y>180</y>
-       <width>121</width>
-       <height>20</height>
-      </rect>
-     </property>
-     <property name="orientation">
-      <enum>Qt::Horizontal</enum>
-     </property>
-    </widget>
     <widget class="QLineEdit" name="txtPassword_login">
      <property name="geometry">
       <rect>
        <x>81</x>
-       <y>330</y>
+       <y>360</y>
        <width>311</width>
        <height>41</height>
       </rect>
      </property>
      <property name="styleSheet">
       <string notr="true">border-style: outset;
-background-color: rgb(194, 194, 194);
 border-width: 1px;
+background-color: rgb(231, 231, 231);
 border-radius: 8px;
 border-color: rgb(194,194,194);
 padding: 4px;</string>
@@ -217,7 +220,7 @@ padding: 4px;</string>
      <property name="geometry">
       <rect>
        <x>280</x>
-       <y>380</y>
+       <y>410</y>
        <width>111</width>
        <height>21</height>
       </rect>
@@ -236,7 +239,7 @@ padding: 4px;</string>
      <property name="styleSheet">
       <string notr="true">color: rgb(63, 61, 84);
 border: 0px;
-background-color: rgb(240, 240, 240);</string>
+background-color: rgb(255, 255, 255);</string>
      </property>
      <property name="text">
       <string>Forgot Password?</string>
@@ -246,7 +249,7 @@ background-color: rgb(240, 240, 240);</string>
      <property name="geometry">
       <rect>
        <x>81</x>
-       <y>212</y>
+       <y>242</y>
        <width>51</width>
        <height>21</height>
       </rect>
@@ -270,7 +273,7 @@ background-color: rgb(240, 240, 240);</string>
      <property name="geometry">
       <rect>
        <x>81</x>
-       <y>290</y>
+       <y>320</y>
        <width>71</width>
        <height>31</height>
       </rect>
@@ -294,7 +297,7 @@ background-color: rgb(240, 240, 240);</string>
      <property name="geometry">
       <rect>
        <x>80</x>
-       <y>420</y>
+       <y>450</y>
        <width>311</width>
        <height>41</height>
       </rect>
@@ -344,24 +347,38 @@ box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.16), 0 0 0 1px rgba(0, 0, 0, 0.08);
        <height>51</height>
       </rect>
      </property>
+     <property name="cursor">
+      <cursorShape>PointingHandCursor</cursorShape>
+     </property>
      <property name="autoFillBackground">
       <bool>false</bool>
      </property>
      <property name="styleSheet">
       <string notr="true">color: #333;
-border: 2px solid  rgb(231, 231, 231);
-border-radius: 14px;
-background-color: rgb(194, 194, 194);</string>
+border: 0px solid  rgb(231, 231, 231);
+background-color: rgb(231, 231, 231);
+border-radius: 8px;
+color:rgb(240, 240, 240)</string>
      </property>
      <property name="text">
-      <string>G</string>
+      <string/>
+     </property>
+     <property name="icon">
+      <iconset>
+       <normaloff>Icons/icons8-google-48.png</normaloff>Icons/icons8-google-48.png</iconset>
+     </property>
+     <property name="iconSize">
+      <size>
+       <width>32</width>
+       <height>32</height>
+      </size>
      </property>
     </widget>
     <widget class="QLabel" name="label_10">
      <property name="geometry">
       <rect>
        <x>140</x>
-       <y>470</y>
+       <y>500</y>
        <width>151</width>
        <height>31</height>
       </rect>
@@ -385,7 +402,7 @@ background-color: rgb(194, 194, 194);</string>
      <property name="geometry">
       <rect>
        <x>280</x>
-       <y>475</y>
+       <y>505</y>
        <width>50</width>
        <height>21</height>
       </rect>
@@ -404,7 +421,7 @@ background-color: rgb(194, 194, 194);</string>
      <property name="styleSheet">
       <string notr="true">color: rgb(63, 61, 84);
 border: 0px;
-background-color: rgb(240, 240, 240);</string>
+background-color: rgb(255, 255, 255);</string>
      </property>
      <property name="text">
       <string>Signup</string>
@@ -417,6 +434,107 @@ background-color: rgb(240, 240, 240);</string>
      </property>
      <property name="default">
       <bool>false</bool>
+     </property>
+    </widget>
+    <widget class="QFrame" name="frame_3">
+     <property name="geometry">
+      <rect>
+       <x>50</x>
+       <y>188</y>
+       <width>120</width>
+       <height>2</height>
+      </rect>
+     </property>
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="minimumSize">
+      <size>
+       <width>0</width>
+       <height>2</height>
+      </size>
+     </property>
+     <property name="maximumSize">
+      <size>
+       <width>200</width>
+       <height>2</height>
+      </size>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">background-color: rgb(231, 231, 231);</string>
+     </property>
+     <property name="frameShape">
+      <enum>QFrame::StyledPanel</enum>
+     </property>
+     <property name="frameShadow">
+      <enum>QFrame::Raised</enum>
+     </property>
+    </widget>
+    <widget class="QFrame" name="frame_6">
+     <property name="geometry">
+      <rect>
+       <x>301</x>
+       <y>188</y>
+       <width>120</width>
+       <height>2</height>
+      </rect>
+     </property>
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Maximum" vsizetype="Minimum">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="minimumSize">
+      <size>
+       <width>0</width>
+       <height>2</height>
+      </size>
+     </property>
+     <property name="maximumSize">
+      <size>
+       <width>200</width>
+       <height>2</height>
+      </size>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">background-color: rgb(231, 231, 231);</string>
+     </property>
+     <property name="frameShape">
+      <enum>QFrame::StyledPanel</enum>
+     </property>
+     <property name="frameShadow">
+      <enum>QFrame::Raised</enum>
+     </property>
+    </widget>
+    <widget class="QLabel" name="lblError_login">
+     <property name="geometry">
+      <rect>
+       <x>80</x>
+       <y>210</y>
+       <width>310</width>
+       <height>22</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <family>Segoe UI</family>
+       <pointsize>10</pointsize>
+       <weight>75</weight>
+       <bold>true</bold>
+      </font>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">QLabel{
+color: rgb(250,0,0);
+line-spacing: 2px;
+}</string>
+     </property>
+     <property name="text">
+      <string/>
      </property>
     </widget>
    </widget>
@@ -454,15 +572,15 @@ font-weight: 600;</string>
      <property name="geometry">
       <rect>
        <x>81</x>
-       <y>240</y>
+       <y>270</y>
        <width>311</width>
        <height>41</height>
       </rect>
      </property>
      <property name="styleSheet">
       <string notr="true">border-style: outset;
-background-color: rgb(194, 194, 194);
 border-width: 1px;
+background-color: rgb(231, 231, 231);
 border-radius: 8px;
 border-color: rgb(194,194,194);
 padding: 4px;</string>
@@ -474,22 +592,6 @@ padding: 4px;</string>
       <string>email@example.com</string>
      </property>
     </widget>
-    <widget class="Line" name="line">
-     <property name="geometry">
-      <rect>
-       <x>60</x>
-       <y>180</y>
-       <width>121</width>
-       <height>20</height>
-      </rect>
-     </property>
-     <property name="styleSheet">
-      <string notr="true">color: rgb(194, 194, 194);</string>
-     </property>
-     <property name="orientation">
-      <enum>Qt::Horizontal</enum>
-     </property>
-    </widget>
     <widget class="QPushButton" name="pushButton_4">
      <property name="geometry">
       <rect>
@@ -499,17 +601,31 @@ padding: 4px;</string>
        <height>50</height>
       </rect>
      </property>
+     <property name="cursor">
+      <cursorShape>PointingHandCursor</cursorShape>
+     </property>
      <property name="autoFillBackground">
       <bool>false</bool>
      </property>
      <property name="styleSheet">
       <string notr="true">color: #333;
-border: 2px solid  rgb(231, 231, 231);
-border-radius: 14px;
-background-color: rgb(194, 194, 194);</string>
+border: 0px solid  rgb(231, 231, 231);
+background-color: rgb(231, 231, 231);
+border-radius: 8px;
+color:rgb(240, 240, 240)</string>
      </property>
      <property name="text">
-      <string>F</string>
+      <string/>
+     </property>
+     <property name="icon">
+      <iconset>
+       <normaloff>Icons/icons8-facebook-circled-48.png</normaloff>Icons/icons8-facebook-circled-48.png</iconset>
+     </property>
+     <property name="iconSize">
+      <size>
+       <width>32</width>
+       <height>32</height>
+      </size>
      </property>
     </widget>
     <widget class="QLabel" name="label">
@@ -539,32 +655,19 @@ background-color: rgb(194, 194, 194);</string>
       <set>Qt::AlignCenter</set>
      </property>
     </widget>
-    <widget class="Line" name="line_3">
-     <property name="geometry">
-      <rect>
-       <x>290</x>
-       <y>180</y>
-       <width>121</width>
-       <height>20</height>
-      </rect>
-     </property>
-     <property name="orientation">
-      <enum>Qt::Horizontal</enum>
-     </property>
-    </widget>
     <widget class="QLineEdit" name="txtPassword_signup">
      <property name="geometry">
       <rect>
        <x>81</x>
-       <y>330</y>
+       <y>360</y>
        <width>311</width>
        <height>41</height>
       </rect>
      </property>
      <property name="styleSheet">
       <string notr="true">border-style: outset;
-background-color: rgb(194, 194, 194);
 border-width: 1px;
+background-color: rgb(231, 231, 231);
 border-radius: 8px;
 border-color: rgb(194,194,194);
 padding: 4px;</string>
@@ -580,7 +683,7 @@ padding: 4px;</string>
      <property name="geometry">
       <rect>
        <x>81</x>
-       <y>212</y>
+       <y>242</y>
        <width>51</width>
        <height>21</height>
       </rect>
@@ -604,7 +707,7 @@ padding: 4px;</string>
      <property name="geometry">
       <rect>
        <x>81</x>
-       <y>290</y>
+       <y>320</y>
        <width>71</width>
        <height>31</height>
       </rect>
@@ -628,7 +731,7 @@ padding: 4px;</string>
      <property name="geometry">
       <rect>
        <x>80</x>
-       <y>420</y>
+       <y>515</y>
        <width>311</width>
        <height>41</height>
       </rect>
@@ -641,14 +744,17 @@ padding: 4px;</string>
        <bold>true</bold>
       </font>
      </property>
+     <property name="cursor">
+      <cursorShape>PointingHandCursor</cursorShape>
+     </property>
      <property name="styleSheet">
-      <string notr="true">border-style: outset;
-color: rgb(255, 255, 255);
+      <string notr="true">color: rgb(255, 255, 255);
 background-color: rgb(63, 61, 84);
-border-width: 1px;
+border: 2px solid  rgb(63, 61, 94);
 border-radius: 8px;
-border-color: rgb(194,194,194);
-padding: 4px;</string>
+padding: 4px;
+box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.16), 0 0 0 1px rgba(0, 0, 0, 0.08);
+</string>
      </property>
      <property name="text">
       <string>Sign Up</string>
@@ -663,24 +769,38 @@ padding: 4px;</string>
        <height>51</height>
       </rect>
      </property>
+     <property name="cursor">
+      <cursorShape>PointingHandCursor</cursorShape>
+     </property>
      <property name="autoFillBackground">
       <bool>false</bool>
      </property>
      <property name="styleSheet">
       <string notr="true">color: #333;
-border: 2px solid  rgb(231, 231, 231);
-border-radius: 14px;
-background-color: rgb(194, 194, 194);</string>
+border: 0px solid  rgb(231, 231, 231);
+background-color: rgb(231, 231, 231);
+border-radius: 8px;
+color:rgb(240, 240, 240)</string>
      </property>
      <property name="text">
-      <string>G</string>
+      <string/>
+     </property>
+     <property name="icon">
+      <iconset>
+       <normaloff>Icons/icons8-google-48.png</normaloff>Icons/icons8-google-48.png</iconset>
+     </property>
+     <property name="iconSize">
+      <size>
+       <width>32</width>
+       <height>32</height>
+      </size>
      </property>
     </widget>
     <widget class="QLabel" name="label_9">
      <property name="geometry">
       <rect>
        <x>140</x>
-       <y>470</y>
+       <y>565</y>
        <width>151</width>
        <height>31</height>
       </rect>
@@ -704,7 +824,7 @@ background-color: rgb(194, 194, 194);</string>
      <property name="geometry">
       <rect>
        <x>290</x>
-       <y>475</y>
+       <y>570</y>
        <width>40</width>
        <height>21</height>
       </rect>
@@ -717,10 +837,13 @@ background-color: rgb(194, 194, 194);</string>
        <bold>true</bold>
       </font>
      </property>
+     <property name="cursor">
+      <cursorShape>PointingHandCursor</cursorShape>
+     </property>
      <property name="styleSheet">
       <string notr="true">color: rgb(63, 61, 84);
 border: 0px;
-background-color: rgb(240, 240, 240);</string>
+background-color: rgb(255, 255, 255);</string>
      </property>
      <property name="text">
       <string>Login</string>
@@ -735,35 +858,486 @@ background-color: rgb(240, 240, 240);</string>
       <bool>false</bool>
      </property>
     </widget>
-   </widget>
-   <widget class="QWidget" name="page">
-    <widget class="QPushButton" name="pushButton">
+    <widget class="QFrame" name="frame_4">
      <property name="geometry">
       <rect>
-       <x>170</x>
-       <y>60</y>
-       <width>101</width>
-       <height>51</height>
+       <x>301</x>
+       <y>188</y>
+       <width>120</width>
+       <height>2</height>
       </rect>
      </property>
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="minimumSize">
+      <size>
+       <width>0</width>
+       <height>2</height>
+      </size>
+     </property>
+     <property name="maximumSize">
+      <size>
+       <width>120</width>
+       <height>2</height>
+      </size>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">background-color: rgb(231, 231, 231);</string>
+     </property>
+     <property name="frameShape">
+      <enum>QFrame::StyledPanel</enum>
+     </property>
+     <property name="frameShadow">
+      <enum>QFrame::Raised</enum>
+     </property>
+    </widget>
+    <widget class="QFrame" name="frame_5">
+     <property name="geometry">
+      <rect>
+       <x>50</x>
+       <y>188</y>
+       <width>120</width>
+       <height>2</height>
+      </rect>
+     </property>
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Maximum" vsizetype="Minimum">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="minimumSize">
+      <size>
+       <width>0</width>
+       <height>2</height>
+      </size>
+     </property>
+     <property name="maximumSize">
+      <size>
+       <width>120</width>
+       <height>2</height>
+      </size>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">background-color: rgb(231, 231, 231);</string>
+     </property>
+     <property name="frameShape">
+      <enum>QFrame::StyledPanel</enum>
+     </property>
+     <property name="frameShadow">
+      <enum>QFrame::Raised</enum>
+     </property>
+    </widget>
+    <widget class="QLabel" name="lblPassword_3">
+     <property name="geometry">
+      <rect>
+       <x>81</x>
+       <y>410</y>
+       <width>121</width>
+       <height>31</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <family>Segoe UI</family>
+       <pointsize>8</pointsize>
+       <weight>75</weight>
+       <bold>true</bold>
+      </font>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">color: rgb(63, 61, 85);</string>
+     </property>
      <property name="text">
-      <string>PushButton</string>
+      <string>Confirm Password</string>
+     </property>
+    </widget>
+    <widget class="QLineEdit" name="txtConfirmPassword_signup">
+     <property name="geometry">
+      <rect>
+       <x>81</x>
+       <y>450</y>
+       <width>311</width>
+       <height>41</height>
+      </rect>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">border-style: outset;
+border-width: 1px;
+background-color: rgb(231, 231, 231);
+border-radius: 8px;
+border-color: rgb(194,194,194);
+padding: 4px;</string>
+     </property>
+     <property name="text">
+      <string/>
+     </property>
+     <property name="placeholderText">
+      <string>Confirm Password</string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="lblError_signup">
+     <property name="geometry">
+      <rect>
+       <x>80</x>
+       <y>210</y>
+       <width>310</width>
+       <height>22</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <family>Segoe UI</family>
+       <pointsize>10</pointsize>
+       <weight>75</weight>
+       <bold>true</bold>
+      </font>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">QLabel{
+color: rgb(250,0,0);
+line-spacing: 2px;
+}</string>
+     </property>
+     <property name="text">
+      <string/>
+     </property>
+    </widget>
+   </widget>
+   <widget class="QWidget" name="page">
+    <widget class="QPushButton" name="btnMicrophoneControl">
+     <property name="geometry">
+      <rect>
+       <x>196</x>
+       <y>21</y>
+       <width>80</width>
+       <height>80</height>
+      </rect>
+     </property>
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Maximum" vsizetype="Maximum">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="maximumSize">
+      <size>
+       <width>100</width>
+       <height>100</height>
+      </size>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">background-color: rgb(62, 60, 84);
+border: 1px solid white;
+border-radius: 40;</string>
+     </property>
+     <property name="text">
+      <string/>
+     </property>
+     <property name="icon">
+      <iconset>
+       <normaloff>Icons/Icon ionic-ios-mic.png</normaloff>Icons/Icon ionic-ios-mic.png</iconset>
+     </property>
+     <property name="iconSize">
+      <size>
+       <width>32</width>
+       <height>32</height>
+      </size>
      </property>
     </widget>
     <widget class="QLabel" name="label_5">
      <property name="geometry">
       <rect>
-       <x>40</x>
+       <x>20</x>
        <y>150</y>
-       <width>131</width>
-       <height>21</height>
+       <width>151</width>
+       <height>31</height>
       </rect>
      </property>
+     <property name="font">
+      <font>
+       <family>Segoe UI Semibold</family>
+       <pointsize>19</pointsize>
+       <weight>50</weight>
+       <bold>false</bold>
+      </font>
+     </property>
      <property name="text">
-      <string>Similar Commands</string>
+      <string>Transcript</string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="lblLiveTranscript">
+     <property name="geometry">
+      <rect>
+       <x>20</x>
+       <y>190</y>
+       <width>441</width>
+       <height>51</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <family>Segoe UI Semibold</family>
+       <pointsize>18</pointsize>
+       <weight>50</weight>
+       <bold>false</bold>
+      </font>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">color:rgb(63, 61, 84);
+</string>
+     </property>
+     <property name="text">
+      <string>boilerplate code</string>
      </property>
     </widget>
    </widget>
+  </widget>
+  <widget class="QFrame" name="title_bar_2">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>501</width>
+     <height>30</height>
+    </rect>
+   </property>
+   <property name="sizePolicy">
+    <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+     <horstretch>0</horstretch>
+     <verstretch>0</verstretch>
+    </sizepolicy>
+   </property>
+   <property name="maximumSize">
+    <size>
+     <width>16777215</width>
+     <height>30</height>
+    </size>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">background-color: none;</string>
+   </property>
+   <property name="frameShape">
+    <enum>QFrame::NoFrame</enum>
+   </property>
+   <property name="frameShadow">
+    <enum>QFrame::Raised</enum>
+   </property>
+   <layout class="QHBoxLayout" name="horizontalLayout">
+    <property name="spacing">
+     <number>0</number>
+    </property>
+    <property name="leftMargin">
+     <number>0</number>
+    </property>
+    <property name="topMargin">
+     <number>0</number>
+    </property>
+    <property name="rightMargin">
+     <number>0</number>
+    </property>
+    <property name="bottomMargin">
+     <number>0</number>
+    </property>
+    <item>
+     <widget class="QFrame" name="frame_title">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
+      <property name="minimumSize">
+       <size>
+        <width>10</width>
+        <height>50</height>
+       </size>
+      </property>
+      <property name="font">
+       <font>
+        <family>Roboto Condensed Light</family>
+        <pointsize>14</pointsize>
+       </font>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">background-color: rgb(62, 60, 84);
+border:none;</string>
+      </property>
+      <property name="frameShape">
+       <enum>QFrame::StyledPanel</enum>
+      </property>
+      <property name="frameShadow">
+       <enum>QFrame::Raised</enum>
+      </property>
+      <layout class="QVBoxLayout" name="verticalLayout_2">
+       <property name="spacing">
+        <number>0</number>
+       </property>
+       <property name="leftMargin">
+        <number>0</number>
+       </property>
+       <property name="topMargin">
+        <number>0</number>
+       </property>
+       <property name="rightMargin">
+        <number>350</number>
+       </property>
+       <property name="bottomMargin">
+        <number>20</number>
+       </property>
+       <item>
+        <widget class="QPushButton" name="btnSettings">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="styleSheet">
+          <string notr="true">QPushButton{
+background-color: rgb(63, 61, 85);
+border: 0px solid rgb(63, 61, 85);}
+QPushButton:hover{
+background-color: rgb(99, 96, 134);
+}
+</string>
+         </property>
+         <property name="text">
+          <string/>
+         </property>
+         <property name="icon">
+          <iconset>
+           <normaloff>Icons/Icon ionic-ios-settings.png</normaloff>Icons/Icon ionic-ios-settings.png</iconset>
+         </property>
+         <property name="iconSize">
+          <size>
+           <width>12</width>
+           <height>12</height>
+          </size>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+    </item>
+    <item>
+     <widget class="QFrame" name="frame_btns">
+      <property name="maximumSize">
+       <size>
+        <width>100</width>
+        <height>16777215</height>
+       </size>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">border:none;</string>
+      </property>
+      <property name="frameShape">
+       <enum>QFrame::StyledPanel</enum>
+      </property>
+      <property name="frameShadow">
+       <enum>QFrame::Raised</enum>
+      </property>
+      <layout class="QHBoxLayout" name="horizontalLayout_3">
+       <property name="spacing">
+        <number>0</number>
+       </property>
+       <property name="leftMargin">
+        <number>0</number>
+       </property>
+       <property name="topMargin">
+        <number>0</number>
+       </property>
+       <property name="rightMargin">
+        <number>0</number>
+       </property>
+       <property name="bottomMargin">
+        <number>0</number>
+       </property>
+       <item>
+        <widget class="QPushButton" name="btnWindowMinimize">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="minimumSize">
+          <size>
+           <width>10</width>
+           <height>20</height>
+          </size>
+         </property>
+         <property name="styleSheet">
+          <string notr="true">QPushButton{
+background-color: rgb(63, 61, 85);
+border: 0px solid rgb(63, 61, 85);}
+QPushButton:hover{
+background-color: rgb(99, 96, 134);
+}
+</string>
+         </property>
+         <property name="text">
+          <string/>
+         </property>
+         <property name="icon">
+          <iconset>
+           <normaloff>Icons/Icon awesome-window-minimize.png</normaloff>Icons/Icon awesome-window-minimize.png</iconset>
+         </property>
+         <property name="iconSize">
+          <size>
+           <width>8</width>
+           <height>8</height>
+          </size>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="btnWindowClose">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="minimumSize">
+          <size>
+           <width>10</width>
+           <height>20</height>
+          </size>
+         </property>
+         <property name="styleSheet">
+          <string notr="true">QPushButton{
+background-color: rgb(63, 61, 85);
+border: 0px solid rgb(63, 61, 85);
+}
+QPushButton:hover{
+	
+	background-color: rgb(255, 0, 0);
+}</string>
+         </property>
+         <property name="text">
+          <string/>
+         </property>
+         <property name="icon">
+          <iconset>
+           <normaloff>Icons/Icon ionic-ios-close.png</normaloff>Icons/Icon ionic-ios-close.png</iconset>
+         </property>
+         <property name="iconSize">
+          <size>
+           <width>8</width>
+           <height>8</height>
+          </size>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+    </item>
+   </layout>
   </widget>
  </widget>
  <resources/>

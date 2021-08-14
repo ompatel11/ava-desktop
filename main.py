@@ -15,7 +15,7 @@ import platform as _platform
 import yaml
 from yaml.loader import SafeLoader
 
-print(f"Platform = {platform.system()}")
+
 if _platform.system() == "Linux":
     import gi
 
@@ -34,6 +34,7 @@ GREEN = "\033[0;32m"
 YELLOW = "\033[0;33m"
 istyping = False
 
+
 # Service Account Info
 # credential_path = "ava-daemon-4ce53760f667.json"
 # os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = credential_path
@@ -50,16 +51,15 @@ class TranscriptModifier(object):
 
         commands = self.fetch_commands(self.extension)
         if self.extension == "py":
-            t1 = threading.Thread(target=self.modify_programming_ext(commands))
+            t1 = threading.Thread(target=self.modify_continuous_speech(commands))
             t1.start()
 
         if self.extension == "cpp":
-            t1 = threading.Thread(target=self.modify_programming_ext(commands))
+            t1 = threading.Thread(target=self.modify_continuous_speech(commands))
             t1.start()
 
     def fetch_commands(self, ext):
         # Open the file and load the file
-        print(ext)
         if ext == "word":
             with open("word_commands.yaml") as f:
                 data = yaml.load(f, Loader=SafeLoader)
@@ -73,19 +73,17 @@ class TranscriptModifier(object):
     def modify_word_ext(self, commands):
         pass
 
-    def modify_programming_ext(self, commands):
+    def modify_continuous_speech(self, commands):
+
         self.transcript = self.transcript.lower()
         words = self.transcript.split(' ')
         length = len(words)
         print("Transcript= " + self.transcript)
-        print(f"Length= {length}")
 
         skipNxtItr = False
         for i, val in enumerate(words):
-            print(f"I = {i}")
             if skipNxtItr:
                 skipNxtItr = False
-                print("Skipped")
                 continue
             if length != 1 and i != (length - 1):
                 if val + words[i + 1] == "elsa" or val == "elsafe" or val + words[i + 1] == "elsea" or val + words[
@@ -113,8 +111,6 @@ class TranscriptModifier(object):
                 else:
                     simulatekeys(commands[val])
                     continue
-                print(commands[val])
-                print("Try Block")
                 if len(commands[val]) > 1:
                     for j in range(len(commands[val][1]['direction'])):
                         if j % 2 != 0:
@@ -127,7 +123,6 @@ class TranscriptModifier(object):
 
                         if commands[val][1]['direction'][j] == "up":
                             # Up def ():
-                            print("Here is UP")
                             self.moveUp(commands[val][1]["direction"][j + 1])
                             continue
                         if commands[val][1]['direction'][j] == "down":
@@ -136,7 +131,6 @@ class TranscriptModifier(object):
                             continue
                         if commands[val][1]['direction'][j] == "left":
                             # Left
-                            print("LEFT")
                             self.moveLeft(int(commands[val][1]["direction"][j + 1]))
 
                             if commands[val][1]['direction'][j] == "right":
@@ -145,12 +139,10 @@ class TranscriptModifier(object):
                                 continue
                 continue
             except Exception as e:
-                print("Exception = ", e)
                 simulatekeys(val)
                 continue
 
     def moveLeft(self, index):
-        print("Inside moveLeft")
         for i in range(index):
             pyautogui.press("left")
 
@@ -205,8 +197,10 @@ class ResumableMicrophoneStream:
     """Opens a recording stream as a generator yielding the audio chunks."""
 
     def __init__(self, rate, chunk_size):
+        self.THRESHOLD = 300
         self._rate = rate
         self.chunk_size = chunk_size
+        self.SILENT_CHUNKS = 3 * self._rate / self.chunk_size
         self._num_channels = 1
         self._buff = queue.Queue()
         self.closed = True
@@ -262,7 +256,7 @@ class ResumableMicrophoneStream:
 
         while not self.closed:
             data = []
-
+            silent_chunks = 0
             if self.new_stream and self.last_audio_input:
 
                 chunk_time = STREAMING_LIMIT / len(self.last_audio_input)
@@ -293,6 +287,12 @@ class ResumableMicrophoneStream:
             # data, and stop iteration if the chunk is None, indicating the
             # end of the audio stream.
             chunk = self._buff.get()
+
+            silent = self.is_silent(chunk)
+            if silent:
+                silent_chunks += 1
+                if silent_chunks > self.SILENT_CHUNKS:
+                    print("Silence detected")
             self.audio_input.append(chunk)
 
             if chunk is None:
@@ -312,6 +312,11 @@ class ResumableMicrophoneStream:
                     break
 
             yield b"".join(data)
+
+    def is_silent(self, data_chunk):
+        """Returns 'True' if below the 'silent' threshold"""
+        print("_isSilent() called")
+        return max(data_chunk) < self.THRESHOLD
 
 
 def simulatekeys(transcript):
@@ -489,7 +494,7 @@ class AudioManager:
                     )
 
                     responses = self.client.streaming_recognize(self.streaming_config, requests)
-
+                    print("Speech API called")
                     # Now, put the transcription responses to use.
                     listen_print_loop(responses, stream, "cpp")
 
