@@ -15,7 +15,6 @@ import platform as _platform
 import yaml
 from yaml.loader import SafeLoader
 
-
 if _platform.system() == "Linux":
     import gi
 
@@ -233,7 +232,7 @@ class ResumableMicrophoneStream:
         return self
 
     def __exit__(self, type, value, traceback):
-
+        print("In Exit")
         self._audio_stream.stop_stream()
         self._audio_stream.close()
         self.closed = True
@@ -253,7 +252,9 @@ class ResumableMicrophoneStream:
 
     def generator(self):
         """Stream Audio from microphone to API and to local buffer"""
-
+        print(self.closed)
+        if self.closed:
+            self.setExit()
         while not self.closed:
             data = []
             silent_chunks = 0
@@ -470,12 +471,13 @@ class AudioManager:
         self.streaming_config = speech.StreamingRecognitionConfig(
             config=self.config, interim_results=True,
         )
-        self.mic_manager = ResumableMicrophoneStream(SAMPLE_RATE, CHUNK_SIZE)
+        self.mic_manager = None
 
     def stop(self):
         self.mic_manager.setExit()
 
     def start(self):
+        self.mic_manager = ResumableMicrophoneStream(SAMPLE_RATE, CHUNK_SIZE)
         if checkFocus():
             with self.mic_manager as stream:
 
@@ -510,8 +512,7 @@ class AudioManager:
                         sys.stdout.write("\n")
                     stream.new_stream = True
 
-
-obj = AudioManager()
-obj.start()
-
-obj.stop()
+# obj = AudioManager()
+# obj.start()
+#
+# obj.stop()

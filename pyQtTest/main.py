@@ -1,6 +1,7 @@
 # This Python file uses the following encoding: utf-8
 import sys
 import os
+import threading
 
 from FirebaseClientWrapper import FirebaseClientWrapper
 from PySide2.QtWidgets import *
@@ -10,6 +11,8 @@ from PySide2.QtGui import *
 from PySide2.QtCore import Qt
 from PySide2 import QtCore
 
+from pyQtTest.audio_manager import AudioManager
+
 
 class MainApp(QWidget):
 
@@ -17,6 +20,7 @@ class MainApp(QWidget):
         super(MainApp, self).__init__()
         self.setWindowFlag(QtCore.Qt.FramelessWindowHint)
         self.Firebase_app = FirebaseClientWrapper()
+        self.MircophoneManager = AudioManager()
         self.load_ui()
         self.stackedPanel = self.findChild(QStackedWidget, "stackPanel")
         self.stackedPanel.setCurrentIndex(0)
@@ -92,13 +96,18 @@ class MainApp(QWidget):
         Change the icon and background based on the state of the microphone
         Calls to the microphone manager class will be made from here.
         """
-        if self.isMic == False:
+        if not self.isMic:
             self.btnMicrophoneControl.setIcon(QIcon("Icons/Pause@2x.png"))
             self.btnMicrophoneControl.setIconSize(QSize(64, 64))
             self.btnMicrophoneControl.setStyleSheet("""
             background-color: white;
             border: none;
             """)
+            if self.MircophoneManager is None:
+                self.MircophoneManager = AudioManager()
+
+            t1 = threading.Thread(target=self.MircophoneManager.start)
+            t1.start()
             self.isMic = True
         else:
             self.btnMicrophoneControl.setIconSize(QSize(32, 32))
@@ -108,6 +117,9 @@ class MainApp(QWidget):
             border: 1px solid white;
             border-radius: 40;
             """)
+            t2 = threading.Thread(target=self.MircophoneManager.stop)
+            t2.start()
+            self.MircophoneManager = None
             self.isMic = False
 
     def user_signup(self):

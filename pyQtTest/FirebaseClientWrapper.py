@@ -24,7 +24,8 @@ class FirebaseClientWrapper:
 
             "USER_DISABLED": "User disabled contact the support team.",
 
-            "ERROR_TOO_MANY_REQUESTS": "Too many attempts made to log into this account.",
+            "TOO_MANY_ATTEMPTS_TRY_LATER": "Too many attempts made to log into this account, you can immediately "
+                                           "restore it by resetting your password or you can try again later",
 
             "ERROR_OPERATION_NOT_ALLOWED": "Server under maintenance, please try again later.",
             "operation-not-allowed": "Server under maintenance, please try again later.",
