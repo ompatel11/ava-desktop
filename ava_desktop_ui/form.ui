@@ -5,6 +5,9 @@
   <property name="windowModality">
    <enum>Qt::ApplicationModal</enum>
   </property>
+  <property name="enabled">
+   <bool>true</bool>
+  </property>
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -15,7 +18,7 @@
   </property>
   <property name="font">
    <font>
-    <family>Segoe UI Semibold</family>
+    <family>Segoe UI</family>
     <pointsize>10</pointsize>
     <weight>50</weight>
     <bold>false</bold>
@@ -38,8 +41,8 @@
    </property>
    <property name="font">
     <font>
-     <family>Segoe UI Semibold</family>
-     <pointsize>16</pointsize>
+     <family>Sitka Small</family>
+     <pointsize>10</pointsize>
      <weight>50</weight>
      <bold>false</bold>
     </font>
@@ -49,7 +52,7 @@
 </string>
    </property>
    <property name="currentIndex">
-    <number>1</number>
+    <number>0</number>
    </property>
    <widget class="QWidget" name="LoginPage">
     <widget class="QLineEdit" name="txtEmail_login">
@@ -60,6 +63,12 @@
        <width>311</width>
        <height>41</height>
       </rect>
+     </property>
+     <property name="font">
+      <font>
+       <family>Sitka Small</family>
+       <pointsize>10</pointsize>
+      </font>
      </property>
      <property name="styleSheet">
       <string notr="true">border-style: outset;
@@ -103,12 +112,12 @@ padding: 4px;</string>
       <set>Qt::AlignCenter</set>
      </property>
     </widget>
-    <widget class="QPushButton" name="b">
+    <widget class="QPushButton" name="btnFacebook">
      <property name="geometry">
       <rect>
        <x>154</x>
        <y>110</y>
-       <width>60</width>
+       <width>55</width>
        <height>50</height>
       </rect>
      </property>
@@ -122,7 +131,7 @@ padding: 4px;</string>
       <string notr="true">color: #333;
 border: 0px solid  rgb(231, 231, 231);
 background-color: rgb(231, 231, 231);
-border-radius: 8px;
+border-radius: 12px;
 color:rgb(240, 240, 240)</string>
      </property>
      <property name="text">
@@ -137,6 +146,9 @@ color:rgb(240, 240, 240)</string>
        <width>32</width>
        <height>32</height>
       </size>
+     </property>
+     <property name="flat">
+      <bool>false</bool>
      </property>
     </widget>
     <widget class="QCheckBox" name="chkRememberme">
@@ -201,6 +213,12 @@ font-weight: 600;</string>
        <height>41</height>
       </rect>
      </property>
+     <property name="font">
+      <font>
+       <family>Sitka Small</family>
+       <pointsize>10</pointsize>
+      </font>
+     </property>
      <property name="styleSheet">
       <string notr="true">border-style: outset;
 border-width: 1px;
@@ -257,7 +275,7 @@ background-color: rgb(255, 255, 255);</string>
      <property name="font">
       <font>
        <family>Segoe UI</family>
-       <pointsize>8</pointsize>
+       <pointsize>10</pointsize>
        <weight>75</weight>
        <bold>true</bold>
       </font>
@@ -281,7 +299,7 @@ background-color: rgb(255, 255, 255);</string>
      <property name="font">
       <font>
        <family>Segoe UI</family>
-       <pointsize>8</pointsize>
+       <pointsize>10</pointsize>
        <weight>75</weight>
        <bold>true</bold>
       </font>
@@ -338,13 +356,13 @@ box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.16), 0 0 0 1px rgba(0, 0, 0, 0.08);
       <bool>true</bool>
      </property>
     </widget>
-    <widget class="QPushButton" name="pushButton_8">
+    <widget class="QPushButton" name="btnGoogle">
      <property name="geometry">
       <rect>
        <x>254</x>
        <y>110</y>
-       <width>61</width>
-       <height>51</height>
+       <width>55</width>
+       <height>50</height>
       </rect>
      </property>
      <property name="cursor">
@@ -357,7 +375,7 @@ box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.16), 0 0 0 1px rgba(0, 0, 0, 0.08);
       <string notr="true">color: #333;
 border: 0px solid  rgb(231, 231, 231);
 background-color: rgb(231, 231, 231);
-border-radius: 8px;
+border-radius: 12px;
 color:rgb(240, 240, 240)</string>
      </property>
      <property name="text">
@@ -577,6 +595,12 @@ font-weight: 600;</string>
        <height>41</height>
       </rect>
      </property>
+     <property name="font">
+      <font>
+       <family>Sitka Small</family>
+       <pointsize>10</pointsize>
+      </font>
+     </property>
      <property name="styleSheet">
       <string notr="true">border-style: outset;
 border-width: 1px;
@@ -597,7 +621,7 @@ padding: 4px;</string>
       <rect>
        <x>154</x>
        <y>110</y>
-       <width>60</width>
+       <width>55</width>
        <height>50</height>
       </rect>
      </property>
@@ -611,7 +635,7 @@ padding: 4px;</string>
       <string notr="true">color: #333;
 border: 0px solid  rgb(231, 231, 231);
 background-color: rgb(231, 231, 231);
-border-radius: 8px;
+border-radius: 12px;
 color:rgb(240, 240, 240)</string>
      </property>
      <property name="text">
@@ -664,6 +688,12 @@ color:rgb(240, 240, 240)</string>
        <height>41</height>
       </rect>
      </property>
+     <property name="font">
+      <font>
+       <family>Sitka Small</family>
+       <pointsize>10</pointsize>
+      </font>
+     </property>
      <property name="styleSheet">
       <string notr="true">border-style: outset;
 border-width: 1px;
@@ -691,7 +721,7 @@ padding: 4px;</string>
      <property name="font">
       <font>
        <family>Segoe UI</family>
-       <pointsize>8</pointsize>
+       <pointsize>10</pointsize>
        <weight>75</weight>
        <bold>true</bold>
       </font>
@@ -715,7 +745,7 @@ padding: 4px;</string>
      <property name="font">
       <font>
        <family>Segoe UI</family>
-       <pointsize>8</pointsize>
+       <pointsize>10</pointsize>
        <weight>75</weight>
        <bold>true</bold>
       </font>
@@ -748,13 +778,17 @@ padding: 4px;</string>
       <cursorShape>PointingHandCursor</cursorShape>
      </property>
      <property name="styleSheet">
-      <string notr="true">color: rgb(255, 255, 255);
+      <string notr="true">QPushButton{
+color: rgb(255, 255, 255);
 background-color: rgb(63, 61, 84);
 border: 2px solid  rgb(63, 61, 94);
 border-radius: 8px;
 padding: 4px;
 box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.16), 0 0 0 1px rgba(0, 0, 0, 0.08);
-</string>
+}
+QPushButton:pressed{
+color: rgb(255, 30, 32);
+}</string>
      </property>
      <property name="text">
       <string>Sign Up</string>
@@ -765,8 +799,8 @@ box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.16), 0 0 0 1px rgba(0, 0, 0, 0.08);
       <rect>
        <x>254</x>
        <y>110</y>
-       <width>61</width>
-       <height>51</height>
+       <width>55</width>
+       <height>50</height>
       </rect>
      </property>
      <property name="cursor">
@@ -779,7 +813,7 @@ box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.16), 0 0 0 1px rgba(0, 0, 0, 0.08);
       <string notr="true">color: #333;
 border: 0px solid  rgb(231, 231, 231);
 background-color: rgb(231, 231, 231);
-border-radius: 8px;
+border-radius: 12px;
 color:rgb(240, 240, 240)</string>
      </property>
      <property name="text">
@@ -944,7 +978,7 @@ background-color: rgb(255, 255, 255);</string>
      <property name="font">
       <font>
        <family>Segoe UI</family>
-       <pointsize>8</pointsize>
+       <pointsize>10</pointsize>
        <weight>75</weight>
        <bold>true</bold>
       </font>
@@ -964,6 +998,12 @@ background-color: rgb(255, 255, 255);</string>
        <width>311</width>
        <height>41</height>
       </rect>
+     </property>
+     <property name="font">
+      <font>
+       <family>Sitka Small</family>
+       <pointsize>10</pointsize>
+      </font>
      </property>
      <property name="styleSheet">
       <string notr="true">border-style: outset;
@@ -1340,6 +1380,27 @@ QPushButton:hover{
    </layout>
   </widget>
  </widget>
+ <tabstops>
+  <tabstop>btnFacebook</tabstop>
+  <tabstop>btnGoogle</tabstop>
+  <tabstop>txtEmail_login</tabstop>
+  <tabstop>txtPassword_login</tabstop>
+  <tabstop>chkRememberme</tabstop>
+  <tabstop>btnForgotpwd</tabstop>
+  <tabstop>btnLogin</tabstop>
+  <tabstop>btnSignupPage</tabstop>
+  <tabstop>pushButton_4</tabstop>
+  <tabstop>pushButton_3</tabstop>
+  <tabstop>txtEmail_signup</tabstop>
+  <tabstop>txtPassword_signup</tabstop>
+  <tabstop>txtConfirmPassword_signup</tabstop>
+  <tabstop>btnSignup</tabstop>
+  <tabstop>btnLoginPage</tabstop>
+  <tabstop>btnSettings</tabstop>
+  <tabstop>btnWindowMinimize</tabstop>
+  <tabstop>btnWindowClose</tabstop>
+  <tabstop>btnMicrophoneControl</tabstop>
+ </tabstops>
  <resources/>
  <connections>
   <connection>

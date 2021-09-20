@@ -252,12 +252,10 @@ class ResumableMicrophoneStream:
 
     def generator(self):
         """Stream Audio from microphone to API and to local buffer"""
-        print(self.closed)
-        if self.closed:
-            self.setExit()
+
         while not self.closed:
             data = []
-            silent_chunks = 0
+
             if self.new_stream and self.last_audio_input:
 
                 chunk_time = STREAMING_LIMIT / len(self.last_audio_input)
@@ -288,12 +286,6 @@ class ResumableMicrophoneStream:
             # data, and stop iteration if the chunk is None, indicating the
             # end of the audio stream.
             chunk = self._buff.get()
-
-            silent = self.is_silent(chunk)
-            if silent:
-                silent_chunks += 1
-                if silent_chunks > self.SILENT_CHUNKS:
-                    print("Silence detected")
             self.audio_input.append(chunk)
 
             if chunk is None:
@@ -313,11 +305,6 @@ class ResumableMicrophoneStream:
                     break
 
             yield b"".join(data)
-
-    def is_silent(self, data_chunk):
-        """Returns 'True' if below the 'silent' threshold"""
-        print("_isSilent() called")
-        return max(data_chunk) < self.THRESHOLD
 
 
 def simulatekeys(transcript):
