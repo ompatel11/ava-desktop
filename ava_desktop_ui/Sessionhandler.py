@@ -1,5 +1,8 @@
-import win32con, win32api, os
 from configparser import ConfigParser
+
+import os
+import win32api
+import win32con
 
 
 class SessionHandler:
@@ -10,6 +13,12 @@ class SessionHandler:
 
     def encryptData(self):
         pass
+
+    def deleteData(self):
+        try:
+            os.remove(self.fileName)
+        except Exception as e:
+            print(e)
 
     def writeData(self):
         # Assume we need 2 sections in the config file, let's call them USERINFO and SERVERCONFIG
