@@ -1,19 +1,18 @@
+import multiprocessing
 import sys
 import threading
-from subprocess import run
 
+import PyQt5.QtWebEngineWidgets
 from PyQt5 import QtCore, QtWidgets
 from PyQt5.QtCore import Qt, QSize, QUrl
 from PyQt5.QtGui import QIcon
-# GUI FILE
-from PyQt5.QtWebEngineWidgets import QWebEngineView
-from PyQt5.QtWidgets import QMainWindow, QDialog
-
-from FirebaseClientWrapper import FirebaseClientWrapper
-from Sessionhandler import SessionHandler
+from PyQt5.QtWidgets import QMainWindow, QDialog, QVBoxLayout, QLabel
+import Sessionhandler
+import FirebaseClientWrapper
 from audio_manager import AudioManager
-from user import User
-from ui_form import Ui_main
+from widgets.QtWaitingSpinner import QtWaitingSpinner
+from main_ui import Ui_main
+import user
 
 
 class MainWindow(QMainWindow):
@@ -23,9 +22,6 @@ class MainWindow(QMainWindow):
         self.ui = Ui_main()
         self.ui.setupUi(self)
         self.MircophoneManager = AudioManager()
-        self.sessionHandler = SessionHandler()
-        self.current_user = User()
-        self.Firebase_app = FirebaseClientWrapper()
 
         # SET TITLE BAR
         self.ui.frame_title.mouseMoveEvent = self.moveWindow
@@ -33,6 +29,7 @@ class MainWindow(QMainWindow):
         # Title Bar buttons
         self.ui.btnWindowMinimize.clicked.connect(self.minimizeWindow)
         self.ui.btnWindowClose.clicked.connect(self.closeWindow)
+        self.ui.btnSettings.clicked.connect(self.openSettings)
 
         # Connecting functions to the components
         self.ui.btnLoginPage.clicked.connect(self.movetoLogin)
@@ -69,8 +66,8 @@ class MainWindow(QMainWindow):
         QtCore.QCoreApplication.instance().quit()
 
     def openSettings(self):
-        self.sessionHandler.deleteData()
-        self.stackPanel.setCurrentIndex(0)
+        FirebaseClientWrapper.Firebase_app.logout()
+        self.ui.stackPanel.setCurrentIndex(0)
 
     def pausePlayMic(self):
         """
@@ -104,8 +101,19 @@ class MainWindow(QMainWindow):
             self.isMic = False
 
     def is_persistent(self):
-        if self.sessionHandler.readData():
-            self.ui.stackPanel.setCurrentIndex(2)
+
+        try:
+            result = Sessionhandler.sessionHandler.readLoginState()
+            if result is not False:
+                self.ui.stackPanel.setCurrentIndex(2)
+                user.current_user.email = result["email"]
+                user.current_user.uid = result["uid"]
+                user.current_user.idToken = result["idToken"]
+                print("Here ", user.current_user.email)
+
+        except Exception as e:
+            print("No user found ")
+            self.ui.stackPanel.setCurrentIndex(0)
 
     def user_signup(self):
         """
@@ -117,13 +125,14 @@ class MainWindow(QMainWindow):
         print(pwd, self.ui.txtEmail_signup.text())
         if pwd and confirm_pwd:
             if pwd == confirm_pwd:
-
-                result = self.Firebase_app.signup_new_user(self.ui.txtEmail_signup.text(), self.ui.txtPassword_signup.text())
+                result = FirebaseClientWrapper.Firebase_app.signup_new_user(self.ui.txtEmail_signup.text(),
+                                                                            self.ui.txtPassword_signup.text(),
+                                                                            False)
                 if result is True:
                     self.RememberMe()
-                    self.current_user.setData(self.ui.txtEmail_signup.text())
                     if self.isUser():
                         self.ui.stackPanel.setCurrentIndex(2)
+
                 else:
                     # Set the error message for the user
                     print(result)
@@ -139,13 +148,49 @@ class MainWindow(QMainWindow):
     def RememberMe(self):
         """Returns True if credentials are found in the specified files or else returns false and navigate
         appropriately """
-        self.sessionHandler.writeData()
+        Sessionhandler.sessionHandler.setUserData()
+        Sessionhandler.sessionHandler.setLoginState()
 
     def isUser(self):
-        return True if self.current_user.email is not None else False
+        return True if user.current_user.email is not None else False
 
     def google_login(self):
-        import demo
+        # import secrets
+        # web = PyQt5.QtWebEngineWidgets.QWebEngineView(self.ui.SettingsPage)
+        # client_token = secrets.token_hex(32)
+        # web.load(QUrl(f"http://localhost:3000/gauth/{client_token}"))
+        # web.setGeometry(QtCore.QRect(30, 30, 421, 571))
+        # web.show()
+        self.ui.stackPanel.setCurrentIndex(3)
+        import webbrowser
+        import secrets
+
+        self.client_token = secrets.token_hex(32)
+        webbrowser.open(f"http://localhost:3000/gauth/{self.client_token}")
+        user.current_user.idToken = self.client_token
+        self.readLogin = threading.Thread(target=self.wait_forLoginState)
+        self.readLogin.start()
+
+    def wait_forLoginState(self):
+        self.ui.frame.raise_()
+        self.ui.waitingSpinner.start()
+        switch_loop = True
+        while switch_loop:
+            result = Sessionhandler.sessionHandler.readLoginState()
+            print(result)
+
+            if result is not False:
+                print("Login Success")
+                self.ui.frame.lower()
+                self.ui.stackPanel.setCurrentIndex(2)
+                user.current_user.idToken = self.client_token
+                user.current_user.email = result['email']
+                user.current_user.uid = result["uid"]
+                self.ui.waitingSpinner.stop()
+                self.ui.frame.lower()
+                switch_loop = False
+            else:
+                print("error")
 
     def user_login(self):
         """
@@ -158,12 +203,16 @@ class MainWindow(QMainWindow):
         result = None
         if pwd and email:
             # Persist login credentials pending
-            result = self.Firebase_app.login_email_password(email, pwd)
+
+            if self.ui.chkRememberme.isChecked():
+                result = FirebaseClientWrapper.Firebase_app.login_email_password(email, pwd, True)
+                self.RememberMe()
+            else:
+                result = FirebaseClientWrapper.Firebase_app.login_email_password(email, pwd, False)
+
         if result is True:
             # Navigate to home page
-            if self.ui.chkRememberme.isChecked():
-                self.RememberMe()
-            self.current_user.setData(self.ui.txtEmail_signup.text())
+
             if self.isUser():
                 self.ui.stackPanel.setCurrentIndex(2)
         else:

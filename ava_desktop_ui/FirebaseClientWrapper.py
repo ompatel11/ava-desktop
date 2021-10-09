@@ -1,7 +1,11 @@
 # This Python file uses the following encoding: utf-8
 import json
+import secrets
 
+import user
 import pyrebase
+
+import Sessionhandler
 
 
 class FirebaseClientWrapper:
@@ -35,31 +39,50 @@ class FirebaseClientWrapper:
         }
         self.firebase_app = pyrebase.initialize_app(config)
         self.auth = self.firebase_app.auth()
+        self.database = self.firebase_app.database()
 
-        # Log the user in
-        self.user = ''
-
-    def signup_new_user(self, email, password):
+    def signup_new_user(self, email, password, isPersist):
         """
         Returns true if created new user else returns error object
         """
         try:
             result = self.auth.create_user_with_email_and_password(email, password)
+            print(result)
+            user.current_user.uid = result["localId"]
+            user.current_user.email = result["email"]
+            user.current_user.idToken = secrets.token_hex(32)
+            print(user.current_user.email, user.current_user.idToken, user.current_user.email)
+            print("New user created")
+            if isPersist:
+                if Sessionhandler.sessionHandler.setUserData():
+                    Sessionhandler.sessionHandler.setLoginState()
+            return True
         except Exception as e:
 
             errorMessage = self.error[str(json.loads(e.args[1])['error']['message'])]
             print(e)
             return errorMessage
 
-        return True
-
-    def login_email_password(self, email, password):
+    def login_email_password(self, email, password, isPersist):
         """
         Returns true if user is logged in else returns error object
         """
         try:
             result = self.auth.sign_in_with_email_and_password(email, password)
+            # self.user_id = result.
+            print(result["localId"])
+            user.current_user.uid = result["localId"]
+            user.current_user.email = result["email"]
+            user.current_user.idToken = secrets.token_hex(32)
+            print(user.current_user.email, user.current_user.uid, user.current_user.idToken)
             print("Log In Success")
+            Sessionhandler.sessionHandler.setLoginState()
+            if isPersist:
+                result = Sessionhandler.sessionHandler.setUserData()
+                print(result)
+                Sessionhandler.sessionHandler.setLoginState()
+                if result:
+                    Sessionhandler.sessionHandler.setLoginState()
 
         except Exception as e:
             print(e)
@@ -70,4 +93,8 @@ class FirebaseClientWrapper:
 
         return True
 
-# obj = FirebaseClientWrapper()
+    def logout(self):
+        Sessionhandler.sessionHandler.logout()
+
+
+Firebase_app = FirebaseClientWrapper()
