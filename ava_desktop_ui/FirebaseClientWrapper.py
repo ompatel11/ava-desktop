@@ -50,12 +50,12 @@ class FirebaseClientWrapper:
             print(result)
             user.current_user.uid = result["localId"]
             user.current_user.email = result["email"]
-            user.current_user.idToken = secrets.token_hex(32)
-            print(user.current_user.email, user.current_user.idToken, user.current_user.email)
+            user.current_user.idtoken = secrets.token_hex(32)
+            print(user.current_user.email, user.current_user.idtoken, user.current_user.email)
             print("New user created")
             if isPersist:
                 if Sessionhandler.sessionHandler.setUserData():
-                    Sessionhandler.sessionHandler.setLoginState()
+                    Sessionhandler.sessionHandler.setloginstate()
             return True
         except Exception as e:
 
@@ -73,16 +73,14 @@ class FirebaseClientWrapper:
             print(result["localId"])
             user.current_user.uid = result["localId"]
             user.current_user.email = result["email"]
-            user.current_user.idToken = secrets.token_hex(32)
-            print(user.current_user.email, user.current_user.uid, user.current_user.idToken)
-            print("Log In Success")
-            Sessionhandler.sessionHandler.setLoginState()
+
+            print(user.current_user.email, user.current_user.uid, user.current_user.idtoken)
+
             if isPersist:
                 result = Sessionhandler.sessionHandler.setUserData()
                 print(result)
-                Sessionhandler.sessionHandler.setLoginState()
-                if result:
-                    Sessionhandler.sessionHandler.setLoginState()
+                Sessionhandler.sessionHandler.setloginstate()
+            print("Log In Success")
 
         except Exception as e:
             print(e)

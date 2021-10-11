@@ -337,6 +337,7 @@ def checkFocus():
         if _platform.system() == 'Windows':
             time.sleep(2)
             window = win32gui.GetForegroundWindow()
+            print(win32gui.GetLayeredWindowAttributes())
             # Select the Editor and will wait till that Application is in foreground
             active_window_name = win32gui.GetWindowText(window)
             print("Window Name = " + active_window_name)
@@ -347,7 +348,7 @@ def checkFocus():
             scr = Wnck.Screen.get_default()
             scr.force_update()
             print(scr.get_active_window().get_name())
-    return True if active_window_name == 'ava-desktop – main.cpp' else False
+    return True if active_window_name == 'main.py' else False
 
 
 def listen_print_loop(responses, stream, extension):

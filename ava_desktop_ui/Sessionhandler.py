@@ -1,11 +1,8 @@
-from configparser import ConfigParser
 import os
+from configparser import ConfigParser
 
-import pyrebase.pyrebase
-import win32api
-import win32con
-from FirebaseClientWrapper import Firebase_app
 import user
+import FirebaseClientWrapper
 
 
 class SessionHandler:
@@ -18,6 +15,7 @@ class SessionHandler:
         try:
             self.config_object.read(self.fileName)
             userdata_object = self.config_object["data"]
+            print("User Object from readUserData():", userdata_object['idtoken'])
             return userdata_object
 
         except Exception as e:
@@ -31,12 +29,12 @@ class SessionHandler:
             self.config_object["data"] = {
                 "uid": user.current_user.uid,
                 "email": user.current_user.email,
-                "idToken": user.current_user.idToken,
-                "loginState": "True"
+                "idtoken": user.current_user.idtoken,
+                "loginstate": "True"
             }
 
             # Write the above sections to config.ini file
-            with open('config.ini', 'w+') as conf:
+            with open('application/config/config.ini', 'w+') as conf:
                 self.config_object.write(conf)
             # win32api.SetFileAttributes(self.fileName, win32con.FILE_ATTRIBUTE_HIDDEN)
             return True
@@ -45,24 +43,19 @@ class SessionHandler:
             print(e)
             return False
 
-    def deleteData(self):
-        try:
-            os.remove(self.fileName)
-        except Exception as e:
-            print(e)
-
-    def setLoginState(self):
+    def setloginstate(self):
         # Assume we need 2 sections in the config file, let's call them USERINFO and SERVERCONFIG
 
         try:
             login_data = {
-                "loginState": "True",
+                "loginstate": "True",
                 "email": user.current_user.email,
 
             }
             userData = self.readUserData()
             if True:
-                result = Firebase_app.database.child("users_authenticated").child(user.current_user.idToken).child(user.current_user.uid).set(login_data)
+                result = FirebaseClientWrapper.Firebase_app.database.child("users_authenticated").child(user.current_user.idtoken).child(
+                    user.current_user.uid).update(login_data)
                 print(result.val())
                 print("Writing done")
                 return True
@@ -71,21 +64,25 @@ class SessionHandler:
             print(e)
             return False
 
-    def readLoginState(self):
+    def readloginstate(self):
         # Read the database login state
         try:
             userData = self.readUserData()
-            print("Token=",user.current_user.idToken)
-            print("Uid=",user.current_user.uid)
-            result = Firebase_app.database.child("users_authenticated").child(user.current_user.idToken).child(
-                user.current_user.uid).get()
-            print(result.val())
+            result = FirebaseClientWrapper.Firebase_app.database.child("users_authenticated").child(
+                userData['idtoken']).child(
+                userData['uid']).get()
             if userData is not False:
+                user.current_user.uid = userData['uid']
+                user.current_user.email = userData['email']
+                user.current_user.idtoken = userData['idtoken']
+                print("Token=", user.current_user.idtoken)
+                print("Uid=", user.current_user.uid)
                 documentId = ""
                 for key in result.val().keys():
                     documentId = key
-
-                if result.val()[documentId]["loginState"] == userData["state"]:
+                print("Here", type(result.val()[documentId]))
+                if result.val()[documentId] == userData['loginstate']:
+                    print("User Data from else: ", userData['loginstate'])
                     return userData
 
             else:
@@ -93,9 +90,10 @@ class SessionHandler:
                 for key in result.val().keys():
                     documentId = key
                     print("DocumentId=", documentId)
-                userData = {'loginState': result.val()[documentId]["loginState"], 'email': result.val()[documentId]["email"], "uid": documentId}
+                userData = {'loginstate': result.val()[documentId],
+                            'email': result.val()[documentId]["email"], "uid": documentId}
                 self.setUserData()
-
+                print("User Data from else: ", userData)
                 return userData
 
         except Exception as e:
@@ -105,14 +103,18 @@ class SessionHandler:
     def logout(self):
         try:
             login_data = {
-                "loginState": "False",
+                "loginstate": "False",
                 "email": user.current_user.email
             }
-            print("Token=", user.current_user.idToken)
+            print("Token=", user.current_user.idtoken)
             print("Uid=", user.current_user.uid)
-            result = Firebase_app.database.child("users_authenticated").child(user.current_user.idToken).child(user.current_user.uid).update(login_data)
+            result = FirebaseClientWrapper.Firebase_app.database.child("users_authenticated").child(user.current_user.idtoken).child(
+                user.current_user.uid).update(login_data)
             print(result.val())
-            self.deleteData()
+            user.current_user.deleteData()
+            print("After")
+            print("Token=", user.current_user.idtoken)
+            print("Uid=", user.current_user.uid)
             print("Writing done")
             return True
 

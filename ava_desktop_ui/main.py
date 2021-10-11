@@ -1,18 +1,16 @@
-import multiprocessing
 import sys
 import threading
 
-import PyQt5.QtWebEngineWidgets
 from PyQt5 import QtCore, QtWidgets
-from PyQt5.QtCore import Qt, QSize, QUrl
+from PyQt5.QtCore import Qt, QSize
 from PyQt5.QtGui import QIcon
-from PyQt5.QtWidgets import QMainWindow, QDialog, QVBoxLayout, QLabel
-import Sessionhandler
+from PyQt5.QtWidgets import QMainWindow
+
 import FirebaseClientWrapper
-from audio_manager import AudioManager
-from widgets.QtWaitingSpinner import QtWaitingSpinner
-from main_ui import Ui_main
+import Sessionhandler
 import user
+from audio_manager import AudioManager
+from main_ui import Ui_main
 
 
 class MainWindow(QMainWindow):
@@ -22,7 +20,7 @@ class MainWindow(QMainWindow):
         self.ui = Ui_main()
         self.ui.setupUi(self)
         self.MircophoneManager = AudioManager()
-
+        self.client_token = ''
         # SET TITLE BAR
         self.ui.frame_title.mouseMoveEvent = self.moveWindow
 
@@ -103,16 +101,19 @@ class MainWindow(QMainWindow):
     def is_persistent(self):
 
         try:
-            result = Sessionhandler.sessionHandler.readLoginState()
-            if result is not False:
+            result = Sessionhandler.sessionHandler.readloginstate()
+            if result is not False and result is not None:
                 self.ui.stackPanel.setCurrentIndex(2)
                 user.current_user.email = result["email"]
                 user.current_user.uid = result["uid"]
-                user.current_user.idToken = result["idToken"]
-                print("Here ", user.current_user.email)
-
+                user.current_user.idtoken = result["idtoken"]
+                print("From is_persistent() ", user.current_user.email)
+                if result['loginstate']:
+                    self.ui.stackPanel.setCurrentIndex(2)
+            else:
+                print("Result is ", result)
         except Exception as e:
-            print("No user found ")
+            print("No user found as ", e)
             self.ui.stackPanel.setCurrentIndex(0)
 
     def user_signup(self):
@@ -149,7 +150,7 @@ class MainWindow(QMainWindow):
         """Returns True if credentials are found in the specified files or else returns false and navigate
         appropriately """
         Sessionhandler.sessionHandler.setUserData()
-        Sessionhandler.sessionHandler.setLoginState()
+        Sessionhandler.sessionHandler.setloginstate()
 
     def isUser(self):
         return True if user.current_user.email is not None else False
@@ -161,33 +162,46 @@ class MainWindow(QMainWindow):
         # web.load(QUrl(f"http://localhost:3000/gauth/{client_token}"))
         # web.setGeometry(QtCore.QRect(30, 30, 421, 571))
         # web.show()
-        self.ui.stackPanel.setCurrentIndex(3)
+
         import webbrowser
         import secrets
 
-        self.client_token = secrets.token_hex(32)
-        webbrowser.open(f"http://localhost:3000/gauth/{self.client_token}")
-        user.current_user.idToken = self.client_token
-        self.readLogin = threading.Thread(target=self.wait_forLoginState)
-        self.readLogin.start()
+        try:
+            result = Sessionhandler.sessionHandler.readUserData()
+            if result is not False and result is not None:
+                print("Token from google login ()",result['idtoken'])
+                self.client_token = result['idtoken']
+            else:
+                self.client_token = secrets.token_hex(32)
+        except Exception as e:
+            print(e)
 
-    def wait_forLoginState(self):
+
+        webbrowser.open(f"http://localhost:3000/gauth/{self.client_token}")
+        user.current_user.idtoken = self.client_token
+        self.readLogin = threading.Thread(target=self.wait_forloginstate)
+        self.readLogin.start()
+        self.readLogin.join()
+        self.ui.waitingSpinner.stop()
+        self.ui.frame.lower()
+        self.ui.stackPanel.setCurrentIndex(3)
+
+    def wait_forloginstate(self):
         self.ui.frame.raise_()
         self.ui.waitingSpinner.start()
         switch_loop = True
         while switch_loop:
-            result = Sessionhandler.sessionHandler.readLoginState()
+            result = Sessionhandler.sessionHandler.readloginstate()
             print(result)
 
-            if result is not False:
+            if result is not False and result is not None:
                 print("Login Success")
-                self.ui.frame.lower()
                 self.ui.stackPanel.setCurrentIndex(2)
-                user.current_user.idToken = self.client_token
+                user.current_user.idtoken = self.client_token
                 user.current_user.email = result['email']
                 user.current_user.uid = result["uid"]
-                self.ui.waitingSpinner.stop()
-                self.ui.frame.lower()
+                Sessionhandler.sessionHandler.setUserData()
+
                 switch_loop = False
             else:
                 print("error")
@@ -207,6 +221,7 @@ class MainWindow(QMainWindow):
             if self.ui.chkRememberme.isChecked():
                 result = FirebaseClientWrapper.Firebase_app.login_email_password(email, pwd, True)
                 self.RememberMe()
+                print("Remember me")
             else:
                 result = FirebaseClientWrapper.Firebase_app.login_email_password(email, pwd, False)
 
@@ -215,6 +230,7 @@ class MainWindow(QMainWindow):
 
             if self.isUser():
                 self.ui.stackPanel.setCurrentIndex(2)
+                self.ui.frame.lower()
         else:
             # Set the error message for the user
             print(result)
