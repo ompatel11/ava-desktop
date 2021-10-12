@@ -110,11 +110,11 @@ class MainWindow(QMainWindow):
                 print("From is_persistent() ", user.current_user.email)
                 if result['loginstate']:
                     self.ui.stackPanel.setCurrentIndex(2)
-            else:
+            if result['idtoken'] == "None":
                 print("Result is ", result)
+                self.ui.stackPanel.setCurrentIndex(0)
         except Exception as e:
             print("No user found as ", e)
-            self.ui.stackPanel.setCurrentIndex(0)
 
     def user_signup(self):
         """
@@ -166,45 +166,42 @@ class MainWindow(QMainWindow):
         import webbrowser
         import secrets
 
-        try:
-            result = Sessionhandler.sessionHandler.readUserData()
-            if result is not False and result is not None:
-                print("Token from google login ()",result['idtoken'])
-                self.client_token = result['idtoken']
-            else:
-                self.client_token = secrets.token_hex(32)
-        except Exception as e:
-            print(e)
-
+        self.client_token = secrets.token_hex(32)
 
         webbrowser.open(f"http://localhost:3000/gauth/{self.client_token}")
         user.current_user.idtoken = self.client_token
+        print("Google Login idtoken=", user.current_user.idtoken)
         self.readLogin = threading.Thread(target=self.wait_forloginstate)
         self.readLogin.start()
         self.readLogin.join()
         self.ui.waitingSpinner.stop()
         self.ui.frame.lower()
-        self.ui.stackPanel.setCurrentIndex(3)
 
     def wait_forloginstate(self):
         self.ui.frame.raise_()
         self.ui.waitingSpinner.start()
         switch_loop = True
         while switch_loop:
-            result = Sessionhandler.sessionHandler.readloginstate()
-            print(result)
+            try:
+                result = FirebaseClientWrapper.Firebase_app.database.child("users_authenticated").child(self.client_token).get()
+                print("From Google Login()")
+                documentId = ""
+                print(result.val())
+                for key in result.val().keys():
+                    documentId = key
+                print('DocumentId=', documentId)
+                if result.val()[documentId]['loginstate'] != "False":
+                    print("Login Success")
 
-            if result is not False and result is not None:
-                print("Login Success")
-                self.ui.stackPanel.setCurrentIndex(2)
-                user.current_user.idtoken = self.client_token
-                user.current_user.email = result['email']
-                user.current_user.uid = result["uid"]
-                Sessionhandler.sessionHandler.setUserData()
+                    self.ui.stackPanel.setCurrentIndex(2)
+                    user.current_user.idtoken = self.client_token
+                    user.current_user.email = result.val()[documentId]['email']
+                    user.current_user.uid = documentId
+                    Sessionhandler.sessionHandler.setUserData()
 
-                switch_loop = False
-            else:
-                print("error")
+                    switch_loop = False
+            except Exception as e:
+                print(e)
 
     def user_login(self):
         """

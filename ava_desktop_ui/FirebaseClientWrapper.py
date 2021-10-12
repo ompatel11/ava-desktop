@@ -1,4 +1,5 @@
 # This Python file uses the following encoding: utf-8
+import asyncio
 import json
 import secrets
 
@@ -73,7 +74,10 @@ class FirebaseClientWrapper:
             print(result["localId"])
             user.current_user.uid = result["localId"]
             user.current_user.email = result["email"]
-
+            print(type(user.current_user.idtoken))
+            print(user.current_user.idtoken)
+            if user.current_user.idtoken is '':
+                user.current_user.idtoken = user.current_user.idtoken = secrets.token_hex(32)
             print(user.current_user.email, user.current_user.uid, user.current_user.idtoken)
 
             if isPersist:
@@ -92,7 +96,9 @@ class FirebaseClientWrapper:
         return True
 
     def logout(self):
-        Sessionhandler.sessionHandler.logout()
+        loop = asyncio.get_event_loop()
+        loop.run_until_complete(Sessionhandler.sessionHandler.logout())
+        loop.close()
 
 
 Firebase_app = FirebaseClientWrapper()
