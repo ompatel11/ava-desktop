@@ -1,5 +1,6 @@
 import sys
 import threading
+import time
 
 from PyQt5 import QtCore, QtWidgets
 from PyQt5.QtCore import Qt, QSize
@@ -9,17 +10,17 @@ from PyQt5.QtWidgets import QMainWindow
 import FirebaseClientWrapper
 import Sessionhandler
 import user
-from audio_manager import AudioManager
+import audio_manager
 from main_ui import Ui_main
 
 
 class MainWindow(QMainWindow):
+
     def __init__(self):
-        print(self)
         QMainWindow.__init__(self)
         self.ui = Ui_main()
         self.ui.setupUi(self)
-        self.MircophoneManager = AudioManager()
+        # self.MircophoneManager = AudioManager()
         self.client_token = ''
         # SET TITLE BAR
         self.ui.frame_title.mouseMoveEvent = self.moveWindow
@@ -44,6 +45,11 @@ class MainWindow(QMainWindow):
         # If user remember me == True then login
         self.is_persistent()
 
+        # Speech Recognition Screen
+        self.ui.btnMicrophoneControl.clicked.connect(self.pausePlayMic)
+        self.audioManager = audio_manager.AudioManager(self)
+        # Microphone Boolean
+        self.isMic = False
         # Show UI
         self.show()
 
@@ -72,19 +78,22 @@ class MainWindow(QMainWindow):
         Change the icon and background based on the state of the microphone
         Calls to the microphone manager class will be made from here.
         """
-        if not self.isMic:
+        if self.audioManager.isClosed is False:
             self.ui.btnMicrophoneControl.setIcon(QIcon("Icons/Pause@2x.png"))
             self.ui.btnMicrophoneControl.setIconSize(QSize(64, 64))
             self.ui.btnMicrophoneControl.setStyleSheet("""
             background-color: white;
             border: none;
             """)
-            if self.MircophoneManager is None:
-                self.MircophoneManager = AudioManager()
+            if self.audioManager is None:
+                # Checkbox for continuous transcription
+                audio_manager.audioManger = audio_manager.AudioManager()
 
-            t1 = threading.Thread(target=self.MircophoneManager.start)
+                # Else simple one time audio transcription
+            #      cout<<"helloworldstop";
+            t1 = threading.Thread(target=self.audioManager.start)
             t1.start()
-            self.isMic = True
+            self.audioManager.isClosed = True
         else:
             self.ui.btnMicrophoneControl.setIconSize(QSize(32, 32))
             self.ui.btnMicrophoneControl.setIcon(QIcon("Icons/Icon ionic-ios-mic.png"))
@@ -93,10 +102,10 @@ class MainWindow(QMainWindow):
             border: 1px solid white;
             border-radius: 40;
             """)
-            t2 = threading.Thread(target=self.MircophoneManager.stop)
-            t2.start()
-            self.MircophoneManager = None
-            self.isMic = False
+            t1 = threading.Thread(target=self.audioManager.stop)
+            t1.start()
+            audio_manager.audioManger = None
+            self.audioManager.isClosed = False
 
     def is_persistent(self):
 
@@ -110,6 +119,7 @@ class MainWindow(QMainWindow):
                 print("From is_persistent() ", user.current_user.email)
                 if result['loginstate']:
                     self.ui.stackPanel.setCurrentIndex(2)
+                    self.ui.frame.lower()
             if result['idtoken'] == "None":
                 print("Result is ", result)
                 self.ui.stackPanel.setCurrentIndex(0)
@@ -126,6 +136,7 @@ class MainWindow(QMainWindow):
         print(pwd, self.ui.txtEmail_signup.text())
         if pwd and confirm_pwd:
             if pwd == confirm_pwd:
+                self.ui.frame.raise_()
                 result = FirebaseClientWrapper.Firebase_app.signup_new_user(self.ui.txtEmail_signup.text(),
                                                                             self.ui.txtPassword_signup.text(),
                                                                             False)
@@ -163,6 +174,7 @@ class MainWindow(QMainWindow):
         # web.setGeometry(QtCore.QRect(30, 30, 421, 571))
         # web.show()
 
+        self.ui.frame.raise_()
         import webbrowser
         import secrets
 
@@ -173,17 +185,15 @@ class MainWindow(QMainWindow):
         print("Google Login idtoken=", user.current_user.idtoken)
         self.readLogin = threading.Thread(target=self.wait_forloginstate)
         self.readLogin.start()
-        self.readLogin.join()
-        self.ui.waitingSpinner.stop()
-        self.ui.frame.lower()
 
     def wait_forloginstate(self):
         self.ui.frame.raise_()
-        self.ui.waitingSpinner.start()
         switch_loop = True
-        while switch_loop:
+        for i in range(5):
             try:
-                result = FirebaseClientWrapper.Firebase_app.database.child("users_authenticated").child(self.client_token).get()
+                time.sleep(2)
+                result = FirebaseClientWrapper.Firebase_app.database.child("users_authenticated").child(
+                    self.client_token).get()
                 print("From Google Login()")
                 documentId = ""
                 print(result.val())
@@ -200,8 +210,10 @@ class MainWindow(QMainWindow):
                     Sessionhandler.sessionHandler.setUserData()
 
                     switch_loop = False
+                    self.ui.frame.lower()
             except Exception as e:
                 print(e)
+        self.ui.frame.lower()
 
     def user_login(self):
         """
@@ -211,27 +223,34 @@ class MainWindow(QMainWindow):
 
         email = self.ui.txtEmail_login.text()
         pwd = self.ui.txtPassword_login.text()
+        print("Email = ", email, pwd)
+        print(f"PWD= {bool(pwd)}")
         result = None
         if pwd and email:
+
+            self.ui.waitingSpinner.start()
             # Persist login credentials pending
 
             if self.ui.chkRememberme.isChecked():
                 result = FirebaseClientWrapper.Firebase_app.login_email_password(email, pwd, True)
+
                 self.RememberMe()
                 print("Remember me")
             else:
                 result = FirebaseClientWrapper.Firebase_app.login_email_password(email, pwd, False)
+            if result is True:
+                # Navigate to home page
 
-        if result is True:
-            # Navigate to home page
-
-            if self.isUser():
-                self.ui.stackPanel.setCurrentIndex(2)
-                self.ui.frame.lower()
+                if self.isUser():
+                    self.ui.stackPanel.setCurrentIndex(2)
+                    self.ui.frame.lower()
+            else:
+                # Set the error message for the user
+                print(result)
+                self.ui.lblError_login.setText(result)
         else:
-            # Set the error message for the user
-            print(result)
-            self.ui.lblError_login.setText(result)
+            print('Else part')
+            self.ui.lblError_login.setText("Email and Password fields cannot be empty.")
 
     def movetoLogin(self):
         """

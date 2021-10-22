@@ -127,16 +127,12 @@ class SessionHandler:
             print(e)
             return False
 
-    async def logout(self):
+    def logout(self):
         try:
-            login_data = {
-                "loginstate": "False",
-                "email": user.current_user.email
-            }
             boolean_result = self.deleteUserData()
             print("Token from logout=", user.current_user.idtoken)
             print("Uid from logout=", user.current_user.uid)
-            result = await FirebaseClientWrapper.Firebase_app.database.child("users_authenticated").child(
+            result = FirebaseClientWrapper.Firebase_app.database.child("users_authenticated").child(
                 user.current_user.idtoken).remove()
             # .child(
             #     user.current_user.uid).update(login_data)
@@ -154,6 +150,7 @@ class SessionHandler:
             return True
 
         except Exception as e:
+            print(e)
             return False
 
 

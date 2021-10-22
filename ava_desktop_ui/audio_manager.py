@@ -7,6 +7,8 @@ import os
 import threading
 import time
 
+from PyQt5.QtCore import QSize
+from PyQt5.QtGui import QIcon
 from google.cloud import speech
 import pyaudio
 from six.moves import queue
@@ -14,6 +16,9 @@ import pyautogui
 import platform as _platform
 import yaml
 from yaml.loader import SafeLoader
+
+from ava_desktop_ui.main import MainWindow
+from ava_desktop_ui.main_ui import Ui_main
 
 if _platform.system() == "Linux":
     import gi
@@ -49,13 +54,16 @@ class TranscriptModifier(object):
         self.extension = extension
 
         commands = self.fetch_commands(self.extension)
-        if self.extension == "py":
-            t1 = threading.Thread(target=self.modify_continuous_speech(commands))
-            t1.start()
-
-        if self.extension == "cpp":
-            t1 = threading.Thread(target=self.modify_continuous_speech(commands))
-            t1.start()
+        #  TODO: Implement for Transcript conversion for Desktop Automation: Completed
+        t1 = threading.Thread(target=self.modify_continuous_speech(commands))
+        t1.start()
+        # if self.extension == "py":
+        #     t1 = threading.Thread(target=self.modify_continuous_speech(commands))
+        #     t1.start()
+        # cout<<"helloworld";
+        # if self.extension == "cpp":
+        #     t1 = threading.Thread(target=self.modify_continuous_speech(commands))
+        #     t1.start()
 
     def fetch_commands(self, ext):
         # Open the file and load the file
@@ -84,14 +92,6 @@ class TranscriptModifier(object):
             if skipNxtItr:
                 skipNxtItr = False
                 continue
-            if length != 1 and i != (length - 1):
-                if val + words[i + 1] == "elsa" or val == "elsafe" or val + words[i + 1] == "elsea" or val + words[
-                    i + 1] == "elseif":
-                    simulatekeys("else if(){\n\n}")
-                    simulatekeys("\t")
-                    self.moveLeft(5)
-                    skipNxtItr = True
-                    continue
 
             if val == "text":
                 for j, value in enumerate(words):
@@ -337,94 +337,18 @@ def checkFocus():
         if _platform.system() == 'Windows':
             time.sleep(2)
             window = win32gui.GetForegroundWindow()
-            print(win32gui.GetLayeredWindowAttributes())
+            print(win32gui.GetForegroundWindow())
             # Select the Editor and will wait till that Application is in foreground
             active_window_name = win32gui.GetWindowText(window)
             print("Window Name = " + active_window_name)
-            if active_window_name == 'ava-desktop – main.cpp':
+            if active_window_name != 'main':
                 break
         if _platform.system() == 'Linux':
             time.sleep(2)
             scr = Wnck.Screen.get_default()
             scr.force_update()
             print(scr.get_active_window().get_name())
-    return True if active_window_name == 'main.py' else False
-
-
-def listen_print_loop(responses, stream, extension):
-    """Iterates through server responses and prints them.
-
-    The responses passed is a generator that will block until a response
-    is provided by the server.
-
-    Each response may contain multiple results, and each result may contain
-    multiple alternatives; for details, see https://goo.gl/tjCPAU.  Here we
-    print only the transcription for the top alternative of the top result.
-
-    In this case, responses are provided for interim results as well. If the
-    response is an interim one, print a line feed at the end of it, to allow
-    the next result to overwrite it, until the response is a final one. For the
-    final one, print a newline to preserve the finalized transcription.
-    """
-
-    for response in responses:
-
-        if get_current_time() - stream.start_time > STREAMING_LIMIT:
-            stream.start_time = get_current_time()
-            break
-
-        if not response.results:
-            continue
-
-        result = response.results[0]
-
-        if not result.alternatives:
-            continue
-
-        transcript = result.alternatives[0].transcript
-
-        result_seconds = 0
-        result_micros = 0
-
-        if result.result_end_time.seconds:
-            result_seconds = result.result_end_time.seconds
-
-        if result.result_end_time.microseconds:
-            result_micros = result.result_end_time.microseconds
-
-        stream.result_end_time = int((result_seconds * 1000) + (result_micros / 1000))
-
-        corrected_time = (
-                stream.result_end_time
-                - stream.bridging_offset
-                + (STREAMING_LIMIT * stream.restart_counter)
-        )
-        # Display interim results, but with a carriage return at the end of the
-        # line, so subsequent lines will overwrite them.
-
-        if result.is_final:
-
-            sys.stdout.write(GREEN)
-            sys.stdout.write("\033[K")
-            sys.stdout.write(str(corrected_time) + ": " + transcript + "\n")
-
-            stream.is_final_end_time = stream.result_end_time
-            stream.last_transcript_was_final = True
-            TranscriptModifier(transcript, extension)
-            # Exit recognition if any of the transcribed phrases could be
-            # one of our keywords.
-            if re.search(r"\b(exit|quit)\b", transcript, re.I):
-                sys.stdout.write(YELLOW)
-                sys.stdout.write("Exiting...\n")
-                stream.closed = True
-                break
-
-        else:
-            sys.stdout.write(RED)
-            sys.stdout.write("\033[K")
-            sys.stdout.write(str(corrected_time) + ": " + transcript + "\r")
-
-            stream.last_transcript_was_final = False
+    return True if active_window_name != 'main' else False
 
 
 class AudioManager:
@@ -433,7 +357,8 @@ class AudioManager:
     Provides a control from the user interface
     """
 
-    def __init__(self):
+    def __init__(self, main_obj: MainWindow):
+        self._mainObject = main_obj
         cred = {
             "type": "service_account",
             "project_id": "ava-daemon",
@@ -460,47 +385,131 @@ class AudioManager:
             config=self.config, interim_results=True,
         )
         self.mic_manager = None
+        self.isClosed = False
 
     def stop(self):
+        self._mainObject.ui.btnMicrophoneControl.setIconSize(QSize(32, 32))
+        self._mainObject.ui.btnMicrophoneControl.setIcon(QIcon("Icons/Icon ionic-ios-mic.png"))
+        self._mainObject.ui.btnMicrophoneControl.setStyleSheet("""
+                                background-color: rgb(62, 60, 84);
+                                border: 1px solid white;
+                                border-radius: 40;
+                                """)
         self.mic_manager.setExit()
+        self.isClosed = True
 
     def start(self):
         self.mic_manager = ResumableMicrophoneStream(SAMPLE_RATE, CHUNK_SIZE)
-        if checkFocus():
-            with self.mic_manager as stream:
+        try:
+            if checkFocus():
+                with self.mic_manager as stream:
 
-                while not stream.closed:
-                    sys.stdout.write(YELLOW)
-                    sys.stdout.write(
-                        "\n" + str(STREAMING_LIMIT * stream.restart_counter) + ": NEW REQUEST\n"
-                    )
+                    while not stream.closed:
+                        sys.stdout.write(YELLOW)
+                        sys.stdout.write(
+                            "\n" + str(STREAMING_LIMIT * stream.restart_counter) + ": NEW REQUEST\n"
+                        )
 
-                    stream.audio_input = []
-                    audio_generator = stream.generator()
+                        stream.audio_input = []
+                        audio_generator = stream.generator()
 
-                    requests = (
-                        speech.StreamingRecognizeRequest(audio_content=content)
-                        for content in audio_generator
-                    )
+                        requests = (
+                            speech.StreamingRecognizeRequest(audio_content=content)
+                            for content in audio_generator
+                        )
 
-                    responses = self.client.streaming_recognize(self.streaming_config, requests)
-                    print("Speech API called")
-                    # Now, put the transcription responses to use.
-                    listen_print_loop(responses, stream, "cpp")
+                        responses = self.client.streaming_recognize(self.streaming_config, requests)
+                        print("Speech API called")
+                        # Now, put the transcription responses to use.
+                        self.listen_print_loop(responses, stream, "cpp")
 
-                    if stream.result_end_time > 0:
-                        stream.final_request_end_time = stream.is_final_end_time
-                    stream.result_end_time = 0
-                    stream.last_audio_input = []
-                    stream.last_audio_input = stream.audio_input
-                    stream.audio_input = []
-                    stream.restart_counter = stream.restart_counter + 1
+                        if stream.result_end_time > 0:
+                            stream.final_request_end_time = stream.is_final_end_time
+                        stream.result_end_time = 0
+                        stream.last_audio_input = []
+                        stream.last_audio_input = stream.audio_input
+                        stream.audio_input = []
+                        stream.restart_counter = stream.restart_counter + 1
 
-                    if not stream.last_transcript_was_final:
-                        sys.stdout.write("\n")
-                    stream.new_stream = True
+                        if not stream.last_transcript_was_final:
+                            sys.stdout.write("\n")
+                        stream.new_stream = True
+        except Exception as e:
 
-# obj = AudioManager()
-# obj.start()
-#
-# obj.stop()
+            self.stop()
+            print(e)
+
+    def listen_print_loop(self, responses, stream, extension):
+        """Iterates through server responses and prints them.
+
+        The responses passed is a generator that will block until a response
+        is provided by the server.
+
+        Each response may contain multiple results, and each result may contain
+        multiple alternatives; for details, see https://goo.gl/tjCPAU.  Here we
+        print only the transcription for the top alternative of the top result.
+
+        In this case, responses are provided for interim results as well. If the
+        response is an interim one, print a line feed at the end of it, to allow
+        the next result to overwrite it, until the response is a final one. For the
+        final one, print a newline to preserve the finalized transcription.
+        """
+
+        for response in responses:
+
+            if get_current_time() - stream.start_time > STREAMING_LIMIT:
+                stream.start_time = get_current_time()
+                break
+
+            if not response.results:
+                continue
+
+            result = response.results[0]
+
+            if not result.alternatives:
+                continue
+
+            transcript = result.alternatives[0].transcript
+
+            result_seconds = 0
+            result_micros = 0
+
+            if result.result_end_time.seconds:
+                result_seconds = result.result_end_time.seconds
+
+            if result.result_end_time.microseconds:
+                result_micros = result.result_end_time.microseconds
+
+            stream.result_end_time = int((result_seconds * 1000) + (result_micros / 1000))
+
+            corrected_time = (
+                    stream.result_end_time
+                    - stream.bridging_offset
+                    + (STREAMING_LIMIT * stream.restart_counter)
+            )
+            # Display interim results, but with a carriage return at the end of the
+            # line, so subsequent lines will overwrite them.
+
+            if result.is_final:
+
+                sys.stdout.write(GREEN)
+                sys.stdout.write("\033[K")
+                sys.stdout.write(str(corrected_time) + ": " + transcript + "\n")
+
+                stream.is_final_end_time = stream.result_end_time
+                stream.last_transcript_was_final = True
+                TranscriptModifier(transcript, extension)
+                self._mainObject.ui.lblLiveTranscript.setText(transcript)
+                # Exit recognition if any of the transcribed phrases could be
+                # one of our keywords.
+                if re.search(r"\b(exit|quit|stop)\b", transcript, re.I):
+                    self.stop()
+
+            else:
+                sys.stdout.write(RED)
+                sys.stdout.write("\033[K")
+                sys.stdout.write(str(corrected_time) + ": " + transcript + "\r")
+
+                stream.last_transcript_was_final = False
+
+# audioManager = AudioManager()

@@ -1,5 +1,4 @@
-# This Python file uses the following encoding: utf-8
-import asyncio
+# This Python file uses the following encoding: utf-
 import json
 import secrets
 
@@ -96,9 +95,7 @@ class FirebaseClientWrapper:
         return True
 
     def logout(self):
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(Sessionhandler.sessionHandler.logout())
-        loop.close()
+        Sessionhandler.sessionHandler.logout()
 
 
 Firebase_app = FirebaseClientWrapper()
