@@ -1,9 +1,7 @@
 from __future__ import division
 
-import platform
 import re
 import sys
-import os
 import threading
 import time
 
@@ -18,7 +16,6 @@ import yaml
 from yaml.loader import SafeLoader
 
 from ava_desktop_ui.main import MainWindow
-from ava_desktop_ui.main_ui import Ui_main
 
 if _platform.system() == "Linux":
     import gi
@@ -54,7 +51,6 @@ class TranscriptModifier(object):
         self.extension = extension
 
         commands = self.fetch_commands(self.extension)
-        #  TODO: Implement for Transcript conversion for Desktop Automation: Completed
         t1 = threading.Thread(target=self.modify_continuous_speech(commands))
         t1.start()
         # if self.extension == "py":
@@ -84,7 +80,6 @@ class TranscriptModifier(object):
 
         self.transcript = self.transcript.lower()
         words = self.transcript.split(' ')
-        length = len(words)
         print("Transcript= " + self.transcript)
 
         skipNxtItr = False
@@ -138,6 +133,7 @@ class TranscriptModifier(object):
                                 continue
                 continue
             except Exception as e:
+                print(e)
                 simulatekeys(val)
                 continue
 
@@ -255,7 +251,8 @@ class ResumableMicrophoneStream:
 
         while not self.closed:
             data = []
-
+            silent_chunks = 0
+            
             if self.new_stream and self.last_audio_input:
 
                 chunk_time = STREAMING_LIMIT / len(self.last_audio_input)
@@ -287,7 +284,9 @@ class ResumableMicrophoneStream:
             # end of the audio stream.
             chunk = self._buff.get()
             self.audio_input.append(chunk)
+            silent = self.is_silent(chunk)
 
+            self.audio_input.append(chunk)
             if chunk is None:
                 return
             data.append(chunk)
@@ -295,7 +294,11 @@ class ResumableMicrophoneStream:
             while True:
                 try:
                     chunk = self._buff.get(block=False)
-
+                    if silent:
+                        silent_chunks += 1
+                        if silent_chunks > self.SILENT_CHUNKS:
+                            print("Silence detected")
+                            break
                     if chunk is None:
                         return
                     data.append(chunk)
@@ -305,6 +308,10 @@ class ResumableMicrophoneStream:
                     break
 
             yield b"".join(data)
+
+    def is_silent(self, chunk):
+        """Returns 'True' if below the 'silent' threshold"""
+        return max(chunk) < 0
 
 
 def simulatekeys(transcript):
@@ -412,7 +419,6 @@ class AudioManager:
 
                         stream.audio_input = []
                         audio_generator = stream.generator()
-
                         requests = (
                             speech.StreamingRecognizeRequest(audio_content=content)
                             for content in audio_generator
@@ -470,7 +476,7 @@ class AudioManager:
                 continue
 
             transcript = result.alternatives[0].transcript
-
+            self._mainObject.ui.lblLiveTranscript.setText(transcript)
             result_seconds = 0
             result_micros = 0
 
@@ -499,7 +505,7 @@ class AudioManager:
                 stream.is_final_end_time = stream.result_end_time
                 stream.last_transcript_was_final = True
                 TranscriptModifier(transcript, extension)
-                self._mainObject.ui.lblLiveTranscript.setText(transcript)
+
                 # Exit recognition if any of the transcribed phrases could be
                 # one of our keywords.
                 if re.search(r"\b(exit|quit|stop)\b", transcript, re.I):

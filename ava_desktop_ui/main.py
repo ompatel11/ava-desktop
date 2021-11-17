@@ -4,14 +4,14 @@ import time
 
 from PyQt5 import QtCore, QtWidgets
 from PyQt5.QtCore import Qt, QSize
-from PyQt5.QtGui import QIcon
+from PyQt5.QtGui import QIcon, QPalette, QColor
 from PyQt5.QtWidgets import QMainWindow
 
 import FirebaseClientWrapper
 import Sessionhandler
 import user
 import audio_manager
-from main_ui import Ui_main
+from new_main_ui import Ui_main
 
 
 class MainWindow(QMainWindow):
@@ -28,8 +28,14 @@ class MainWindow(QMainWindow):
         # Title Bar buttons
         self.ui.btnWindowMinimize.clicked.connect(self.minimizeWindow)
         self.ui.btnWindowClose.clicked.connect(self.closeWindow)
-        self.ui.btnSettings.clicked.connect(self.openSettings)
+        self.ui.btnMenu.clicked.connect(self.openMenu)
+        self.isMenuOpen = None
+        self.isMenuEnabled = False
+        self.ui.SubMenuFrame.lower()
 
+        # SubMenu Buttons
+        self.ui.btnLogout.clicked.connect(self.logout)
+        self.ui.btnSettings.clicked.connect(self.movetoTask)
         # Connecting functions to the components
         self.ui.btnLoginPage.clicked.connect(self.movetoLogin)
         self.ui.btnSignupPage.clicked.connect(self.movetoSignup)
@@ -50,6 +56,7 @@ class MainWindow(QMainWindow):
         self.audioManager = audio_manager.AudioManager(self)
         # Microphone Boolean
         self.isMic = False
+
         # Show UI
         self.show()
 
@@ -61,7 +68,7 @@ class MainWindow(QMainWindow):
                 self.dragPos = event.globalPos()
                 event.accept()
             except Exception as e:
-                pass
+                print(e)
 
     def minimizeWindow(self):
         self.showMinimized()
@@ -69,9 +76,18 @@ class MainWindow(QMainWindow):
     def closeWindow(self):
         QtCore.QCoreApplication.instance().quit()
 
-    def openSettings(self):
-        FirebaseClientWrapper.Firebase_app.logout()
-        self.ui.stackPanel.setCurrentIndex(0)
+    def openMenu(self):
+        if self.isMenuEnabled:
+            if self.isMenuOpen:
+                # Raise state
+                print("Inside true")
+                self.ui.SubMenuFrame.lower()
+                self.isMenuOpen = False
+            else:
+                # Lower state
+                print("Inside false")
+                self.ui.SubMenuFrame.raise_()
+                self.isMenuOpen = True
 
     def pausePlayMic(self):
         """
@@ -90,7 +106,7 @@ class MainWindow(QMainWindow):
                 audio_manager.audioManger = audio_manager.AudioManager()
 
                 # Else simple one time audio transcription
-            #      cout<<"helloworldstop";
+
             t1 = threading.Thread(target=self.audioManager.start)
             t1.start()
             self.audioManager.isClosed = True
@@ -113,18 +129,28 @@ class MainWindow(QMainWindow):
             result = Sessionhandler.sessionHandler.readloginstate()
             if result is not False and result is not None:
                 self.ui.stackPanel.setCurrentIndex(2)
+                self.isMenuEnabled = True
                 user.current_user.email = result["email"]
                 user.current_user.uid = result["uid"]
                 user.current_user.idtoken = result["idtoken"]
                 print("From is_persistent() ", user.current_user.email)
                 if result['loginstate']:
+                    self.isMenuEnabled = True
                     self.ui.stackPanel.setCurrentIndex(2)
                     self.ui.frame.lower()
             if result['idtoken'] == "None":
                 print("Result is ", result)
                 self.ui.stackPanel.setCurrentIndex(0)
         except Exception as e:
+            self.isMenuEnabled = False
             print("No user found as ", e)
+            self.ui.stackPanel.setCurrentIndex(0)
+
+    def logout(self):
+        FirebaseClientWrapper.Firebase_app.logout()
+        self.ui.stackPanel.setCurrentIndex(0)
+        self.isMenuEnabled = False
+        self.ui.SubMenuFrame.lower()
 
     def user_signup(self):
         """
@@ -143,6 +169,8 @@ class MainWindow(QMainWindow):
                 if result is True:
                     self.RememberMe()
                     if self.isUser():
+                        self.isMenuEnabled = True
+                        self.ui.frame.lower()
                         self.ui.stackPanel.setCurrentIndex(2)
 
                 else:
@@ -188,7 +216,6 @@ class MainWindow(QMainWindow):
 
     def wait_forloginstate(self):
         self.ui.frame.raise_()
-        switch_loop = True
         for i in range(5):
             try:
                 time.sleep(2)
@@ -202,14 +229,12 @@ class MainWindow(QMainWindow):
                 print('DocumentId=', documentId)
                 if result.val()[documentId]['loginstate'] != "False":
                     print("Login Success")
-
+                    self.isMenuEnabled = True
                     self.ui.stackPanel.setCurrentIndex(2)
                     user.current_user.idtoken = self.client_token
                     user.current_user.email = result.val()[documentId]['email']
                     user.current_user.uid = documentId
                     Sessionhandler.sessionHandler.setUserData()
-
-                    switch_loop = False
                     self.ui.frame.lower()
             except Exception as e:
                 print(e)
@@ -225,7 +250,7 @@ class MainWindow(QMainWindow):
         pwd = self.ui.txtPassword_login.text()
         print("Email = ", email, pwd)
         print(f"PWD= {bool(pwd)}")
-        result = None
+
         if pwd and email:
 
             self.ui.waitingSpinner.start()
@@ -242,6 +267,7 @@ class MainWindow(QMainWindow):
                 # Navigate to home page
 
                 if self.isUser():
+                    self.isMenuEnabled = True
                     self.ui.stackPanel.setCurrentIndex(2)
                     self.ui.frame.lower()
             else:
@@ -251,6 +277,43 @@ class MainWindow(QMainWindow):
         else:
             print('Else part')
             self.ui.lblError_login.setText("Email and Password fields cannot be empty.")
+
+    def movetoTask(self):
+        """
+        Navigate to Task Page
+        :return: None
+        """
+        for i in range(12):
+            self.frame_2 = QtWidgets.QFrame(self.ui.scrollAreaWidgetContents)
+            sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Fixed)
+            sizePolicy.setHorizontalStretch(0)
+            sizePolicy.setVerticalStretch(0)
+            sizePolicy.setHeightForWidth(self.frame_2.sizePolicy().hasHeightForWidth())
+            self.frame_2.setSizePolicy(sizePolicy)
+            self.frame_2.setMinimumSize(QtCore.QSize(445, 100))
+            self.frame_2.setStyleSheet("background-color: rgb(85, 170, 255);\n"
+                                       "border-top-right-radius: 12px;\n"
+                                       "border-bottom-right-radius: 12px;")
+            self.frame_2.setFrameShape(QtWidgets.QFrame.StyledPanel)
+            self.frame_2.setFrameShadow(QtWidgets.QFrame.Raised)
+            self.frame_2.setObjectName("frame_2")
+            self.frame_8 = QtWidgets.QFrame(self.frame_2)
+            self.frame_8.setGeometry(QtCore.QRect(0, 0, 12, 100))
+            sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Fixed)
+            sizePolicy.setHorizontalStretch(0)
+            sizePolicy.setVerticalStretch(0)
+            sizePolicy.setHeightForWidth(self.frame_8.sizePolicy().hasHeightForWidth())
+            self.frame_8.setSizePolicy(sizePolicy)
+            self.frame_8.setStyleSheet("background-color: rgb(85, 255, 0);\n"
+                                       "border-top-right-radius: 0px;\n"
+                                       "border-bottom-right-radius: 0px;")
+            self.frame_8.setFrameShape(QtWidgets.QFrame.StyledPanel)
+            self.frame_8.setFrameShadow(QtWidgets.QFrame.Raised)
+            self.frame_8.setObjectName("frame_8")
+            self.ui.verticalLayout_4.addWidget(self.frame_2)
+        self.ui.stackPanel.setCurrentIndex(3)
+        self.ui.SubMenuFrame.lower()
+        self.isMenuOpen = False
 
     def movetoLogin(self):
         """
@@ -265,12 +328,28 @@ class MainWindow(QMainWindow):
         self.ui.stackPanel.setCurrentIndex(1)
 
     # APP EVENTS
-    ########################################################################
     def mousePressEvent(self, event):
         self.dragPos = event.globalPos()
 
 
 if __name__ == "__main__":
     app = QtWidgets.QApplication(sys.argv)
+    # Now use a palette to switch to dark colors:
+    palette = QPalette()
+    palette.setColor(QPalette.Window, QColor(53, 53, 53))
+    palette.setColor(QPalette.WindowText, QColor(63, 61, 84))
+    palette.setColor(QPalette.Base, QColor(25, 25, 25))
+    palette.setColor(QPalette.AlternateBase, QColor(53, 53, 53))
+    palette.setColor(QPalette.ToolTipBase, Qt.black)
+    palette.setColor(QPalette.ToolTipText, Qt.white)
+    palette.setColor(QPalette.Text, QColor(63, 61, 84))
+    palette.setColor(QPalette.Button, QColor(53, 53, 53))
+    palette.setColor(QPalette.ButtonText, QColor(63, 61, 84))
+    palette.setColor(QPalette.BrightText, Qt.red)
+    palette.setColor(QPalette.Link, QColor(42, 130, 218))
+    palette.setColor(QPalette.Highlight, QColor(42, 130, 218))
+    palette.setColor(QPalette.HighlightedText, Qt.black)
+    app.setPalette(palette)
+    app.setStyle("Oxygen")
     window = MainWindow()
     sys.exit(app.exec_())

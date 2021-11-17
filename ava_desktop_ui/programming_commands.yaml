@@ -177,3 +177,10 @@ cpp:
     - down: 1
     - left: 1
     - right: 1
+
+compose email:
+    - open: "Mail"
+    - clickedAt:
+        - x: "50"
+        - y: "30"
+    - keys: "Hello world"
