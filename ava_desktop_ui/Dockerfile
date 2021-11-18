@@ -7,3 +7,5 @@ COPY requirements.txt ./
 COPY programming_commands.yaml ./
 RUN pip install --trusted-host pypi.python.org -r requirements.txt
 CMD ["python", "main.py"]
+
+

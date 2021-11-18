@@ -4,7 +4,6 @@ import re
 import sys
 import threading
 import time
-
 from PyQt5.QtCore import QSize
 from PyQt5.QtGui import QIcon
 from google.cloud import speech
@@ -53,13 +52,6 @@ class TranscriptModifier(object):
         commands = self.fetch_commands(self.extension)
         t1 = threading.Thread(target=self.modify_continuous_speech(commands))
         t1.start()
-        # if self.extension == "py":
-        #     t1 = threading.Thread(target=self.modify_continuous_speech(commands))
-        #     t1.start()
-        # cout<<"helloworld";
-        # if self.extension == "cpp":
-        #     t1 = threading.Thread(target=self.modify_continuous_speech(commands))
-        #     t1.start()
 
     def fetch_commands(self, ext):
         # Open the file and load the file

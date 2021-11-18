@@ -1,0 +1,116 @@
+demo6:
+- hotKeyPress: Key.esc
+- hotKeyPress: Key.tab
+- hotKeyPress: Key.caps_lock
+- hotKeyPress: Key.shift
+- hotKeyPress: Key.ctrl_l
+- hotKeyPress: Key.cmd
+- hotKeyPress: Key.alt_l
+- hotKeyPress: Key.space
+- timeSleep:
+    sleep: 12.084344148635864
+- moveTo:
+    x: 976
+    y: 261
+- leftClick:
+    x: 976
+    y: 261
+- hotKeyPress: Key.alt_gr
+- hotKeyPress: Key.ctrl_r
+- hotKeyPress: Key.left
+- hotKeyPress: Key.down
+- hotKeyPress: Key.right
+- hotKeyPress: Key.up
+- hotKeyPress: Key.esc
+- hotKeyPress: Key.insert
+- hotKeyPress: Key.home
+- hotKeyPress: Key.page_up
+- hotKeyPress: Key.pause
+- hotKeyPress: Key.scroll_lock
+- hotKeyPress: Key.print_screen
+- hotKeyPress: Key.f1
+- hotKeyPress: Key.f2
+- hotKeyPress: Key.f3
+- hotKeyPress: Key.f4
+- hotKeyPress: Key.f5
+- hotKeyPress: Key.f6
+- hotKeyPress: Key.f7
+- hotKeyPress: Key.f8
+- hotKeyPress: Key.f9
+- hotKeyPress: Key.f10
+- hotKeyPress: Key.f11
+- hotKeyPress: Key.f12
+- hotKeyPress: Key.num_lock
+- hotKeyPress: Key.caps_lock
+- hotKeyPress: "'/'"
+- hotKeyPress: "'*'"
+- hotKeyPress: "'-'"
+- hotKeyPress: Key.home
+- hotKeyPress: Key.up
+- hotKeyPress: Key.page_up
+- hotKeyPress: Key.left
+- hotKeyPress: <12>
+- hotKeyPress: Key.right
+
+demo:
+- hotKeyPress: Key.ctrl_l
+- "\x01"
+- "\x03"
+- hotKeyRelease: Key.ctrl_l
+- timeSleep:
+    sleep: 10.867380619049072
+- moveTo:
+    x: 494
+    y: 75
+- leftClick:
+    x: 494
+    y: 75
+- timeSleep:
+    sleep: 1.9434592723846436
+- moveTo:
+    x: 346
+    y: 276
+- leftClick:
+    x: 346
+    y: 276
+- timeSleep:
+    sleep: 4.23182487487793
+- moveTo:
+    x: 317
+    y: 273
+- leftClick:
+    x: 317
+    y: 273
+- timeSleep:
+    sleep: 0.1844801902770996
+- moveTo:
+    x: 317
+    y: 273
+- leftClick:
+    x: 317
+    y: 273
+- timeSleep:
+    sleep: 0.6958155632019043
+- moveTo:
+    x: 317
+    y: 273
+- leftClick:
+    x: 317
+    y: 273
+- hotKeyPress: Key.ctrl_l
+- "\x03"
+- hotKeyRelease: Key.ctrl_l
+- timeSleep:
+    sleep: 3.5120651721954346
+- moveTo:
+    x: 317
+    y: 273
+- leftClick:
+    x: 317
+    y: 273
+- hotKeyPress: Key.enter
+- hotKeyRelease: Key.enter
+- hotKeyPress: Key.ctrl_l
+- "\x16"
+- "\x13"
+- hotKeyRelease: Key.ctrl_l
