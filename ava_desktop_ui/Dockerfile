@@ -1,11 +1,15 @@
 FROM python
 COPY audio_manager.py ./
-COPY ../ava-daemon-4ce53760f667.json ./
-RUN apt-get update
-RUN apt-get install libasound-dev libportaudio2 libportaudiocpp0 portaudio19-dev -y
+COPY main.py ./
+COPY widgets/ ./widgets
+COPY application ./application
+COPY Icons ./Icons
 COPY requirements.txt ./
 COPY programming_commands.yaml ./
-RUN pip install --trusted-host pypi.python.org -r requirements.txt
+RUN apt-get update
+RUN apt-get install libasound-dev libportaudio2 libportaudiocpp0 portaudio19-dev -y
+RUN pip install pyaudio
+RUN pip install -r ./requirements.txt
 CMD ["python", "main.py"]
 
 

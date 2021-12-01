@@ -1,7 +1,7 @@
 import os
 from configparser import ConfigParser
 
-import user
+from Model import user
 import FirebaseClientWrapper
 
 
@@ -102,12 +102,12 @@ class SessionHandler:
                 print("Token=", user.current_user.idtoken)
                 print("Uid=", user.current_user.uid)
                 documentId = ""
-                print(result.val())
+                print("Firebase result=",result.val())
                 for key in result.val().keys():
                     documentId = key
-                print("Here", type(result.val()[documentId]))
+                print("Here", result.val()[documentId])
                 if result.val()[documentId] == "True" and userData['loginstate'] == "True":
-                    print("User Data from else: ", userData['loginstate'])
+                    print("User Data from if : ", userData['loginstate'])
                     return userData
 
             else:
@@ -120,7 +120,7 @@ class SessionHandler:
                 user.current_user.email = result.val()[documentId]["email"]
                 user.current_user.uid = documentId
                 self.setUserData()
-                print("User Data from else: ", userData)
+                print("User Data from else called: ", userData)
                 return userData
 
         except Exception as e:
@@ -147,6 +147,7 @@ class SessionHandler:
                 print("Token=", user.current_user.idtoken)
                 print("Uid=", user.current_user.uid)
                 print("Writing done")
+                user.current_user.deleteData()
             return True
 
         except Exception as e:

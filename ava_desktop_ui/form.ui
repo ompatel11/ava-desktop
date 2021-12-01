@@ -12,7 +12,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>500</width>
+    <width>501</width>
     <height>694</height>
    </rect>
   </property>
@@ -128,11 +128,17 @@ padding: 4px;</string>
       <bool>false</bool>
      </property>
      <property name="styleSheet">
-      <string notr="true">color: #333;
+      <string notr="true">QPushButton{
+color: #333;
 border: 0px solid  rgb(231, 231, 231);
 background-color: rgb(231, 231, 231);
 border-radius: 12px;
-color:rgb(240, 240, 240)</string>
+color:rgb(240, 240, 240)
+}
+QPushButton:pressed{
+background-color: rgb(240, 240, 240);
+border-color: rgb(240, 240, 240);
+}</string>
      </property>
      <property name="text">
       <string/>
@@ -237,10 +243,10 @@ padding: 4px;</string>
     <widget class="QPushButton" name="btnForgotpwd">
      <property name="geometry">
       <rect>
-       <x>280</x>
-       <y>445</y>
-       <width>111</width>
-       <height>21</height>
+       <x>248</x>
+       <y>440</y>
+       <width>140</width>
+       <height>30</height>
       </rect>
      </property>
      <property name="font">
@@ -255,9 +261,14 @@ padding: 4px;</string>
       <cursorShape>PointingHandCursor</cursorShape>
      </property>
      <property name="styleSheet">
-      <string notr="true">color: rgb(63, 61, 84);
+      <string notr="true">QPushButton{
+color: rgb(63, 61, 84);
 border: 0px;
-background-color: rgb(255, 255, 255);</string>
+background-color: rgb(255, 255, 255);
+}
+QPushButton:pressed{
+	color: rgb(103, 100, 138);
+}</string>
      </property>
      <property name="text">
       <string>Forgot Password?</string>
@@ -335,13 +346,17 @@ background-color: rgb(255, 255, 255);</string>
       <bool>false</bool>
      </property>
      <property name="styleSheet">
-      <string notr="true">color: rgb(255, 255, 255);
+      <string notr="true">QPushButton{
+color: rgb(255, 255, 255);
 background-color: rgb(63, 61, 84);
 border: 2px solid  rgb(63, 61, 94);
 border-radius: 8px;
 padding: 4px;
 box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.16), 0 0 0 1px rgba(0, 0, 0, 0.08);
-</string>
+}
+QPushButton:pressed{
+	background-color: rgb(103, 100, 138);
+}</string>
      </property>
      <property name="text">
       <string>Log in</string>
@@ -372,11 +387,17 @@ box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.16), 0 0 0 1px rgba(0, 0, 0, 0.08);
       <bool>false</bool>
      </property>
      <property name="styleSheet">
-      <string notr="true">color: #333;
+      <string notr="true">QPushButton{
+color: #333;
 border: 0px solid  rgb(231, 231, 231);
 background-color: rgb(231, 231, 231);
 border-radius: 12px;
-color:rgb(240, 240, 240)</string>
+color:rgb(240, 240, 240)
+}
+QPushButton:pressed{
+background-color: rgb(240, 240, 240);
+border-color: rgb(240, 240, 240);
+}</string>
      </property>
      <property name="text">
       <string/>
@@ -395,9 +416,9 @@ color:rgb(240, 240, 240)</string>
     <widget class="QLabel" name="label_10">
      <property name="geometry">
       <rect>
-       <x>140</x>
+       <x>100</x>
        <y>535</y>
-       <width>151</width>
+       <width>190</width>
        <height>31</height>
       </rect>
      </property>
@@ -419,10 +440,10 @@ color:rgb(240, 240, 240)</string>
     <widget class="QPushButton" name="btnSignupPage">
      <property name="geometry">
       <rect>
-       <x>280</x>
-       <y>540</y>
-       <width>50</width>
-       <height>21</height>
+       <x>290</x>
+       <y>535</y>
+       <width>60</width>
+       <height>30</height>
       </rect>
      </property>
      <property name="font">
@@ -437,9 +458,14 @@ color:rgb(240, 240, 240)</string>
       <cursorShape>PointingHandCursor</cursorShape>
      </property>
      <property name="styleSheet">
-      <string notr="true">color: rgb(63, 61, 84);
+      <string notr="true">QPushButton{
+color: rgb(63, 61, 84);
 border: 0px;
-background-color: rgb(255, 255, 255);</string>
+background-color: rgb(255, 255, 255);
+}
+QPushButton:pressed{
+	color: rgb(103, 100, 138);
+}</string>
      </property>
      <property name="text">
       <string>Signup</string>
@@ -458,7 +484,7 @@ background-color: rgb(255, 255, 255);</string>
      <property name="geometry">
       <rect>
        <x>50</x>
-       <y>223</y>
+       <y>220</y>
        <width>120</width>
        <height>2</height>
       </rect>
@@ -632,11 +658,17 @@ padding: 4px;</string>
       <bool>false</bool>
      </property>
      <property name="styleSheet">
-      <string notr="true">color: #333;
+      <string notr="true">QPushButton{
+color: #333;
 border: 0px solid  rgb(231, 231, 231);
 background-color: rgb(231, 231, 231);
 border-radius: 12px;
-color:rgb(240, 240, 240)</string>
+color:rgb(240, 240, 240)
+}
+QPushButton:pressed{
+background-color: rgb(240, 240, 240);
+border-color: rgb(240, 240, 240);
+}</string>
      </property>
      <property name="text">
       <string/>
@@ -738,7 +770,7 @@ padding: 4px;</string>
       <rect>
        <x>81</x>
        <y>320</y>
-       <width>71</width>
+       <width>100</width>
        <height>31</height>
       </rect>
      </property>
@@ -787,7 +819,7 @@ padding: 4px;
 box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.16), 0 0 0 1px rgba(0, 0, 0, 0.08);
 }
 QPushButton:pressed{
-color: rgb(255, 30, 32);
+	background-color: rgb(103, 100, 138);
 }</string>
      </property>
      <property name="text">
@@ -810,11 +842,17 @@ color: rgb(255, 30, 32);
       <bool>false</bool>
      </property>
      <property name="styleSheet">
-      <string notr="true">color: #333;
+      <string notr="true">QPushButton{
+color: #333;
 border: 0px solid  rgb(231, 231, 231);
 background-color: rgb(231, 231, 231);
 border-radius: 12px;
-color:rgb(240, 240, 240)</string>
+color:rgb(240, 240, 240)
+}
+QPushButton:pressed{
+background-color: rgb(240, 240, 240);
+border-color: rgb(240, 240, 240);
+}</string>
      </property>
      <property name="text">
       <string/>
@@ -833,9 +871,9 @@ color:rgb(240, 240, 240)</string>
     <widget class="QLabel" name="label_9">
      <property name="geometry">
       <rect>
-       <x>140</x>
+       <x>96</x>
        <y>565</y>
-       <width>151</width>
+       <width>200</width>
        <height>31</height>
       </rect>
      </property>
@@ -857,10 +895,10 @@ color:rgb(240, 240, 240)</string>
     <widget class="QPushButton" name="btnLoginPage">
      <property name="geometry">
       <rect>
-       <x>290</x>
-       <y>570</y>
-       <width>40</width>
-       <height>21</height>
+       <x>296</x>
+       <y>565</y>
+       <width>50</width>
+       <height>30</height>
       </rect>
      </property>
      <property name="font">
@@ -875,9 +913,14 @@ color:rgb(240, 240, 240)</string>
       <cursorShape>PointingHandCursor</cursorShape>
      </property>
      <property name="styleSheet">
-      <string notr="true">color: rgb(63, 61, 84);
+      <string notr="true">QPushButton{
+color: rgb(63, 61, 84);
 border: 0px;
-background-color: rgb(255, 255, 255);</string>
+background-color: rgb(255, 255, 255);
+}
+QPushButton:pressed{
+	color: rgb(103, 100, 138);
+}</string>
      </property>
      <property name="text">
       <string>Login</string>
@@ -971,7 +1014,7 @@ background-color: rgb(255, 255, 255);</string>
       <rect>
        <x>81</x>
        <y>410</y>
-       <width>121</width>
+       <width>160</width>
        <height>31</height>
       </rect>
      </property>
@@ -1071,9 +1114,14 @@ line-spacing: 2px;
       </size>
      </property>
      <property name="styleSheet">
-      <string notr="true">background-color: rgb(62, 60, 84);
+      <string notr="true">QPushButton{
+background-color: rgb(62, 60, 84);
 border: 1px solid white;
-border-radius: 40;</string>
+border-radius: 40;
+}
+QPushButton:pressed{
+	background-color: rgb(103, 100, 138);
+}</string>
      </property>
      <property name="text">
       <string/>
@@ -1142,8 +1190,8 @@ border-radius: 40;</string>
       <rect>
        <x>10</x>
        <y>10</y>
-       <width>481</width>
-       <height>601</height>
+       <width>480</width>
+       <height>641</height>
       </rect>
      </property>
      <property name="styleSheet">
@@ -1167,8 +1215,8 @@ QScrollBar::handle:vertical{
        <rect>
         <x>0</x>
         <y>0</y>
-        <width>4512</width>
-        <height>4500</height>
+        <width>480</width>
+        <height>641</height>
        </rect>
       </property>
       <property name="layoutDirection">
@@ -1193,62 +1241,292 @@ QScrollBar::handle:vertical{
        <property name="bottomMargin">
         <number>0</number>
        </property>
-       <item>
-        <widget class="QFrame" name="frame_2">
-         <property name="sizePolicy">
-          <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
-         </property>
-         <property name="minimumSize">
-          <size>
-           <width>4500</width>
-           <height>4500</height>
-          </size>
-         </property>
-         <property name="styleSheet">
-          <string notr="true">background-color: rgb(85, 170, 255);
-border-top-right-radius: 12px;
-border-bottom-right-radius: 12px;</string>
-         </property>
-         <property name="frameShape">
-          <enum>QFrame::StyledPanel</enum>
-         </property>
-         <property name="frameShadow">
-          <enum>QFrame::Raised</enum>
-         </property>
-         <widget class="QFrame" name="frame_8">
-          <property name="geometry">
-           <rect>
-            <x>0</x>
-            <y>0</y>
-            <width>12</width>
-            <height>100</height>
-           </rect>
-          </property>
-          <property name="sizePolicy">
-           <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-            <horstretch>0</horstretch>
-            <verstretch>0</verstretch>
-           </sizepolicy>
-          </property>
-          <property name="styleSheet">
-           <string notr="true">background-color: rgb(85, 255, 0);
-border-top-right-radius: 0px;
-border-bottom-right-radius: 0px;</string>
-          </property>
-          <property name="frameShape">
-           <enum>QFrame::StyledPanel</enum>
-          </property>
-          <property name="frameShadow">
-           <enum>QFrame::Raised</enum>
-          </property>
-         </widget>
-        </widget>
-       </item>
       </layout>
      </widget>
+    </widget>
+    <widget class="QPushButton" name="btnCreateTask">
+     <property name="geometry">
+      <rect>
+       <x>429</x>
+       <y>599</y>
+       <width>60</width>
+       <height>60</height>
+      </rect>
+     </property>
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Maximum" vsizetype="Maximum">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="maximumSize">
+      <size>
+       <width>100</width>
+       <height>100</height>
+      </size>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">QPushButton{
+background-color: rgb(62, 60, 84);
+border: 1px solid white;
+border-radius: 30;
+}
+QPushButton:pressed{
+	background-color: rgb(103, 100, 138);
+}</string>
+     </property>
+     <property name="text">
+      <string/>
+     </property>
+     <property name="icon">
+      <iconset>
+       <normaloff>Icons/Icon ionic-ios-add@2x.png</normaloff>Icons/Icon ionic-ios-add@2x.png</iconset>
+     </property>
+     <property name="iconSize">
+      <size>
+       <width>32</width>
+       <height>32</height>
+      </size>
+     </property>
+    </widget>
+   </widget>
+   <widget class="QWidget" name="AddTaskPage">
+    <widget class="QTextEdit" name="txtTitle">
+     <property name="geometry">
+      <rect>
+       <x>39</x>
+       <y>110</y>
+       <width>421</width>
+       <height>31</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <family>Segoe UI</family>
+       <pointsize>10</pointsize>
+      </font>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">border: 1px solid;
+border-color: rgb(62, 60, 84);</string>
+     </property>
+     <property name="verticalScrollBarPolicy">
+      <enum>Qt::ScrollBarAlwaysOff</enum>
+     </property>
+     <property name="horizontalScrollBarPolicy">
+      <enum>Qt::ScrollBarAlwaysOff</enum>
+     </property>
+     <property name="lineWrapColumnOrWidth">
+      <number>1</number>
+     </property>
+     <property name="acceptRichText">
+      <bool>false</bool>
+     </property>
+     <property name="placeholderText">
+      <string>Title</string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="lblTitle">
+     <property name="geometry">
+      <rect>
+       <x>40</x>
+       <y>60</y>
+       <width>101</width>
+       <height>31</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <family>Segoe UI</family>
+       <pointsize>20</pointsize>
+       <italic>false</italic>
+      </font>
+     </property>
+     <property name="text">
+      <string>Title</string>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="btnTaskListener">
+     <property name="geometry">
+      <rect>
+       <x>210</x>
+       <y>410</y>
+       <width>80</width>
+       <height>80</height>
+      </rect>
+     </property>
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Maximum" vsizetype="Maximum">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="maximumSize">
+      <size>
+       <width>100</width>
+       <height>100</height>
+      </size>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">QPushButton{
+background-color: rgb(62, 60, 84);
+border: 1px solid white;
+border-radius: 40;
+}
+QPushButton:pressed{
+	background-color: rgb(103, 100, 138);
+}</string>
+     </property>
+     <property name="text">
+      <string/>
+     </property>
+     <property name="icon">
+      <iconset>
+       <normaloff>Icons/Icon awesome-play@2x.png</normaloff>Icons/Icon awesome-play@2x.png</iconset>
+     </property>
+     <property name="iconSize">
+      <size>
+       <width>32</width>
+       <height>32</height>
+      </size>
+     </property>
+    </widget>
+    <widget class="QLabel" name="lblDescription">
+     <property name="geometry">
+      <rect>
+       <x>40</x>
+       <y>170</y>
+       <width>161</width>
+       <height>31</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <family>Segoe UI</family>
+       <pointsize>20</pointsize>
+       <italic>false</italic>
+      </font>
+     </property>
+     <property name="text">
+      <string>Description</string>
+     </property>
+    </widget>
+    <widget class="QTextEdit" name="txtDescription">
+     <property name="geometry">
+      <rect>
+       <x>39</x>
+       <y>220</y>
+       <width>421</width>
+       <height>111</height>
+      </rect>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">border: 1px solid;
+border-color: rgb(62, 60, 84);</string>
+     </property>
+     <property name="placeholderText">
+      <string>Description</string>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="btnAddTask">
+     <property name="geometry">
+      <rect>
+       <x>100</x>
+       <y>520</y>
+       <width>311</width>
+       <height>41</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <family>Segoe UI</family>
+       <pointsize>10</pointsize>
+       <weight>75</weight>
+       <bold>true</bold>
+      </font>
+     </property>
+     <property name="cursor">
+      <cursorShape>PointingHandCursor</cursorShape>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">QPushButton{
+color: rgb(255, 255, 255);
+background-color: rgb(63, 61, 84);
+border: 2px solid  rgb(63, 61, 94);
+border-radius: 8px;
+padding: 4px;
+box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.16), 0 0 0 1px rgba(0, 0, 0, 0.08);
+}
+QPushButton:pressed{
+	background-color: rgb(103, 100, 138);
+}</string>
+     </property>
+     <property name="text">
+      <string>Add Task</string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="lblRecordTask">
+     <property name="geometry">
+      <rect>
+       <x>40</x>
+       <y>360</y>
+       <width>161</width>
+       <height>31</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <family>Segoe UI</family>
+       <pointsize>20</pointsize>
+       <italic>false</italic>
+      </font>
+     </property>
+     <property name="text">
+      <string>Record Task</string>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="btnTaskListener_2">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>10</y>
+       <width>40</width>
+       <height>40</height>
+      </rect>
+     </property>
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Maximum" vsizetype="Maximum">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="maximumSize">
+      <size>
+       <width>100</width>
+       <height>100</height>
+      </size>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">QPushButton{
+background-color: rgb(255, 255, 255);
+border: 1px solid white;
+border-radius: 20;
+}
+</string>
+     </property>
+     <property name="text">
+      <string/>
+     </property>
+     <property name="icon">
+      <iconset>
+       <normaloff>Icons/Icon awesome-arrow-left@2x.png</normaloff>Icons/Icon awesome-arrow-left@2x.png</iconset>
+     </property>
+     <property name="iconSize">
+      <size>
+       <width>32</width>
+       <height>32</height>
+      </size>
+     </property>
     </widget>
    </widget>
   </widget>
@@ -1316,7 +1594,7 @@ border-bottom-right-radius: 0px;</string>
 background-color: rgb(63, 61, 85);
 border: 0px solid rgb(63, 61, 85);}
 QPushButton:hover{
-background-color: rgb(99, 96, 134);
+	background-color: rgb(103, 100, 138);
 }
 </string>
         </property>
@@ -1438,7 +1716,7 @@ background-color: rgb(62, 60, 84);</string>
 background-color: rgb(63, 61, 85);
 border: 0px solid rgb(63, 61, 85);}
 QPushButton:hover{
-background-color: rgb(99, 96, 134);
+	background-color: rgb(103, 100, 138);
 }
 </string>
          </property>

@@ -1,5 +1,3 @@
-import array
-import threading
 import time
 
 from pynput.keyboard import Key
@@ -170,4 +168,4 @@ class TaskListener:
         print('Mouse scrolled at ({0}, {1})({2}, {3})'.format(x, y, dx, dy))
 
 
-TaskListener("demo")
+TaskListener("Open Youtube")

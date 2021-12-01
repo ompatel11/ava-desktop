@@ -1,116 +1,130 @@
-demo6:
-- hotKeyPress: Key.esc
-- hotKeyPress: Key.tab
-- hotKeyPress: Key.caps_lock
-- hotKeyPress: Key.shift
-- hotKeyPress: Key.ctrl_l
-- hotKeyPress: Key.cmd
-- hotKeyPress: Key.alt_l
-- hotKeyPress: Key.space
+Open Mail:
 - timeSleep:
-    sleep: 12.084344148635864
+    sleep: 2.583737850189209
 - moveTo:
-    x: 976
-    y: 261
+    x: 35
+    y: 1049
 - leftClick:
-    x: 976
-    y: 261
-- hotKeyPress: Key.alt_gr
-- hotKeyPress: Key.ctrl_r
-- hotKeyPress: Key.left
-- hotKeyPress: Key.down
-- hotKeyPress: Key.right
-- hotKeyPress: Key.up
-- hotKeyPress: Key.esc
-- hotKeyPress: Key.insert
-- hotKeyPress: Key.home
-- hotKeyPress: Key.page_up
-- hotKeyPress: Key.pause
-- hotKeyPress: Key.scroll_lock
-- hotKeyPress: Key.print_screen
-- hotKeyPress: Key.f1
-- hotKeyPress: Key.f2
-- hotKeyPress: Key.f3
-- hotKeyPress: Key.f4
-- hotKeyPress: Key.f5
-- hotKeyPress: Key.f6
-- hotKeyPress: Key.f7
-- hotKeyPress: Key.f8
-- hotKeyPress: Key.f9
-- hotKeyPress: Key.f10
-- hotKeyPress: Key.f11
-- hotKeyPress: Key.f12
-- hotKeyPress: Key.num_lock
-- hotKeyPress: Key.caps_lock
-- hotKeyPress: "'/'"
-- hotKeyPress: "'*'"
-- hotKeyPress: "'-'"
-- hotKeyPress: Key.home
-- hotKeyPress: Key.up
-- hotKeyPress: Key.page_up
-- hotKeyPress: Key.left
-- hotKeyPress: <12>
-- hotKeyPress: Key.right
-
-demo:
-- hotKeyPress: Key.ctrl_l
-- "\x01"
-- "\x03"
-- hotKeyRelease: Key.ctrl_l
+    x: 35
+    y: 1049
 - timeSleep:
-    sleep: 10.867380619049072
+    sleep: 2.9552316665649414
 - moveTo:
-    x: 494
-    y: 75
+    x: 184
+    y: 1046
 - leftClick:
-    x: 494
-    y: 75
+    x: 184
+    y: 1046
+- c
+- h
+- r
+- o
+- m
+- e
 - timeSleep:
-    sleep: 1.9434592723846436
+    sleep: 4.916955947875977
 - moveTo:
-    x: 346
-    y: 276
+    x: 198
+    y: 354
 - leftClick:
-    x: 346
-    y: 276
+    x: 198
+    y: 354
 - timeSleep:
-    sleep: 4.23182487487793
+    sleep: 2.356982469558716
 - moveTo:
-    x: 317
-    y: 273
+    x: 707
+    y: 478
 - leftClick:
-    x: 317
-    y: 273
-- timeSleep:
-    sleep: 0.1844801902770996
-- moveTo:
-    x: 317
-    y: 273
-- leftClick:
-    x: 317
-    y: 273
-- timeSleep:
-    sleep: 0.6958155632019043
-- moveTo:
-    x: 317
-    y: 273
-- leftClick:
-    x: 317
-    y: 273
-- hotKeyPress: Key.ctrl_l
-- "\x03"
-- hotKeyRelease: Key.ctrl_l
-- timeSleep:
-    sleep: 3.5120651721954346
-- moveTo:
-    x: 317
-    y: 273
-- leftClick:
-    x: 317
-    y: 273
+    x: 707
+    y: 478
+- y
+- o
+- u
+- t
+- u
+- b
+- e
 - hotKeyPress: Key.enter
 - hotKeyRelease: Key.enter
-- hotKeyPress: Key.ctrl_l
-- "\x16"
-- "\x13"
-- hotKeyRelease: Key.ctrl_l
+- timeSleep:
+    sleep: 3.7560975551605225
+- moveTo:
+    x: 628
+    y: 356
+- leftClick:
+    x: 628
+    y: 356
+- timeSleep:
+    sleep: 8.876549243927002
+- moveTo:
+    x: 1233
+    y: 1060
+- leftClick:
+    x: 1233
+    y: 1060
+Open Youtube:
+- timeSleep:
+    sleep: 3.0163261890411377
+- moveTo:
+    x: 145
+    y: 1047
+- leftClick:
+    x: 145
+    y: 1047
+- c
+- h
+- r
+- o
+- m
+- e
+- hotKeyPress: Key.backspace
+- hotKeyRelease: Key.backspace
+- e
+- d
+- g
+- e
+- hotKeyPress: Key.enter
+- hotKeyRelease: Key.enter
+- timeSleep:
+    sleep: 10.687487125396729
+- moveTo:
+    x: 452
+    y: 57
+- leftClick:
+    x: 452
+    y: 57
+- hotKeyPress: Key.esc
+- hotKeyRelease: Key.esc
+- timeSleep:
+    sleep: 5.505052328109741
+- moveTo:
+    x: 873
+    y: 61
+- leftClick:
+    x: 873
+    y: 61
+- y
+- o
+- u
+- t
+- u
+- b
+- e
+- hotKeyPress: Key.enter
+- hotKeyRelease: Key.enter
+- timeSleep:
+    sleep: 6.749086856842041
+- moveTo:
+    x: 278
+    y: 304
+- leftClick:
+    x: 278
+    y: 304
+- timeSleep:
+    sleep: 1.8547031879425049
+- moveTo:
+    x: 338
+    y: 22
+- leftClick:
+    x: 338
+    y: 22

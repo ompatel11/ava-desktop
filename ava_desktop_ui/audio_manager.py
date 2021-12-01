@@ -1,5 +1,4 @@
 from __future__ import division
-
 import re
 import sys
 import threading
@@ -14,7 +13,7 @@ import platform as _platform
 import yaml
 from yaml.loader import SafeLoader
 
-from ava_desktop_ui.main import MainWindow
+from main import MainWindow
 
 if _platform.system() == "Linux":
     import gi
