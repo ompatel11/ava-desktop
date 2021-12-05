@@ -1190,7 +1190,7 @@ QPushButton:pressed{
       <rect>
        <x>10</x>
        <y>10</y>
-       <width>480</width>
+       <width>491</width>
        <height>641</height>
       </rect>
      </property>
@@ -1215,7 +1215,7 @@ QScrollBar::handle:vertical{
        <rect>
         <x>0</x>
         <y>0</y>
-        <width>480</width>
+        <width>491</width>
         <height>641</height>
        </rect>
       </property>
@@ -1247,7 +1247,7 @@ QScrollBar::handle:vertical{
     <widget class="QPushButton" name="btnCreateTask">
      <property name="geometry">
       <rect>
-       <x>429</x>
+       <x>410</x>
        <y>599</y>
        <width>60</width>
        <height>60</height>
@@ -1485,7 +1485,7 @@ QPushButton:pressed{
       <string>Record Task</string>
      </property>
     </widget>
-    <widget class="QPushButton" name="btnTaskListener_2">
+    <widget class="QPushButton" name="btnBackToTasks">
      <property name="geometry">
       <rect>
        <x>10</x>

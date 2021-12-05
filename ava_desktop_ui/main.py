@@ -6,12 +6,11 @@ from PyQt5 import QtCore, QtWidgets
 from PyQt5.QtCore import Qt, QSize
 from PyQt5.QtGui import QIcon, QPalette, QColor
 from PyQt5.QtWidgets import QMainWindow
-from pyqt5_plugins.examplebuttonplugin import QtGui
-
 import FirebaseClientWrapper
 import Sessionhandler
 import audio_manager
 import Model.user as user
+from ava_desktop_ui.Model import tasks, TaskManager
 from ava_desktop_ui.demo import RunTask
 from main_ui import Ui_main
 
@@ -56,10 +55,17 @@ class MainWindow(QMainWindow):
         # Speech Recognition Screen
         self.ui.btnMicrophoneControl.clicked.connect(self.taskListener)
         self.audioManager = audio_manager.AudioManager(self)
+
         # Microphone Boolean
         self.isMic = False
 
+        # Tasks Page
+
+        # Tasks Navigation Buttons
+        self.ui.btnBackToTasks.clicked.connect(self.backToTask)
+
         self.ui.btnCreateTask.clicked.connect(self.createTask)
+        self.Ui_task_List = []
         # Show UI
         self.show()
 
@@ -94,100 +100,16 @@ class MainWindow(QMainWindow):
 
     def createTask(self):
         print("Called createTask")
+        taskObject: QtWidgets.QFrame = tasks.Task(self, "Demo", "Demo").createTaskComponent()
+        TaskManager.TaskLists.addTask(taskObject.findChild(QtWidgets.QPushButton, f"btnRuntask_Demo"))
+        print(taskObject.findChild(QtWidgets.QPushButton, f"btnRuntask_Demo").objectName())
+        taskObject.findChild(QtWidgets.QPushButton, f"btnRuntask_Demo").clicked.connect(self.runTask)
+        taskObject.findChild(QtWidgets.QPushButton, f"btnDelete_Demo").clicked.connect(self.deleteTask)
+        self.ui.verticalLayout_4.addWidget(taskObject)
+        taskJsonObj = {'name': "Demo", 'description': "Demo", 'runCounter': '0'}
+        user.current_user.addTask(taskJsonObj)
+        self.Ui_task_List.append(taskObject.findChild(QtWidgets.QPushButton, f"btnRuntask_Demo"))
         self.ui.stackPanel.setCurrentIndex(4)
-    #     globals()["mainTaskFrame_" + self.taskId] = QtWidgets.QFrame(self.ui.scrollAreaWidgetContents)
-    #     sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Preferred)
-    #     sizePolicy.setHorizontalStretch(0)
-    #     sizePolicy.setVerticalStretch(0)
-    #     sizePolicy.setHeightForWidth(globals()["mainTaskFrame_" + self.taskId].sizePolicy().hasHeightForWidth())
-    #     globals()["mainTaskFrame_" + self.taskId].setSizePolicy(sizePolicy)
-    #     globals()["mainTaskFrame_" + self.taskId].setMinimumSize(QtCore.QSize(450, 100))
-    #     globals()["mainTaskFrame_" + self.taskId].setMaximumSize(QtCore.QSize(450, 100))
-    #     globals()["mainTaskFrame_" + self.taskId].setStyleSheet("border: 1px solid;\n"
-    #                                "border-color: rgb(138, 139, 152);\n"
-    #                                "border-top-right-radius: 12px;\n"
-    #                                "border-bottom-right-radius: 12px;\n"
-    #                                "box-shadow: 1px 2px rgba(0, 0, 0, 16);")
-    #     globals()["mainTaskFrame_" + self.taskId].setFrameShape(QtWidgets.QFrame.StyledPanel)
-    #     globals()["mainTaskFrame_" + self.taskId].setFrameShadow(QtWidgets.QFrame.Raised)
-    #     globals()["mainTaskFrame_" + self.taskId].setObjectName("frame_2")
-    #     self.frame_8 = QtWidgets.QFrame(globals()["mainTaskFrame_" + self.taskId])
-    #     self.frame_8.setGeometry(QtCore.QRect(0, 0, 6, 100))
-    #     sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Fixed)
-    #     sizePolicy.setHorizontalStretch(0)
-    #     sizePolicy.setVerticalStretch(0)
-    #     sizePolicy.setHeightForWidth(self.frame_8.sizePolicy().hasHeightForWidth())
-    #     self.frame_8.setSizePolicy(sizePolicy)
-    #     self.frame_8.setStyleSheet("background-color: rgb(138, 139, 152);\n"
-    #                                "border-left: 0px;\n"
-    #                                "border-top-right-radius: 0px;\n"
-    #                                "border-bottom-right-radius: 0px;")
-    #     self.frame_8.setFrameShape(QtWidgets.QFrame.StyledPanel)
-    #     self.frame_8.setFrameShadow(QtWidgets.QFrame.Raised)
-    #     self.frame_8.setObjectName("frame_8")
-    #     globals()["btnDelete_" + self.taskId] = QtWidgets.QPushButton(globals()["mainTaskFrame_" + self.taskId])
-    #     globals()["btnDelete_" + self.taskId].setGeometry(QtCore.QRect(425, 4, 20, 20))
-    #     sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Minimum)
-    #     sizePolicy.setHorizontalStretch(0)
-    #     sizePolicy.setVerticalStretch(0)
-    #     sizePolicy.setHeightForWidth(globals()["btnDelete_" + self.taskId].sizePolicy().hasHeightForWidth())
-    #     globals()["btnDelete_" + self.taskId].setSizePolicy(sizePolicy)
-    #     globals()["btnDelete_" + self.taskId].setStyleSheet("QPushButton{\n"
-    #                                                         "border: none;\n"
-    #                                                         "border-radius: 10px;\n"
-    #                                                         "}\n"
-    #                                                         "")
-    #     globals()["btnDelete_" + self.taskId].setText("")
-    #     icon3 = QtGui.QIcon()
-    #     icon3.addPixmap(QtGui.QPixmap("Icons/Delete Task Icon.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
-    #     globals()["btnDelete_" + self.taskId].setIcon(icon3)
-    #     globals()["btnDelete_" + self.taskId].setIconSize(QtCore.QSize(12, 12))
-    #     globals()["btnDelete_" + self.taskId].setObjectName(f"btnDelete_{self.taskId}")
-    #     globals()["btnDelete_" + self.taskId].clicked.connect(self.deleteTask)
-    #     globals()["btnRuntask_" + self.taskId] = QtWidgets.QPushButton(globals()["mainTaskFrame_" + self.taskId])
-    #     globals()["btnRuntask_" + self.taskId].setGeometry(QtCore.QRect(400, 4, 20, 20))
-    #     sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Minimum)
-    #     sizePolicy.setHorizontalStretch(0)
-    #     sizePolicy.setVerticalStretch(0)
-    #     sizePolicy.setHeightForWidth(globals()["btnRuntask_" + self.taskId].sizePolicy().hasHeightForWidth())
-    #     globals()["btnRuntask_" + self.taskId].setSizePolicy(sizePolicy)
-    #     globals()["btnRuntask_" + self.taskId].setStyleSheet("QPushButton{\n"
-    #                                                          "border: none;\n"
-    #                                                          "border-radius: 10px;\n"
-    #                                                          "}\n"
-    #                                                          "")
-    #     globals()["btnRuntask_" + self.taskId].setText("")
-    #     icon4 = QtGui.QIcon()
-    #     icon4.addPixmap(QtGui.QPixmap("Icons/Run Task Icon.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
-    #     globals()["btnRuntask_" + self.taskId].setIcon(icon4)
-    #     globals()["btnRuntask_" + self.taskId].setIconSize(QtCore.QSize(12, 12))
-    #     globals()["btnRuntask_" + self.taskId].setObjectName(f"btnRuntask_{self.taskId}")
-    #     globals()["btnRuntask_" + self.taskId].clicked.connect(self.runTask)
-    #     globals()["frame_7_" + self.taskId] = QtWidgets.QFrame(globals()["mainTaskFrame_" + self.taskId])
-    #     globals()["frame_7_" + self.taskId].setGeometry(QtCore.QRect(10, 10, 381, 81))
-    #     globals()["frame_7_" + self.taskId].setStyleSheet("border:none;")
-    #     globals()["frame_7_" + self.taskId].setFrameShape(QtWidgets.QFrame.StyledPanel)
-    #     globals()["frame_7_" + self.taskId].setFrameShadow(QtWidgets.QFrame.Raised)
-    #     globals()["frame_7_" + self.taskId].setObjectName("frame_7")
-    #     globals()["frame_6_" + self.taskId] = QtWidgets.QLabel(globals()["frame_7_" + self.taskId])
-    #     globals()["frame_6_" + self.taskId].setGeometry(QtCore.QRect(10, 0, 370, 30))
-    #     font = QtGui.QFont()
-    #     font.setFamily("Sitka Banner Semibold")
-    #     font.setPointSize(16)
-    #     font.setBold(True)
-    #     font.setWeight(75)
-    #     globals()["frame_6_" + self.taskId].setFont(font)
-    #     globals()["frame_6_" + self.taskId].setObjectName("label_6")
-    #     self.label_7 = QtWidgets.QLabel(globals()["frame_7_" + self.taskId])
-    #     self.label_7.setGeometry(QtCore.QRect(9, 29, 371, 41))
-    #     font = QtGui.QFont()
-    #     font.setFamily("Sitka Banner Semibold")
-    #     font.setPointSize(10)
-    #     font.setBold(True)
-    #     font.setWeight(75)
-    #     self.label_7.setFont(font)
-    #     self.label_7.setObjectName("label_7")
-    #     self.ui.verticalLayout_4.addWidget(globals()["mainTaskFrame_" + self.taskId])
 
     def deleteTask(self):
         print("Delete task called")
@@ -393,116 +315,29 @@ class MainWindow(QMainWindow):
             print('Else part')
             self.ui.lblError_login.setText("Email and Password fields cannot be empty.")
 
+    def backToTask(self):
+        """
+        Navigate to Tasks Page
+        :return:
+        """
+        self.ui.stackPanel.setCurrentIndex(3)
+
     def movetoTask(self):
         """
         Navigate to Task Page
         :return: None
         """
-        self.Ui_task_List = []
-        for item in user.current_user.task_list:
-            self.taskId = str(item['name'])
-            globals()["mainTaskFrame_" + self.taskId] = QtWidgets.QFrame(self.ui.scrollAreaWidgetContents)
-            sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Preferred)
-            sizePolicy.setHorizontalStretch(0)
-            sizePolicy.setVerticalStretch(0)
-            sizePolicy.setHeightForWidth(globals()["mainTaskFrame_" + self.taskId].sizePolicy().hasHeightForWidth())
-            globals()["mainTaskFrame_" + self.taskId].setSizePolicy(sizePolicy)
-            globals()["mainTaskFrame_" + self.taskId].setMinimumSize(QtCore.QSize(450, 100))
-            globals()["mainTaskFrame_" + self.taskId].setMaximumSize(QtCore.QSize(450, 100))
-            globals()["mainTaskFrame_" + self.taskId].setStyleSheet("border: 1px solid;\n"
-                                                                    "border-color: rgb(138, 139, 152);\n"
-                                                                    "border-top-right-radius: 12px;\n"
-                                                                    "border-bottom-right-radius: 12px;\n"
-                                                                    "box-shadow: 1px 2px rgba(0, 0, 0, 16);")
-            globals()["mainTaskFrame_" + self.taskId].setFrameShape(QtWidgets.QFrame.StyledPanel)
-            globals()["mainTaskFrame_" + self.taskId].setFrameShadow(QtWidgets.QFrame.Raised)
-            globals()["mainTaskFrame_" + self.taskId].setObjectName("mainTaskFrame_" + self.taskId)
-            self.frame_8 = QtWidgets.QFrame(globals()["mainTaskFrame_" + self.taskId])
-            self.frame_8.setGeometry(QtCore.QRect(0, 0, 6, 100))
-            sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Fixed)
-            sizePolicy.setHorizontalStretch(0)
-            sizePolicy.setVerticalStretch(0)
-            sizePolicy.setHeightForWidth(self.frame_8.sizePolicy().hasHeightForWidth())
-            self.frame_8.setSizePolicy(sizePolicy)
-            self.frame_8.setStyleSheet("background-color: rgb(138, 139, 152);\n"
-                                       "border-left: 0px;\n"
-                                       "border-top-right-radius: 0px;\n"
-                                       "border-bottom-right-radius: 0px;")
-            self.frame_8.setFrameShape(QtWidgets.QFrame.StyledPanel)
-            self.frame_8.setFrameShadow(QtWidgets.QFrame.Raised)
-            self.frame_8.setObjectName("frame_8")
-            globals()["btnDelete_" + self.taskId] = QtWidgets.QPushButton(globals()["mainTaskFrame_" + self.taskId])
-            globals()["btnDelete_" + self.taskId].setGeometry(QtCore.QRect(425, 4, 20, 20))
-            sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Minimum)
-            sizePolicy.setHorizontalStretch(0)
-            sizePolicy.setVerticalStretch(0)
-            sizePolicy.setHeightForWidth(globals()["btnDelete_" + self.taskId].sizePolicy().hasHeightForWidth())
-            globals()["btnDelete_" + self.taskId].setSizePolicy(sizePolicy)
-            globals()["btnDelete_" + self.taskId].setStyleSheet("QPushButton{\n"
-                                                                "border: none;\n"
-                                                                "border-radius: 10px;\n"
-                                                                "}\n"
-                                                                "")
-            globals()["btnDelete_" + self.taskId].setText("")
-            icon3 = QtGui.QIcon()
-            icon3.addPixmap(QtGui.QPixmap("Icons/Delete Task Icon.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
-            globals()["btnDelete_" + self.taskId].setIcon(icon3)
-            globals()["btnDelete_" + self.taskId].setIconSize(QtCore.QSize(12, 12))
-            globals()["btnDelete_" + self.taskId].setObjectName(f"btnDelete_{self.taskId}")
-            globals()["btnDelete_" + self.taskId].clicked.connect(self.deleteTask)
-            globals()["btnRuntask_" + self.taskId] = QtWidgets.QPushButton(globals()["mainTaskFrame_" + self.taskId])
-            globals()["btnRuntask_" + self.taskId].setGeometry(QtCore.QRect(400, 4, 20, 20))
-            sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Minimum)
-            sizePolicy.setHorizontalStretch(0)
-            sizePolicy.setVerticalStretch(0)
-            sizePolicy.setHeightForWidth(globals()["btnRuntask_" + self.taskId].sizePolicy().hasHeightForWidth())
-            globals()["btnRuntask_" + self.taskId].setSizePolicy(sizePolicy)
-            globals()["btnRuntask_" + self.taskId].setStyleSheet("QPushButton{\n"
-                                                                 "border: none;\n"
-                                                                 "border-radius: 10px;\n"
-                                                                 "}\n"
-                                                                 "")
-            globals()["btnRuntask_" + self.taskId].setText("")
-            icon4 = QtGui.QIcon()
-            icon4.addPixmap(QtGui.QPixmap("Icons/Run Task Icon.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
-            globals()["btnRuntask_" + self.taskId].setIcon(icon4)
-            globals()["btnRuntask_" + self.taskId].setIconSize(QtCore.QSize(12, 12))
-            globals()["btnRuntask_" + self.taskId].setObjectName(f"btnRuntask_{self.taskId}")
-            globals()["btnRuntask_" + self.taskId].clicked.connect(self.runTask)
-            globals()["frame_7_" + self.taskId] = QtWidgets.QFrame(globals()["mainTaskFrame_" + self.taskId])
-            globals()["frame_7_" + self.taskId].setGeometry(QtCore.QRect(10, 10, 381, 81))
-            globals()["frame_7_" + self.taskId].setStyleSheet("border:none;")
-            globals()["frame_7_" + self.taskId].setFrameShape(QtWidgets.QFrame.StyledPanel)
-            globals()["frame_7_" + self.taskId].setFrameShadow(QtWidgets.QFrame.Raised)
-            globals()["frame_7_" + self.taskId].setObjectName("frame_7")
-            globals()["frame_6_" + self.taskId] = QtWidgets.QLabel(globals()["frame_7_" + self.taskId])
-            globals()["frame_6_" + self.taskId].setGeometry(QtCore.QRect(10, 0, 370, 30))
-            font = QtGui.QFont()
-            font.setFamily("Sitka Banner Semibold")
-            font.setPointSize(16)
-            font.setBold(True)
-            font.setWeight(75)
-            globals()["frame_6_" + self.taskId].setFont(font)
-            globals()["frame_6_" + self.taskId].setObjectName("label_6")
-            print(globals()["frame_6_" + self.taskId])
-
-            self.label_7 = QtWidgets.QLabel(globals()["frame_7_" + self.taskId])
-            self.label_7.setGeometry(QtCore.QRect(9, 29, 371, 41))
-            font = QtGui.QFont()
-            font.setFamily("Sitka Banner Semibold")
-            font.setPointSize(10)
-            font.setBold(True)
-            font.setWeight(75)
-            self.label_7.setFont(font)
-            self.label_7.setObjectName("label_7")
-            self.ui.verticalLayout_4.addWidget(globals()["mainTaskFrame_" + self.taskId])
-            self.translate = QtCore.QCoreApplication.translate
-            globals()["frame_6_" + self.taskId].setText(self.translate("main", item['name']))
-            self.label_7.setText(self.translate("main", item['description']))
-            # tasks.Task(self, item['name'], item['description'])
-            # print(self.ui.scrollAreaWidgetContents.children())
-            # print("Item", item['name'])
         self.ui.stackPanel.setCurrentIndex(3)
+        if not self.Ui_task_List:
+            print(self.Ui_task_List)
+            for item in user.current_user.task_list:
+                taskObject: QtWidgets.QFrame = tasks.Task(self, item['name'], item['description']).createTaskComponent()
+                TaskManager.TaskLists.addTask(taskObject.findChild(QtWidgets.QPushButton, f"btnRuntask_{item['name']}"))
+                print(taskObject.findChild(QtWidgets.QPushButton, f"btnRuntask_{item['name']}").objectName())
+                taskObject.findChild(QtWidgets.QPushButton, f"btnRuntask_{item['name']}").clicked.connect(self.runTask)
+                taskObject.findChild(QtWidgets.QPushButton, f"btnDelete_{item['name']}").clicked.connect(self.deleteTask)
+                self.ui.verticalLayout_4.addWidget(taskObject)
+                self.Ui_task_List.append(taskObject.findChild(QtWidgets.QPushButton, f"btnRuntask_{item['name']}"))
 
         self.ui.SubMenuFrame.lower()
         self.isMenuOpen = False

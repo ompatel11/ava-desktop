@@ -23,7 +23,7 @@ class User:
             print(i)
             self.task_list.append(i)
         f.close()
-        print(self.task_list)
+        print("Task list: ", self.task_list)
 
     def deleteData(self):
         self.email = None
