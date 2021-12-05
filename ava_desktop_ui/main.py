@@ -34,6 +34,9 @@ class MainWindow(QMainWindow):
         self.isMenuEnabled = False
         self.ui.SubMenuFrame.lower()
 
+        # Tasks Page
+        self.Ui_task_List = []
+
         # SubMenu Buttons
         self.ui.btnLogout.clicked.connect(self.logout)
         self.ui.btnSettings.clicked.connect(self.movetoTask)
@@ -59,13 +62,13 @@ class MainWindow(QMainWindow):
         # Microphone Boolean
         self.isMic = False
 
-        # Tasks Page
+
 
         # Tasks Navigation Buttons
         self.ui.btnBackToTasks.clicked.connect(self.backToTask)
 
         self.ui.btnCreateTask.clicked.connect(self.createTask)
-        self.Ui_task_List = []
+
         # Show UI
         self.show()
 
@@ -113,7 +116,9 @@ class MainWindow(QMainWindow):
 
     def deleteTask(self):
         print("Delete task called")
-        print(self.sender().parent().objectName())
+        print(str(self.sender().objectName()).replace("btnDelete_", ""))
+        user.current_user.deleteTask(str(self.sender().objectName()).replace("btnDelete_", ""))
+        self.ui.verticalLayout_4.removeWidget(self.sender().parentWidget())
 
     def taskListener(self):
         import task_listener
@@ -169,7 +174,8 @@ class MainWindow(QMainWindow):
                     user.current_user.getTasks()
                     print(user.current_user.uid)
                     self.isMenuEnabled = True
-                    self.ui.stackPanel.setCurrentIndex(2)
+                    # self.ui.stackPanel.setCurrentIndex(2)
+                    self.movetoTask()
                     self.ui.frame.lower()
             try:
                 if result['idtoken'] == "None":

@@ -1,3 +1,6 @@
+import json
+
+
 class User:
     email = str
     uid = str
@@ -15,12 +18,27 @@ class User:
     def addTask(self, data):
         self.task_list.append(data)
 
+    def deleteTask(self, taskname):
+        with open('application/config/tasks.json') as data_file:
+            data = json.load(data_file)
+        print(data)
+        index = 0
+        for i in data['tasks']:
+            if i['name'] == taskname:
+                print(i)
+                del data['tasks'][index]
+            index += 1
+
+        with open('application/config/tasks.json', 'w') as data_file:
+            print("Task List after deleting:", data)
+            json.dump(data, data_file)
+
     def getTasks(self):
-        import json
+
         f = open("application/config/tasks.json")
         data = json.load(f)
         for i in data['tasks']:
-            print(i)
+            print(i['name'])
             self.task_list.append(i)
         f.close()
         print("Task list: ", self.task_list)
