@@ -1,5 +1,7 @@
 import json
 
+from ruamel.yaml import SafeLoader
+
 
 class User:
     email = str
@@ -17,16 +19,19 @@ class User:
 
     def addTask(self, data):
         self.task_list.append(data)
+        with open('application/config/tasks.json', 'w') as data_file:
+            print("Task List after adding:", self.task_list)
+            json.dump(self.task_list, data_file)
 
     def deleteTask(self, taskname):
         with open('application/config/tasks.json') as data_file:
             data = json.load(data_file)
         print(data)
         index = 0
-        for i in data['tasks']:
+        for i in data:
             if i['name'] == taskname:
                 print(i)
-                del data['tasks'][index]
+                del data[index]
             index += 1
 
         with open('application/config/tasks.json', 'w') as data_file:
@@ -37,7 +42,8 @@ class User:
 
         f = open("application/config/tasks.json")
         data = json.load(f)
-        for i in data['tasks']:
+        print(data)
+        for i in data:
             print(i['name'])
             self.task_list.append(i)
         f.close()

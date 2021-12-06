@@ -1,17 +1,19 @@
-import random
 import sys
 import threading
 import time
-from PyQt5 import QtCore, QtWidgets
+from PyQt5 import QtCore, QtWidgets, QtGui
 from PyQt5.QtCore import Qt, QSize
 from PyQt5.QtGui import QIcon, QPalette, QColor
 from PyQt5.QtWidgets import QMainWindow
+from ruamel import yaml
+
 import FirebaseClientWrapper
 import Sessionhandler
 import audio_manager
 import Model.user as user
 from ava_desktop_ui.Model import tasks, TaskManager
-from ava_desktop_ui.demo import RunTask
+from ava_desktop_ui.Model.TaskRunner import RunTask
+from ava_desktop_ui.task_listener import TaskListener
 from main_ui import Ui_main
 
 
@@ -34,13 +36,19 @@ class MainWindow(QMainWindow):
         self.isMenuEnabled = False
         self.ui.SubMenuFrame.lower()
 
-        # Tasks Page
+        # Tasks UI controls
         self.Ui_task_List = []
+        self.ui.btnAddTask.clicked.connect(self.createTask)
+        self.ui.txtTitle.textChanged.connect(self.titleChange)
+        self.ui.txtDescription.textChanged.connect(self.descriptionChange)
+        self.ui.btnTaskListener.clicked.connect(self.starTaskListener)
+        self.startStatus = False
 
         # SubMenu Buttons
         self.ui.btnLogout.clicked.connect(self.logout)
         self.ui.btnSettings.clicked.connect(self.movetoTask)
-        # Connecting functions to the components
+
+        # Login Buttons
         self.ui.btnLoginPage.clicked.connect(self.movetoLogin)
         self.ui.btnSignupPage.clicked.connect(self.movetoSignup)
 
@@ -52,6 +60,7 @@ class MainWindow(QMainWindow):
 
         # Social Logins
         self.ui.btnGoogle.clicked.connect(self.google_login)
+
         # If user remember me == True then login
         self.is_persistent()
 
@@ -62,15 +71,19 @@ class MainWindow(QMainWindow):
         # Microphone Boolean
         self.isMic = False
 
-
-
         # Tasks Navigation Buttons
         self.ui.btnBackToTasks.clicked.connect(self.backToTask)
 
-        self.ui.btnCreateTask.clicked.connect(self.createTask)
+        self.ui.btnCreateTask.clicked.connect(self.movetoCreateTask)
 
         # Show UI
         self.show()
+
+    def titleChange(self):
+        print(self.sender().text())
+
+    def descriptionChange(self):
+        print(self.sender().text())
 
     def moveWindow(self, event):
         # IF LEFT CLICK MOVE WINDOW
@@ -101,18 +114,72 @@ class MainWindow(QMainWindow):
                 self.ui.SubMenuFrame.raise_()
                 self.isMenuOpen = True
 
+    def starTaskListener(self):
+        if not self.ui.txtTitle.text():
+            print("Title Empty")
+            self.ui.txtTitle.setStyleSheet("border: 2px solid;\n"
+                                           "border-color: rgb(255, 148, 148);")
+        else:
+            print("startStatus: ", self.startStatus)
+            if self.startStatus:
+                # Set the icon to pause
+                self.startStatus = False
+                icon4 = QtGui.QIcon()
+                icon4.addPixmap(QtGui.QPixmap("Icons/Icon awesome-play@2x.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+                self.ui.btnTaskListener.setIcon(icon4)
+                self.taskListenerObject = None
+
+            if not self.startStatus:
+                # Set the icon to play
+                self.startStatus = True
+                icon4 = QtGui.QIcon()
+                icon4.addPixmap(QtGui.QPixmap("Icons/Pause@2x.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+                self.ui.btnTaskListener.setIcon(icon4)
+
+                self.taskListenerObject = TaskListener(self.ui.txtTitle.text())
+                self.taskEntries = self.taskListenerObject.startListeners()
+                print("From startListener", self.taskEntries)
+
+                if self.taskEntries is not False:
+                    icon4 = QtGui.QIcon()
+                    icon4.addPixmap(QtGui.QPixmap("Icons/Icon awesome-play@2x.png"), QtGui.QIcon.Normal,
+                                    QtGui.QIcon.Off)
+                    self.ui.btnTaskListener.setIcon(icon4)
+                    self.taskListenerObject = None
+
     def createTask(self):
-        print("Called createTask")
-        taskObject: QtWidgets.QFrame = tasks.Task(self, "Demo", "Demo").createTaskComponent()
-        TaskManager.TaskLists.addTask(taskObject.findChild(QtWidgets.QPushButton, f"btnRuntask_Demo"))
-        print(taskObject.findChild(QtWidgets.QPushButton, f"btnRuntask_Demo").objectName())
-        taskObject.findChild(QtWidgets.QPushButton, f"btnRuntask_Demo").clicked.connect(self.runTask)
-        taskObject.findChild(QtWidgets.QPushButton, f"btnDelete_Demo").clicked.connect(self.deleteTask)
-        self.ui.verticalLayout_4.addWidget(taskObject)
-        taskJsonObj = {'name': "Demo", 'description': "Demo", 'runCounter': '0'}
-        user.current_user.addTask(taskJsonObj)
-        self.Ui_task_List.append(taskObject.findChild(QtWidgets.QPushButton, f"btnRuntask_Demo"))
-        self.ui.stackPanel.setCurrentIndex(4)
+        title = self.ui.txtTitle.text()
+        description = self.ui.txtDescription.text()
+        print("title: ", title)
+        print("description: ", description)
+
+        if title and description:
+            self.taskObject = tasks.Task(self, title, description).createTaskComponent()
+            TaskManager.TaskLists.addTask(self.taskObject.findChild(QtWidgets.QPushButton, f"btnRuntask_{title}"))
+            print(self.taskObject.findChild(QtWidgets.QPushButton, f"btnRuntask_{title}").objectName())
+            self.taskObject.findChild(QtWidgets.QPushButton, f"btnRuntask_{title}").clicked.connect(self.runTask)
+            self.taskObject.findChild(QtWidgets.QPushButton, f"btnDelete_{title}").clicked.connect(self.deleteTask)
+            self.ui.verticalLayout_4.addWidget(self.taskObject)
+            taskJsonObj = {'name': title, 'description': description, 'runCounter': '0'}
+            user.current_user.addTask(taskJsonObj)
+            print(self.taskEntries)
+            with open('application/config/task_bindings.yml', 'a', encoding="utf-8") as yamlfile:
+                yaml.dump(self.taskEntries, yamlfile, Dumper=yaml.RoundTripDumper, default_flow_style=False)
+            self.Ui_task_List.append(self.taskObject.findChild(QtWidgets.QPushButton, f"btnRuntask_{title}"))
+            self.taskObject = None
+            self.ui.stackPanel.setCurrentIndex(4)
+            self.ui.txtTitle.setText("")
+            self.ui.txtDescription.setText("")
+
+        if not title:
+            print("Title Empty")
+            self.ui.txtTitle.setStyleSheet("border: 2px solid;\n"
+                                           "border-color: rgb(255, 148, 148);")
+
+        if not description:
+            print("Description Empty")
+            self.ui.txtDescription.setStyleSheet("border: 2px solid;\n"
+                                                 "border-color: rgb(255, 148, 148);")
 
     def deleteTask(self):
         print("Delete task called")
@@ -172,7 +239,7 @@ class MainWindow(QMainWindow):
                 print("From is_persistent() ", user.current_user.email)
                 if result['loginstate']:
                     user.current_user.getTasks()
-                    print(user.current_user.uid)
+                    print("Print UID", user.current_user.uid)
                     self.isMenuEnabled = True
                     # self.ui.stackPanel.setCurrentIndex(2)
                     self.movetoTask()
@@ -328,22 +395,48 @@ class MainWindow(QMainWindow):
         """
         self.ui.stackPanel.setCurrentIndex(3)
 
+    def movetoCreateTask(self):
+        self.ui.stackPanel.setCurrentIndex(4)
+
     def movetoTask(self):
         """
         Navigate to Task Page
         :return: None
         """
         self.ui.stackPanel.setCurrentIndex(3)
-        if not self.Ui_task_List:
-            print(self.Ui_task_List)
+
+        if not user.current_user.task_list:
+            print("Else Part")
+            emptyTasksLabel = QtWidgets.QLabel()
+            emptyTasksLabel.setGeometry(QtCore.QRect(110, 55, 251, 71))
+            font = QtGui.QFont()
+            font.setFamily("Segoe UI")
+            font.setPointSize(27)
+            font.setBold(True)
+            font.setWeight(75)
+            emptyTasksLabel.setFont(font)
+            emptyTasksLabel.setStyleSheet("color:rgb(63, 61, 84)")
+            emptyTasksLabel.setAlignment(QtCore.Qt.AlignCenter)
+            emptyTasksLabel.setObjectName("emptyTasksLabel")
+            emptyTasksLabel.setText("NO tasks found!")
+            self.ui.verticalLayout_4.addWidget(emptyTasksLabel)
+
+        else:
+            print(self.ui.verticalLayout_4.findChild(QtWidgets.QLabel, "emptyTasksLabel"))
+            self.ui.verticalLayout_4.removeWidget(
+                self.ui.verticalLayout_4.findChild(QtWidgets.QLabel, "emptyTasksLabel"))
             for item in user.current_user.task_list:
-                taskObject: QtWidgets.QFrame = tasks.Task(self, item['name'], item['description']).createTaskComponent()
-                TaskManager.TaskLists.addTask(taskObject.findChild(QtWidgets.QPushButton, f"btnRuntask_{item['name']}"))
-                print(taskObject.findChild(QtWidgets.QPushButton, f"btnRuntask_{item['name']}").objectName())
-                taskObject.findChild(QtWidgets.QPushButton, f"btnRuntask_{item['name']}").clicked.connect(self.runTask)
-                taskObject.findChild(QtWidgets.QPushButton, f"btnDelete_{item['name']}").clicked.connect(self.deleteTask)
-                self.ui.verticalLayout_4.addWidget(taskObject)
-                self.Ui_task_List.append(taskObject.findChild(QtWidgets.QPushButton, f"btnRuntask_{item['name']}"))
+                self.taskObject: QtWidgets.QFrame = tasks.Task(self, item['name'],
+                                                               item['description']).createTaskComponent()
+                TaskManager.TaskLists.addTask(
+                    self.taskObject.findChild(QtWidgets.QPushButton, f"btnRuntask_{item['name']}"))
+                print(self.taskObject.findChild(QtWidgets.QPushButton, f"btnRuntask_{item['name']}").objectName())
+                self.taskObject.findChild(QtWidgets.QPushButton, f"btnRuntask_{item['name']}").clicked.connect(
+                    self.runTask)
+                self.taskObject.findChild(QtWidgets.QPushButton, f"btnDelete_{item['name']}").clicked.connect(
+                    self.deleteTask)
+                self.ui.verticalLayout_4.addWidget(self.taskObject)
+                self.Ui_task_List.append(self.taskObject.findChild(QtWidgets.QPushButton, f"btnRuntask_{item['name']}"))
 
         self.ui.SubMenuFrame.lower()
         self.isMenuOpen = False
@@ -356,10 +449,9 @@ class MainWindow(QMainWindow):
     def runTask(self, event):
         print("Task Running:", self.sender().objectName())
         self.RuntimeTaskName = self.sender().objectName().split('_')[1]
-        # print(globals()["frame_6_OpenYoutube"])
-        # print(globals()["frame_6_OpenYoutube"].parentWidget().parentWidget().objectName())
         t1 = threading.Thread(target=self._executeThread)
         t1.start()
+        t1.join()
 
     def movetoLogin(self):
         """

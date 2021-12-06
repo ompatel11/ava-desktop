@@ -2,5 +2,5 @@ venv
 ava.spec
 /ava_desktop_ui/Dockerfile
 /ava_desktop_ui/demo2.py
-/ava_desktop_ui/demo.yml
+/ava_desktop_ui/application/config/task_bindings.yml
 /ava_desktop_ui/secrets

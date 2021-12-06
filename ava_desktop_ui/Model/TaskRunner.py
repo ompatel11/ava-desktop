@@ -1,5 +1,4 @@
 import time
-
 import pyautogui
 import yaml
 from yaml import SafeLoader
@@ -106,12 +105,11 @@ class RunTask:
     def fetch_commands(self, ext):
         # Open the file and load the file
         if ext == "word":
-            with open("demo.yml") as f:
-                yaml.safe_dump()
+            with open("application/config/task_bindings.yml") as f:
                 data = yaml.load(f, Loader=SafeLoader)
                 commands = data[ext]
         else:
-            with open("demo.yml") as f:
+            with open('application/config/task_bindings.yml') as f:
                 data = yaml.load(f, Loader=SafeLoader)
                 commands = data[ext]
                 print(commands)

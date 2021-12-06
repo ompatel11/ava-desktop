@@ -1,0 +1,39 @@
+DEMO Mail:
+- timeSleep:
+    sleep: 1
+- hotKeyPress: Key.cmd
+- hotKeyRelease: Key.cmd
+- timeSleep:
+    sleep: 1
+- m
+- a
+- i
+- l
+- timeSleep:
+    sleep: 1
+- hotKeyPress: Key.enter
+- hotKeyRelease: Key.enter
+- timeSleep:
+    sleep: 1
+Open Youtube:
+- timeSleep:
+    sleep: 1
+- hotKeyPress: Key.cmd
+- hotKeyRelease: Key.cmd
+- timeSleep:
+    sleep: 1
+- y
+- o
+- u
+- t
+- u
+- b
+- e
+- timeSleep:
+    sleep: 7.750537157058716
+- moveTo:
+    x: 438
+    y: 492
+- leftClick:
+    x: 438
+    y: 492

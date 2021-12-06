@@ -2,7 +2,6 @@ import time
 
 from pynput.keyboard import Key
 from pynput.mouse import Button
-from ruamel import yaml
 from pynput import keyboard, mouse
 
 
@@ -52,7 +51,6 @@ class TaskListener:
         }
         self.start_time = time.time()
         self.break_program = False
-        self._startListeners()
 
     def elapsed_time(self):
         """
@@ -64,7 +62,7 @@ class TaskListener:
         self.start_time = current_time
         return elapsed_time
 
-    def _startListeners(self):
+    def startListeners(self):
         """
         Setup Keyboard and Mouse Listeners
         :return None:
@@ -75,9 +73,13 @@ class TaskListener:
             keyboarListener.join()
             mouseListener.join()
         if True:
-            print("While loop ended ", self.taskEntries)
-            with open('demo.yml', 'a', encoding="utf-8") as yamlfile:
-                yaml.dump(self.taskEntries, yamlfile, Dumper=yaml.RoundTripDumper, default_flow_style=False)
+            try:
+                print("While loop ended ", self.taskEntries)
+                # with open('task_bindings.yml', 'a', encoding="utf-8") as yamlfile:
+                #     yaml.dump(self.taskEntries, yamlfile, Dumper=yaml.RoundTripDumper, default_flow_style=False)
+                return self.taskEntries
+            except Exception as e:
+                return False
 
     def on_release(self, key):
         if key == keyboard.Key.end:
@@ -89,6 +91,8 @@ class TaskListener:
         #  he
         try:
             self.taskEntries[self.taskName].append({"hotKeyRelease": self.keyMapping[key]})
+            self.taskEntries[self.taskName].append({"timeSleep": {"sleep": 1}})
+
         except Exception as e:
             pass
             # self.taskEntries[self.taskName].append(key.char)
@@ -112,6 +116,8 @@ class TaskListener:
         print(type(key))
 
         try:
+            if self.keyMapping[key]:
+                self.taskEntries[self.taskName].append({"timeSleep": {"sleep": 1}})
             self.taskEntries[self.taskName].append({"hotKeyPress": self.keyMapping[key]})
 
         except Exception as e:
@@ -168,4 +174,4 @@ class TaskListener:
         print('Mouse scrolled at ({0}, {1})({2}, {3})'.format(x, y, dx, dy))
 
 
-# TaskListener("Open Youtube")
+TaskListener("Open Youtube")
