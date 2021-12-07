@@ -163,13 +163,28 @@ class MainWindow(QMainWindow):
             taskJsonObj = {'name': title, 'description': description, 'runCounter': '0'}
             user.current_user.addTask(taskJsonObj)
             print(self.taskEntries)
-            with open('application/config/task_bindings.yml', 'a', encoding="utf-8") as yamlfile:
-                yaml.dump(self.taskEntries, yamlfile, Dumper=yaml.RoundTripDumper, default_flow_style=False)
+            empty = bool
+            with open('application/config/task_bindings.yml') as fp:
+                data = yaml.load(fp)
+                print("DATA:", data)
+                if data is None:
+                    print("Empty yaml file")
+                    empty = True
+            if empty:
+                with open('application/config/task_bindings.yml', 'w', encoding="utf-8") as yamlfile:
+                    yaml.dump(self.taskEntries, yamlfile, Dumper=yaml.RoundTripDumper, default_flow_style=False)
+            else:
+                with open('application/config/task_bindings.yml', 'a', encoding="utf-8") as yamlfile:
+                    yaml.dump(self.taskEntries, yamlfile, Dumper=yaml.RoundTripDumper, default_flow_style=False)
+
             self.Ui_task_List.append(self.taskObject.findChild(QtWidgets.QPushButton, f"btnRuntask_{title}"))
             self.taskObject = None
             self.ui.stackPanel.setCurrentIndex(3)
             self.ui.txtTitle.setText("")
             self.ui.txtDescription.setText("")
+            print("Removing Empty Label", self.ui.TasksPage.findChild(QtWidgets.QLabel, "emptyTasksLabel"))
+            self.ui.verticalLayout_4.removeWidget(
+                self.ui.TasksPage.findChild(QtWidgets.QLabel, "emptyTasksLabel"))
 
         if not title:
             print("Title Empty")
@@ -186,6 +201,22 @@ class MainWindow(QMainWindow):
         print(str(self.sender().objectName()).replace("btnDelete_", ""))
         user.current_user.deleteTask(str(self.sender().objectName()).replace("btnDelete_", ""))
         self.ui.verticalLayout_4.removeWidget(self.sender().parentWidget())
+        print("User task list: ", user.current_user.task_list)
+        if not user.current_user.task_list:
+            emptyTasksLabel = QtWidgets.QLabel()
+            emptyTasksLabel.setGeometry(QtCore.QRect(110, 55, 251, 71))
+            font = QtGui.QFont()
+            font.setFamily("Segoe UI")
+            font.setPointSize(27)
+            font.setBold(True)
+            font.setWeight(75)
+            emptyTasksLabel.setFont(font)
+            emptyTasksLabel.setStyleSheet("color:rgb(63, 61, 84)")
+            emptyTasksLabel.setAlignment(QtCore.Qt.AlignCenter)
+            emptyTasksLabel.setObjectName("emptyTasksLabel")
+            emptyTasksLabel.setText("NO tasks found!")
+            self.ui.verticalLayout_4.addWidget(emptyTasksLabel)
+            print("Empty Label Added")
 
     def taskListener(self):
         import task_listener
@@ -421,10 +452,10 @@ class MainWindow(QMainWindow):
             emptyTasksLabel.setText("NO tasks found!")
             self.ui.verticalLayout_4.addWidget(emptyTasksLabel)
 
+            print("Label", self.ui.TasksPage.findChild(QtWidgets.QLabel, "emptyTasksLabel"))
+            print("Layout children: ", self.ui.TasksPage.children())
         else:
-            print(self.ui.verticalLayout_4.findChild(QtWidgets.QLabel, "emptyTasksLabel"))
-            self.ui.verticalLayout_4.removeWidget(
-                self.ui.verticalLayout_4.findChild(QtWidgets.QLabel, "emptyTasksLabel"))
+
             for item in user.current_user.task_list:
                 self.taskObject: QtWidgets.QFrame = tasks.Task(self, item['name'],
                                                                item['description']).createTaskComponent()

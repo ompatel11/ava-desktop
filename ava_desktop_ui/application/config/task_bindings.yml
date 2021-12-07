@@ -1,29 +1,9 @@
-Test1:
+DEMO:
 - timeSleep:
-    sleep: 2.823289632797241
+    sleep: 0.7881419658660889
 - moveTo:
-    x: 1432
-    y: 214
+    x: 504
+    y: 390
 - leftClick:
-    x: 1432
-    y: 214
-- timeSleep:
-    sleep: 2.103083372116089
-- moveTo:
-    x: 1486
-    y: 73
-- leftClick:
-    x: 1486
-    y: 73
-- timeSleep:
-    sleep: 1
-- hotKeyPress: Key.ctrl_l
-- "\x06"
-- hotKeyRelease: Key.ctrl_l
-- timeSleep:
-    sleep: 1
-- y
-- a
-- m
-- l
-- l
+    x: 504
+    y: 390

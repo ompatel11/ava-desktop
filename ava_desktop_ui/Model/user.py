@@ -28,6 +28,7 @@ class User:
         print(data)
         index = 0
         for i in data:
+            self.task_list.remove(i)
             if i['name'] == taskname:
                 print(i)
                 del data[index]
