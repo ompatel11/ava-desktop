@@ -1,6 +1,5 @@
 import json
-
-from ruamel.yaml import SafeLoader
+from ruamel import yaml
 
 
 class User:
@@ -37,6 +36,17 @@ class User:
         with open('application/config/tasks.json', 'w') as data_file:
             print("Task List after deleting:", data)
             json.dump(data, data_file)
+
+        yamlObj = yaml.YAML()
+        with open('application/config/task_bindings.yml') as fp:
+            data = yamlObj.load(fp)
+            new_data = data
+            del data
+
+        with open('application/config/task_bindings.yml', 'w') as file:
+            del new_data[taskname]
+            yamlObj.dump(new_data, file)
+        print(new_data)
 
     def getTasks(self):
 

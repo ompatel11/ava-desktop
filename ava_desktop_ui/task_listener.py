@@ -104,8 +104,8 @@ class TaskListener:
         :param key:
         :return None:
         """
-        if self.lastPressedStatus == key:
-            return
+        # if self.lastPressedStatus == key:
+        #     return
 
         if key == keyboard.Key.end:
             print('end pressed')
@@ -174,4 +174,4 @@ class TaskListener:
         print('Mouse scrolled at ({0}, {1})({2}, {3})'.format(x, y, dx, dy))
 
 
-TaskListener("Open Youtube")
+# TaskListener("TEST2").startListeners()

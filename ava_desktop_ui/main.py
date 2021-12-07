@@ -167,7 +167,7 @@ class MainWindow(QMainWindow):
                 yaml.dump(self.taskEntries, yamlfile, Dumper=yaml.RoundTripDumper, default_flow_style=False)
             self.Ui_task_List.append(self.taskObject.findChild(QtWidgets.QPushButton, f"btnRuntask_{title}"))
             self.taskObject = None
-            self.ui.stackPanel.setCurrentIndex(4)
+            self.ui.stackPanel.setCurrentIndex(3)
             self.ui.txtTitle.setText("")
             self.ui.txtDescription.setText("")
 
