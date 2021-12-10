@@ -4,11 +4,9 @@ from PyQt5 import QtCore, QtWidgets, QtGui
 import yaml
 from yaml import SafeLoader
 
-from ava_desktop_ui.main import MainWindow
-
 
 class Task:
-    def __init__(self, mainParent: MainWindow, taskHeading: str, taskDescription: str):
+    def __init__(self, mainParent, taskHeading: str, taskDescription: str):
         self.taskDescription = taskDescription
         self.taskFrameColor = ["#A6A8BF", "#8A8B98", "#2F3041", "#A4A5AF", "#292838", "#44434d", "#282736"]
         self.currentColor = random.choice(self.taskFrameColor)

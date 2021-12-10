@@ -52,15 +52,14 @@ class FirebaseClientWrapper:
             user.current_user.email = result["email"]
             user.current_user.idtoken = secrets.token_hex(32)
             print(user.current_user.email, user.current_user.idtoken, user.current_user.email)
-            print("New user created")
+            print("New user created: ")
             if isPersist:
                 if Sessionhandler.sessionHandler.setUserData():
                     Sessionhandler.sessionHandler.setloginstate()
             return True
         except Exception as e:
-
+            print("Error occured: ", e)
             errorMessage = self.error[str(json.loads(e.args[1])['error']['message'])]
-            print(e)
             return errorMessage
 
     def login_email_password(self, email, password, isPersist):
@@ -75,7 +74,7 @@ class FirebaseClientWrapper:
             user.current_user.email = result["email"]
             print(type(user.current_user.idtoken))
             print(user.current_user.idtoken)
-            if user.current_user.idtoken is '':
+            if user.current_user.idtoken == '':
                 user.current_user.idtoken = user.current_user.idtoken = secrets.token_hex(32)
             print(user.current_user.email, user.current_user.uid, user.current_user.idtoken)
 
@@ -86,7 +85,7 @@ class FirebaseClientWrapper:
             print("Log In Success")
 
         except Exception as e:
-            print(e)
+            print("Error occured: ",e)
             errorMessage = self.error[str(json.loads(e.args[1])['error']['message'])]
             print(errorMessage)
 

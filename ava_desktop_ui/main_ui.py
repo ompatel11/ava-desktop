@@ -112,6 +112,7 @@ class Ui_main(object):
         self.label_4.setObjectName("label_4")
         self.txtPassword_login = QtWidgets.QLineEdit(self.LoginPage)
         self.txtPassword_login.setGeometry(QtCore.QRect(81, 395, 311, 41))
+        self.txtPassword_login.setEchoMode(QtWidgets.QLineEdit.Password)
         font = QtGui.QFont()
         font.setFamily("Sitka Small")
         font.setPointSize(10)
@@ -341,6 +342,7 @@ class Ui_main(object):
         self.label.setObjectName("label")
         self.txtPassword_signup = QtWidgets.QLineEdit(self.SignupPage)
         self.txtPassword_signup.setGeometry(QtCore.QRect(81, 360, 311, 41))
+        self.txtPassword_signup.setEchoMode(QtWidgets.QLineEdit.Password)
         font = QtGui.QFont()
         font.setFamily("Sitka Small")
         font.setPointSize(10)
@@ -482,6 +484,7 @@ class Ui_main(object):
         self.lblConfirmPassword.setObjectName("lblConfirmPassword")
         self.txtConfirmPassword_signup = QtWidgets.QLineEdit(self.SignupPage)
         self.txtConfirmPassword_signup.setGeometry(QtCore.QRect(81, 450, 311, 41))
+        self.txtConfirmPassword_signup.setEchoMode(QtWidgets.QLineEdit.Password)
         font = QtGui.QFont()
         font.setFamily("Sitka Small")
         font.setPointSize(10)
@@ -669,7 +672,9 @@ class Ui_main(object):
         font.setWeight(75)
         self.btnAddTask.setFont(font)
         self.btnAddTask.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
+        self.btnAddTask.setFocusPolicy(QtCore.Qt.NoFocus)
         self.btnAddTask.setStyleSheet("QPushButton{\n"
+                                      "outline: none;\n"
                                       "color: rgb(255, 255, 255);\n"
                                       "background-color: rgb(63, 61, 84);\n"
                                       "border: 2px solid  rgb(63, 61, 94);\n"
@@ -678,7 +683,8 @@ class Ui_main(object):
                                       "box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.16), 0 0 0 1px rgba(0, 0, 0, 0.08);\n"
                                       "}\n"
                                       "QPushButton:pressed{\n"
-                                      "    background-color: rgb(103, 100, 138);\n"
+                                      "background-color: rgb(103, 100, 138);\n"
+                                      "outline: none;\n"
                                       "}")
         self.btnAddTask.setObjectName("btnAddTask")
         self.lblRecordTask = QtWidgets.QLabel(self.AddTaskPage)

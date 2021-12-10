@@ -1,0 +1,113 @@
+{
+  "config_dir": "C:\\Users\\Om\\Desktop\\ava-desktop\\ava_desktop_ui\\.pyupdater",
+  "filename": "C:\\Users\\Om\\Desktop\\ava-desktop\\ava_desktop_ui\\.pyupdater\\config.pyu",
+  "count": 0,
+  "app_config": {
+    "APP_NAME": "Ava",
+    "CLIENT_CONFIG_PATH": [
+      "client_config.py"
+    ],
+    "COMPANY_NAME": "Daemon Technologies",
+    "PLUGIN_CONFIGS": {},
+    "UPDATE_PATCHES": true,
+    "MAX_DOWNLOAD_RETRIES": 3,
+    "HTTP_TIMEOUT": 30,
+    "UPDATE_URLS": [
+      "http://localhost:8000/",
+      "http://localhost:3000/"
+    ],
+    "DATA_DIR": "C:\\Users\\Om\\Desktop\\ava-desktop\\ava_desktop_ui"
+  },
+  "keypack": {
+    "client": {
+      "offline_public": "hEh3Jy6i61sNH42U4LGwRrggIQKd6CcqfGg1E8tOGPE"
+    },
+    "repo": {
+      "app_private": "CojJNA7dj958W0Z570YLnWLH+Q3RWxnfUVceIkEngwc"
+    },
+    "upload": {
+      "app_public": "3VXOY6cq9Hcfk0yxjzMgG155zLf4NwMSp2rBrZOCiX0",
+      "signature": "PffTnaU1XZD1KzcaXsq3Fe2SzGddoiKpDvwAu083jNMKjUIi0s592RBLAbFVhCp7/AoePAUmZVXs+Z2DzCFLCQ"
+    }
+  },
+  "version_meta": {
+    "updates": {
+      "Ava": {
+        "1.0.0.0.0": {
+          "win": {
+            "file_hash": "1900c6a652c6791f621f8b9be61ae382398ae412d6738585ec05fe6142fabc5a",
+            "file_size": 63124746,
+            "filename": "Ava-win-1.0alpha.zip"
+          }
+        },
+        "1.0.1.0.0": {
+          "win": {
+            "file_hash": "b00c4022f8162bf1db197120372ce3676ecb7d28bc1975fadd72aadab04d743a",
+            "file_size": 63124751,
+            "filename": "Ava-win-1.0.1alpha.zip",
+            "patch_name": "Ava-win-alpha-2",
+            "patch_hash": "7903f4d5d876b9e6e8691f687d70d90db957c51a5ab7b92f9b221f8bdce5fcc9",
+            "patch_size": 666234
+          }
+        },
+        "1.0.2.0.0": {
+          "win": {
+            "file_hash": "99b0eb47d6eb63bdbca5f594ecbf9c5793348e8197496ef83659da25d36193cc",
+            "file_size": 63124753,
+            "filename": "Ava-win-1.0.2alpha.zip",
+            "patch_name": "Ava-win-alpha-3",
+            "patch_hash": "6b708c5546269d947e1ce997e32399767f4260d3f0557ff6a977810bb7247851",
+            "patch_size": 674729
+          }
+        },
+        "1.0.3.0.0": {
+          "win": {
+            "file_hash": "6023cdabd2791e742330c37f680f54fdae8d1d3a4140101022f7fae6e57f301f",
+            "file_size": 63124767,
+            "filename": "Ava-win-1.0.3alpha.zip",
+            "patch_name": "Ava-win-alpha-4",
+            "patch_hash": "04c3bc096c740ad00fa0fcef947b1f543b95a39c3284fe994b21dff4d4c636f3",
+            "patch_size": 677906
+          }
+        },
+        "1.0.4.0.0": {
+          "win": {
+            "file_hash": "95b73aa5893e0b3a9b346769fbf00207dc20ea133eaa2688ec49272d87656952",
+            "file_size": 63124753,
+            "filename": "Ava-win-1.0.4alpha.zip",
+            "patch_name": "Ava-win-alpha-5",
+            "patch_hash": "e604e4345c6b67c6ac47277ace52fc425f0e6330794fb7f256b761fd00c7482e",
+            "patch_size": 804991
+          }
+        },
+        "1.0.5.0.0": {
+          "win": {
+            "file_hash": "d68240e4ab9d85e0b3446220393e86ace94d282d74d515868bf5e92a7cb3daa8",
+            "file_size": 63124839,
+            "filename": "Ava-win-1.0.5alpha.zip",
+            "patch_name": "Ava-win-alpha-6",
+            "patch_hash": "0f6949ddbf8797118b5eeaa19fe9e1a6c75599c150cbd4d6dbd5f7d2d3b14334",
+            "patch_size": 942983
+          }
+        }
+      }
+    },
+    "latest": {
+      "Ava": {
+        "alpha": {
+          "win": "1.0.5.0.0"
+        }
+      }
+    }
+  },
+  "py_repo_config": {
+    "patches": {
+      "Ava": 6
+    },
+    "package": {
+      "Ava": {
+        "win": "1.0.5.0.0"
+      }
+    }
+  }
+}

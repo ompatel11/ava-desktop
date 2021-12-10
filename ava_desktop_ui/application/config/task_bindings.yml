@@ -1,9 +1,1 @@
-DEMO:
-- timeSleep:
-    sleep: 0.7881419658660889
-- moveTo:
-    x: 504
-    y: 390
-- leftClick:
-    x: 504
-    y: 390
+'{}'

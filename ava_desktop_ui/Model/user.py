@@ -51,13 +51,16 @@ class User:
 
     def getTasks(self):
 
-        f = open("application/config/tasks.json")
-        data = json.load(f)
-        print(data)
-        for i in data:
-            print(i['name'])
-            self.task_list.append(i)
-        f.close()
+        try:
+            f = open("application/config/tasks.json")
+            data = json.load(f)
+            print(data)
+            for i in data:
+                print(i['name'])
+                self.task_list.append(i)
+            f.close()
+        except Exception as e:
+            print(e)
         print("Task list: ", self.task_list)
 
     def deleteData(self):
@@ -66,6 +69,17 @@ class User:
         self.prime_status = None
         self.idtoken = None
         self.task_list = None
+
+    def logout(self):
+        data = json.load(open('application/config/tasks.json'))
+
+        with open('application/config/tasks.json', 'w') as data_file:
+            print("Task List after deleting:", data)
+            json.dump('{}', data_file, indent=4)
+
+        yamlObj = yaml.YAML()
+        with open('application/config/task_bindings.yml', 'w') as file:
+            yamlObj.dump('{}', file)
 
 
 current_user = User()

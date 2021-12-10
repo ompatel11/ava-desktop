@@ -1,20 +1,23 @@
 import sys
 import threading
 import time
+
+import ruamel.yaml
 from PyQt5 import QtCore, QtWidgets, QtGui
 from PyQt5.QtCore import Qt, QSize
 from PyQt5.QtGui import QIcon, QPalette, QColor
-from PyQt5.QtWidgets import QMainWindow
+from PyQt5.QtWidgets import QMainWindow, QProxyStyle, QStyle
 from ruamel import yaml
 
 import FirebaseClientWrapper
 import Sessionhandler
 import audio_manager
 import Model.user as user
-from ava_desktop_ui.Model import tasks, TaskManager
-from ava_desktop_ui.Model.TaskRunner import RunTask
-from ava_desktop_ui.task_listener import TaskListener
+from Model import tasks, TaskManager
+from Model.TaskRunner import RunTask
+from task_listener import TaskListener
 from main_ui import Ui_main
+from pyupdater.client import Client
 
 
 class MainWindow(QMainWindow):
@@ -46,7 +49,7 @@ class MainWindow(QMainWindow):
 
         # SubMenu Buttons
         self.ui.btnLogout.clicked.connect(self.logout)
-        self.ui.btnSettings.clicked.connect(self.movetoTask)
+        # self.ui.btnSettings.clicked.connect(self.movetoTask)
 
         # Login Buttons
         self.ui.btnLoginPage.clicked.connect(self.movetoLogin)
@@ -165,7 +168,7 @@ class MainWindow(QMainWindow):
             print(self.taskEntries)
             empty = bool
             with open('application/config/task_bindings.yml') as fp:
-                data = yaml.load(fp)
+                data = yaml.load(fp, Loader=ruamel.yaml.Loader)
                 print("DATA:", data)
                 if data is None:
                     print("Empty yaml file")
@@ -258,37 +261,64 @@ class MainWindow(QMainWindow):
 
     def is_persistent(self):
 
-        try:
-            result = Sessionhandler.sessionHandler.readloginstate()
-            print("Result from readLoginstate() is:- ", result)
-            if result is not False and result is not None:
-                self.ui.stackPanel.setCurrentIndex(2)
+        result = Sessionhandler.sessionHandler.readloginstate()
+        print("Result from readLoginstate() is:- ", result)
+        if result is not False and result is not None:
+            self.ui.stackPanel.setCurrentIndex(2)
+            self.isMenuEnabled = True
+            user.current_user.email = result["email"]
+            user.current_user.uid = result["uid"]
+            user.current_user.idtoken = result["idtoken"]
+            print("From is_persistent() ", user.current_user.email)
+            if result['loginstate']:
+                user.current_user.getTasks()
+                print("Print UID", user.current_user.uid)
                 self.isMenuEnabled = True
-                user.current_user.email = result["email"]
-                user.current_user.uid = result["uid"]
-                user.current_user.idtoken = result["idtoken"]
-                print("From is_persistent() ", user.current_user.email)
-                if result['loginstate']:
-                    user.current_user.getTasks()
-                    print("Print UID", user.current_user.uid)
-                    self.isMenuEnabled = True
-                    # self.ui.stackPanel.setCurrentIndex(2)
-                    self.movetoTask()
-                    self.ui.frame.lower()
-            try:
-                if result['idtoken'] == "None":
-                    print("Result is ", result)
-            except Exception as error:
-                print(error)
-                self.ui.stackPanel.setCurrentIndex(0)
-
-        except Exception as e:
-            self.isMenuEnabled = False
-            print("No user found as ", e)
+                # self.ui.stackPanel.setCurrentIndex(2)
+                self.movetoTask()
+                self.ui.frame.lower()
+        try:
+            if result['idtoken'] == "None":
+                print("Result is ", result)
+        except Exception as error:
+            print(error)
             self.ui.stackPanel.setCurrentIndex(0)
+        # try:
+        #     result = Sessionhandler.sessionHandler.readloginstate()
+        #     print("Result from readLoginstate() is:- ", result)
+        #     if result is not False and result is not None:
+        #         self.ui.stackPanel.setCurrentIndex(2)
+        #         self.isMenuEnabled = True
+        #         user.current_user.email = result["email"]
+        #         user.current_user.uid = result["uid"]
+        #         user.current_user.idtoken = result["idtoken"]
+        #         print("From is_persistent() ", user.current_user.email)
+        #         if result['loginstate']:
+        #             user.current_user.getTasks()
+        #             print("Print UID", user.current_user.uid)
+        #             self.isMenuEnabled = True
+        #             # self.ui.stackPanel.setCurrentIndex(2)
+        #             self.movetoTask()
+        #             self.ui.frame.lower()
+        #     try:
+        #         if result['idtoken'] == "None":
+        #             print("Result is ", result)
+        #     except Exception as error:
+        #         print(error)
+        #         self.ui.stackPanel.setCurrentIndex(0)
+        #
+        # except Exception as e:
+        #     self.isMenuEnabled = False
+        #     print("No user found as ", e)
+        #     self.ui.stackPanel.setCurrentIndex(0)
 
     def logout(self):
         FirebaseClientWrapper.Firebase_app.logout()
+        for item in self.Ui_task_List:
+            print(item.parent().objectName())
+            self.ui.verticalLayout_4.removeWidget(
+                self.ui.TasksPage.findChild(QtWidgets.QFrame, item.parent().objectName()))
+        user.current_user.logout()
         self.ui.stackPanel.setCurrentIndex(0)
         self.isMenuEnabled = False
         self.ui.SubMenuFrame.lower()
@@ -303,16 +333,18 @@ class MainWindow(QMainWindow):
         print(pwd, self.ui.txtEmail_signup.text())
         if pwd and confirm_pwd:
             if pwd == confirm_pwd:
-                self.ui.frame.raise_()
+
                 result = FirebaseClientWrapper.Firebase_app.signup_new_user(self.ui.txtEmail_signup.text(),
                                                                             self.ui.txtPassword_signup.text(),
                                                                             False)
+                print("Signup Result: ", result)
                 if result is True:
+                    self.ui.frame.raise_()
                     self.RememberMe()
                     if self.isUser():
                         self.isMenuEnabled = True
                         self.ui.frame.lower()
-                        self.ui.stackPanel.setCurrentIndex(2)
+                        self.movetoTask()
 
                 else:
                     # Set the error message for the user
@@ -371,7 +403,7 @@ class MainWindow(QMainWindow):
                 if result.val()[documentId]['loginstate'] != "False":
                     print("Login Success")
                     self.isMenuEnabled = True
-                    self.ui.stackPanel.setCurrentIndex(2)
+                    self.ui.stackPanel.setCurrentIndex(3)
                     user.current_user.idtoken = self.client_token
                     user.current_user.email = result.val()[documentId]['email']
                     user.current_user.uid = documentId
@@ -409,7 +441,7 @@ class MainWindow(QMainWindow):
 
                 if self.isUser():
                     self.isMenuEnabled = True
-                    self.ui.stackPanel.setCurrentIndex(2)
+                    self.movetoTask()
                     self.ui.frame.lower()
             else:
                 # Set the error message for the user
@@ -501,24 +533,76 @@ class MainWindow(QMainWindow):
         self.dragPos = event.globalPos()
 
 
-if __name__ == "__main__":
-    app = QtWidgets.QApplication(sys.argv)
-    # Now use a palette to switch to dark colors:
-    palette = QPalette()
-    palette.setColor(QPalette.Window, QColor(53, 53, 53))
-    palette.setColor(QPalette.WindowText, QColor(63, 61, 84))
-    palette.setColor(QPalette.Base, QColor(25, 25, 25))
-    palette.setColor(QPalette.AlternateBase, QColor(53, 53, 53))
-    palette.setColor(QPalette.ToolTipBase, Qt.black)
-    palette.setColor(QPalette.ToolTipText, Qt.white)
-    palette.setColor(QPalette.Text, QColor(63, 61, 84))
-    palette.setColor(QPalette.Button, QColor(53, 53, 53))
-    palette.setColor(QPalette.ButtonText, QColor(63, 61, 84))
-    palette.setColor(QPalette.BrightText, Qt.red)
-    palette.setColor(QPalette.Link, QColor(42, 130, 218))
-    palette.setColor(QPalette.Highlight, QColor(42, 130, 218))
-    palette.setColor(QPalette.HighlightedText, Qt.black)
-    app.setPalette(palette)
-    app.setStyle("Oxygen")
+class Style(QProxyStyle):
+    def drawPrimitive(self, element, option, painter, widget):
+        if element == QStyle.PE_FrameFocusRect:
+            return
+        super().drawPrimitive(element, option, painter, widget)
+
+
+def RunApp(arg):
+    app = QtWidgets.QApplication(arg)
+    app.setStyle(Style())
     window = MainWindow()
     sys.exit(app.exec_())
+
+
+class ClientConfig(object):
+    PUBLIC_KEY = 'hEh3Jy6i61sNH42U4LGwRrggIQKd6CcqfGg1E8tOGPE'
+    APP_NAME = 'Ava'
+    COMPANY_NAME = 'Daemon Technologies'
+    HTTP_TIMEOUT = 30
+    MAX_DOWNLOAD_RETRIES = 3
+    UPDATE_URLS = ["http://localhost:8000/",
+                   "http://localhost:3000/"]
+
+
+def print_status_info(info):
+    total = info.get(u'total')
+    downloaded = info.get(u'downloaded')
+    status = info.get(u'status')
+    print(downloaded, total, status)
+
+
+if __name__ == "__main__":
+    print(sys.argv)
+    client = Client(
+        ClientConfig()
+    )
+    client.refresh()
+
+    client.add_progress_hook(print_status_info)
+    print("Sending request to web server")
+    app_update = client.update_check(ClientConfig.APP_NAME, "1.0.4", channel='alpha')
+    print("Updated application")
+
+    if app_update is not None:
+        app_update.download()
+    else:
+        print("No new updates found yet!")
+
+    if app_update is not None and app_update.is_downloaded():
+        app_update.extract_overwrite()
+        if sys.argv[1] == "true":
+            RunApp(sys.argv)
+    sys.stdin.read(1)
+    # app = QtWidgets.QApplication(sys.argv)
+    # Now use a palette to switch to dark colors:
+    # palette = QPalette()
+    # palette.setColor(QPalette.Window, QColor(53, 53, 53))
+    # palette.setColor(QPalette.WindowText, QColor(63, 61, 84))
+    # palette.setColor(QPalette.Base, QColor(25, 25, 25))
+    # palette.setColor(QPalette.AlternateBase, QColor(53, 53, 53))
+    # palette.setColor(QPalette.ToolTipBase, Qt.black)
+    # palette.setColor(QPalette.ToolTipText, Qt.white)
+    # palette.setColor(QPalette.Text, QColor(63, 61, 84))
+    # palette.setColor(QPalette.Button, QColor(53, 53, 53))
+    # palette.setColor(QPalette.ButtonText, QColor(63, 61, 84))
+    # palette.setColor(QPalette.BrightText, Qt.red)
+    # palette.setColor(QPalette.Link, QColor(42, 130, 218))
+    # palette.setColor(QPalette.Highlight, QColor(42, 130, 218))
+    # palette.setColor(QPalette.HighlightedText, Qt.black)
+    # app.setPalette(palette)
+    # app.setStyle(Style())
+    # window = MainWindow()
+    # sys.exit(app.exec_())

@@ -136,7 +136,7 @@ class SessionHandler:
                 user.current_user.idtoken).remove()
             # .child(
             #     user.current_user.uid).update(login_data)
-            print(result.val())
+
             # user.current_user.deleteData()
 
             print(boolean_result)
