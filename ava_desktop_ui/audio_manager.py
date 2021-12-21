@@ -13,6 +13,8 @@ import platform as _platform
 import yaml
 from yaml.loader import SafeLoader
 
+from Models import user
+from Models.TaskRunner import RunTask
 from main import MainWindow
 
 if _platform.system() == "Linux":
@@ -39,6 +41,13 @@ istyping = False
 # os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = credential_path
 
 
+class ThreadWithResult(threading.Thread):
+    def __init__(self, group=None, target=None, name=None, args=(), kwargs={}, *, daemon=None):
+        def function():
+            self.result = target(*args, **kwargs)
+        super().__init__(group=group, target=function, name=name, daemon=daemon)
+
+
 class TranscriptModifier(object):
     """Modifies the transcript according to the type of file detected"""
 
@@ -49,8 +58,14 @@ class TranscriptModifier(object):
         self.extension = extension
 
         commands = self.fetch_commands(self.extension)
-        t1 = threading.Thread(target=self.modify_continuous_speech(commands))
-        t1.start()
+        # t1 = threading.Thread(target=self.modify_continuous_speech(commands))
+
+    def startTrasnscription(self):
+        thread1 = ThreadWithResult(target=self.executetasks)
+        thread1.start()
+        thread1.join()
+        print(thread1.result)
+        return thread1.result
 
     def fetch_commands(self, ext):
         # Open the file and load the file
@@ -66,6 +81,21 @@ class TranscriptModifier(object):
 
     def modify_word_ext(self, commands):
         pass
+
+    def executetasks(self):
+        user.current_user.getTasks()
+        print("Tasks= ", user.current_user.task_list)
+        for item in user.current_user.task_list:
+            print(item['name'])
+            # str(self.transcript).casefold()
+            if str(self.transcript).casefold() == str(item['name']).casefold():
+                print("Match found")
+                runTaskObject = RunTask(item['name'])
+                print("Running Task")
+                runTaskObject.enumerateData()
+                return True
+            else:
+                return False
 
     def modify_continuous_speech(self, commands):
 
@@ -243,7 +273,7 @@ class ResumableMicrophoneStream:
         while not self.closed:
             data = []
             silent_chunks = 0
-            
+
             if self.new_stream and self.last_audio_input:
 
                 chunk_time = STREAMING_LIMIT / len(self.last_audio_input)
@@ -355,19 +385,46 @@ class AudioManager:
     Provides a control from the user interface
     """
 
+    # noinspection PyTypeChecker
     def __init__(self, main_obj: MainWindow):
         self._mainObject = main_obj
         cred = {
             "type": "service_account",
             "project_id": "ava-daemon",
             "private_key_id": "4ce53760f66722d399600fe21a614b2794ea25b6",
-            "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQC4WWZLLFJXVLaF\nxLbb8wB9mCH9EPIzcvpBiCOU9gzE13bVdq1XBBmiKwHksMEhdEOHSKVMk4Az7NFI\nqpZKDp6sSYkIVvn8r4Pkcts5jaraHlxmIJwEvZsSFhM25kYL8VPC35Gb6fH3ZNJY\ntxe/QrAN87PKnqlItcw1n0ignvSNmPNCasR69W1uW3G1/hHcxmn8qOBcMfRLo3qp\nHHsLQqPGPdovJUGpsItXiYyCKzyZcWctWt86N3ZiSH5khGTqLEGa7zf6/cAy8xs6\nNk00x5RsyKDsWuYGv3/GjBFXuL1hZkMvQeFqH3qSNJYmAx5JpbkwqaMeJGDPtQzw\nnILfTi3jAgMBAAECggEAFP1o3kpPnc3xck2xnF2QwrwdspjJWv5ObEO5+W4Cii8W\nQrvehLfcy1AmSQmvE8YPIkotOAjbYg4mziVOM2RywJ8m0SJGGHVLiSliuKzetTMb\nxi0UVp3YGDkXOvsBIr75kIiwJZZ/jHGYWa2PMKHBNfV3lSx3jeXVOI3IUTGIGs8L\n0wDx/0Jq/IzLAleD0TuX3v1njxtP3UrPA3w9z35oonw7gFz8WIq1g0VOlTgMRFq7\n3WolvClDBGNfV81hb/vHq6kmO69dBKq4ZDmWokXM/cfEpMTjEH4Zxi3dInORAmH0\n4TqJU4RXDVlsdLRB/qHCKzzVsx8Awci8g1oTarhwEQKBgQDrPXdpWU72MaiWzJbs\nEy10rUaFQI2UAl76d6+qX7/F2i1y0wlCg/SJPC/9lG/tpMppeF89aRz4bwZFrkIe\ninRrcrCHw/4UDuglDW7bNi3iwaRizQn4j5FUq4lOT3N+1udNAN5/6ll8ds74TFZp\nXsTQLXl0vmdW06zysbUElZlCZQKBgQDInjVlsOcXjjhTOOivm6Vofldb2F7ElGCN\nszNFmQvioDcr2ctIK1MYVqxP7DNVHf4OGcblmN/JTP4qVM0+tf4/KALKq9zcYCht\n8W2rFh7DLfaH7tJolLaQggNnJZ0FP/KaIPW3VXMn1c5ClsBOciA2t+JFkS9sWbUj\nOy3L7peGpwKBgBfqlORiDxQasmA6hrGTtZBiOYQ8rug4YX2ng3WX7IBqESrWZ9+a\nWNdHBj4KxGJt2aJleZFdyXM8nm+hKtm+C94MuAPlmkRhy5pQxk+FL58ZPuRIolXi\nCs2H7xrGGyDvKm76wqRQqC5uSdaWtEZcOzhLF0kWPp1mQfQeux+vMfi9AoGAd9TY\nfFeAkbdnuX4irtI/qPzeXYQOh0lBqyJBG+9hBAtDKTQ8km0eg0kyP8MMnmj92ZpY\nDciU037jypFAz5aRuVPC5yBlGlVtkM5G/YyG73rC6Usj70f1DLg8JB55fitGU/4g\nB1RJJqA1Rd0aHUFaMJUB2R/xvbyPz+2HW2q2o70CgYEAwKUlTanxB8yDej92OwCi\nRNhKaK0bBlRZpdJLz80bBLbI31Ffziib9NPdnUHnxRnf4tkghzC2pIWtsfErEnZS\nh0HXlvZ1ucXA42t0KyrMlieZMUbjUIH2tEt9WHXgnBY+kM+6dqPoMzQjRbZREpxU\nRHosnXBXmgpHDJYzT2Yy7Hc=\n-----END PRIVATE KEY-----\n",
+            "private_key": "-----BEGIN PRIVATE "
+                           "KEY-----\nMIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQC4WWZLLFJXVLaF"
+                           "\nxLbb8wB9mCH9EPIzcvpBiCOU9gzE13bVdq1XBBmiKwHksMEhdEOHSKVMk4Az7NFI"
+                           "\nqpZKDp6sSYkIVvn8r4Pkcts5jaraHlxmIJwEvZsSFhM25kYL8VPC35Gb6fH3ZNJY\ntxe"
+                           "/QrAN87PKnqlItcw1n0ignvSNmPNCasR69W1uW3G1/hHcxmn8qOBcMfRLo3qp"
+                           "\nHHsLQqPGPdovJUGpsItXiYyCKzyZcWctWt86N3ZiSH5khGTqLEGa7zf6/cAy8xs6\nNk00x5RsyKDsWuYGv3"
+                           "/GjBFXuL1hZkMvQeFqH3qSNJYmAx5JpbkwqaMeJGDPtQzw"
+                           "\nnILfTi3jAgMBAAECggEAFP1o3kpPnc3xck2xnF2QwrwdspjJWv5ObEO5+W4Cii8W"
+                           "\nQrvehLfcy1AmSQmvE8YPIkotOAjbYg4mziVOM2RywJ8m0SJGGHVLiSliuKzetTMb"
+                           "\nxi0UVp3YGDkXOvsBIr75kIiwJZZ/jHGYWa2PMKHBNfV3lSx3jeXVOI3IUTGIGs8L\n0wDx/0Jq"
+                           "/IzLAleD0TuX3v1njxtP3UrPA3w9z35oonw7gFz8WIq1g0VOlTgMRFq7\n3WolvClDBGNfV81hb"
+                           "/vHq6kmO69dBKq4ZDmWokXM/cfEpMTjEH4Zxi3dInORAmH0\n4TqJU4RXDVlsdLRB"
+                           "/qHCKzzVsx8Awci8g1oTarhwEQKBgQDrPXdpWU72MaiWzJbs\nEy10rUaFQI2UAl76d6+qX7/F2i1y0wlCg/SJPC"
+                           "/9lG/tpMppeF89aRz4bwZFrkIe\ninRrcrCHw/4UDuglDW7bNi3iwaRizQn4j5FUq4lOT3N+1udNAN5"
+                           "/6ll8ds74TFZp\nXsTQLXl0vmdW06zysbUElZlCZQKBgQDInjVlsOcXjjhTOOivm6Vofldb2F7ElGCN"
+                           "\nszNFmQvioDcr2ctIK1MYVqxP7DNVHf4OGcblmN/JTP4qVM0+tf4/KALKq9zcYCht"
+                           "\n8W2rFh7DLfaH7tJolLaQggNnJZ0FP/KaIPW3VXMn1c5ClsBOciA2t+JFkS9sWbUj"
+                           "\nOy3L7peGpwKBgBfqlORiDxQasmA6hrGTtZBiOYQ8rug4YX2ng3WX7IBqESrWZ9+a"
+                           "\nWNdHBj4KxGJt2aJleZFdyXM8nm+hKtm+C94MuAPlmkRhy5pQxk+FL58ZPuRIolXi"
+                           "\nCs2H7xrGGyDvKm76wqRQqC5uSdaWtEZcOzhLF0kWPp1mQfQeux+vMfi9AoGAd9TY\nfFeAkbdnuX4irtI"
+                           "/qPzeXYQOh0lBqyJBG+9hBAtDKTQ8km0eg0kyP8MMnmj92ZpY\nDciU037jypFAz5aRuVPC5yBlGlVtkM5G"
+                           "/YyG73rC6Usj70f1DLg8JB55fitGU/4g\nB1RJJqA1Rd0aHUFaMJUB2R/xvbyPz"
+                           "+2HW2q2o70CgYEAwKUlTanxB8yDej92OwCi"
+                           "\nRNhKaK0bBlRZpdJLz80bBLbI31Ffziib9NPdnUHnxRnf4tkghzC2pIWtsfErEnZS"
+                           "\nh0HXlvZ1ucXA42t0KyrMlieZMUbjUIH2tEt9WHXgnBY+kM+6dqPoMzQjRbZREpxU"
+                           "\nRHosnXBXmgpHDJYzT2Yy7Hc=\n-----END PRIVATE KEY-----\n",
             "client_email": "ava-desktop-demo@ava-daemon.iam.gserviceaccount.com",
             "client_id": "116614411031984579551",
             "auth_uri": "https://accounts.google.com/o/oauth2/auth",
             "token_uri": "https://oauth2.googleapis.com/token",
             "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
-            "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/ava-desktop-demo%40ava-daemon.iam.gserviceaccount.com"
+            "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/ava-desktop-demo%40ava-daemon"
+                                    ".iam.gserviceaccount.com "
         }
 
         self.language_code = "en-US"  # a BCP-47 language tag
@@ -396,6 +453,7 @@ class AudioManager:
         self.mic_manager.setExit()
         self.isClosed = True
 
+    # noinspection PyTypeChecker
     def start(self):
         self.mic_manager = ResumableMicrophoneStream(SAMPLE_RATE, CHUNK_SIZE)
         try:
@@ -495,7 +553,9 @@ class AudioManager:
 
                 stream.is_final_end_time = stream.result_end_time
                 stream.last_transcript_was_final = True
-                TranscriptModifier(transcript, extension)
+                modify_transcript = TranscriptModifier(transcript, extension)
+                if not modify_transcript.startTrasnscription():
+                    self.stop()
 
                 # Exit recognition if any of the transcribed phrases could be
                 # one of our keywords.
@@ -508,5 +568,3 @@ class AudioManager:
                 sys.stdout.write(str(corrected_time) + ": " + transcript + "\r")
 
                 stream.last_transcript_was_final = False
-
-# audioManager = AudioManager()

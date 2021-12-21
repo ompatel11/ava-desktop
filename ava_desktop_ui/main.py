@@ -1,30 +1,29 @@
 import sys
 import threading
 import time
-
 import ruamel.yaml
 from PyQt5 import QtCore, QtWidgets, QtGui
-from PyQt5.QtCore import Qt, QSize
-from PyQt5.QtGui import QIcon, QPalette, QColor
+from PyQt5.QtCore import Qt, QSize, QPropertyAnimation, QRect
+from PyQt5.QtGui import QIcon, QPixmap
 from PyQt5.QtWidgets import QMainWindow, QProxyStyle, QStyle
+import progressbar
 from ruamel import yaml
-
 import FirebaseClientWrapper
 import Sessionhandler
 import audio_manager
-import Model.user as user
-from Model import tasks, TaskManager
-from Model.TaskRunner import RunTask
+import Models.user as user
+from Models import tasks, TaskManager
+from Models.TaskRunner import RunTask
 from task_listener import TaskListener
-from main_ui import Ui_main
-from pyupdater.client import Client
+from ui import Ui_MainWindow
+from pyupdater.client import Client, AppUpdate
 
 
 class MainWindow(QMainWindow):
 
     def __init__(self):
         QMainWindow.__init__(self)
-        self.ui = Ui_main()
+        self.ui = Ui_MainWindow()
         self.ui.setupUi(self)
         # self.MircophoneManager = AudioManager()
         self.client_token = ''
@@ -37,19 +36,19 @@ class MainWindow(QMainWindow):
         self.ui.btnMenu.clicked.connect(self.openMenu)
         self.isMenuOpen = None
         self.isMenuEnabled = False
-        self.ui.SubMenuFrame.lower()
+        # self.ui.SubMenuFrame_2.lower()
 
         # Tasks UI controls
         self.Ui_task_List = []
-        self.ui.btnAddTask.clicked.connect(self.createTask)
+        # self.ui.btnAddTask.clicked.connect(self.createTask)
         self.ui.txtTitle.textChanged.connect(self.titleChange)
         self.ui.txtDescription.textChanged.connect(self.descriptionChange)
         self.ui.btnTaskListener.clicked.connect(self.starTaskListener)
-        self.startStatus = False
-
+        self.taskListenerObject = None
+        self.taskEntries = None
+        self.isListener = False
         # SubMenu Buttons
         self.ui.btnLogout.clicked.connect(self.logout)
-        # self.ui.btnSettings.clicked.connect(self.movetoTask)
 
         # Login Buttons
         self.ui.btnLoginPage.clicked.connect(self.movetoLogin)
@@ -68,7 +67,7 @@ class MainWindow(QMainWindow):
         self.is_persistent()
 
         # Speech Recognition Screen
-        self.ui.btnMicrophoneControl.clicked.connect(self.taskListener)
+        self.ui.btnMicrophoneControl.clicked.connect(self.pausePlayMic)
         self.audioManager = audio_manager.AudioManager(self)
 
         # Microphone Boolean
@@ -84,9 +83,29 @@ class MainWindow(QMainWindow):
 
     def titleChange(self):
         print(self.sender().text())
+        if self.sender().text() is not None:
+            self.ui.txtTitle.setStyleSheet("QLineEdit{\n"
+                                           "border: none;\n"
+                                           "background-color: #E7E7E7;\n"
+                                           "border-radius: 13px;\n"
+                                           "text-align: center;\n"
+                                           "}")
 
     def descriptionChange(self):
         print(self.sender().text())
+        if self.sender().text() is not None:
+            self.ui.txtDescription.setStyleSheet("QLineEdit{\n"
+                                                 "border: none;\n"
+                                                 "background-color: #E7E7E7;\n"
+                                                 "border-radius: 13px;\n"
+                                                 "text-align: center;\n"
+                                                 "}")
+
+    def moveToMicrophone(self):
+        if self.ui.stackPanel.currentIndex() == 2:
+            self.ui.stackPanel.setCurrentIndex(3)
+        else:
+            self.ui.stackPanel.setCurrentIndex(2)
 
     def moveWindow(self, event):
         # IF LEFT CLICK MOVE WINDOW
@@ -104,51 +123,115 @@ class MainWindow(QMainWindow):
     def closeWindow(self):
         QtCore.QCoreApplication.instance().quit()
 
+    def closeMenu(self):
+        self.ui.menu.lower()
+
     def openMenu(self):
         if self.isMenuEnabled:
             if self.isMenuOpen:
                 # Raise state
                 print("Inside true")
-                self.ui.SubMenuFrame.lower()
+                # self.closeMenuAnim = QPropertyAnimation(self.ui.menu, b"geometry")
+                # self.closeMenuAnim.setDuration(600)
+                # self.closeMenuAnim.setStartValue(QtCore.QRect(0, 30, 509, 681))
+                # self.closeMenuAnim.setEndValue(QtCore.QRect(0, 0, 0, 0))
+                # self.closeMenuAnim.setEasingCurve(QtCore.QEasingCurve.BezierSpline)
+                # self.closeMenuAnim.start()
+                # self.closeMenuAnim.finished.connect(self.closeMenu)
+                # self.ui.menu.setGeometry(QtCore.QRect(0, 0, 0, 0))
+                self.ui.menu.lower()
                 self.isMenuOpen = False
             else:
                 # Lower state
                 print("Inside false")
-                self.ui.SubMenuFrame.raise_()
+                self.ui.menu.raise_()
+                # self.openMenuAnim = QPropertyAnimation(self.ui.menu, b"geometry")
+                # self.openMenuAnim.setDuration(600)
+                # self.openMenuAnim.setStartValue(QtCore.QRect(0, 0, 0, 0))
+                # self.openMenuAnim.setEndValue(QtCore.QRect(0, 30, 509, 681))
+                # self.openMenuAnim.setEasingCurve(QtCore.QEasingCurve.BezierSpline)
+                # self.openMenuAnim.start()
+                # self.ui.menu.setGeometry(QtCore.QRect(0, 30, 509, 681))
+
                 self.isMenuOpen = True
 
     def starTaskListener(self):
         if not self.ui.txtTitle.text():
             print("Title Empty")
-            self.ui.txtTitle.setStyleSheet("border: 2px solid;\n"
-                                           "border-color: rgb(255, 148, 148);")
+            self.ui.txtTitle.setStyleSheet("border: none;\n"
+                                           "background-color: #E7E7E7;\n"
+                                           "border-radius: 13px;\n"
+                                           "text-align: center;\n"
+                                           "border: 2px solid;\n"
+                                           "border-color: rgb(255, 148, 148);}")
+        elif not self.ui.txtDescription.text():
+            print("Description Empty")
+            self.ui.txtDescription.setStyleSheet("border: none;\n"
+                                                 "background-color: #E7E7E7;\n"
+                                                 "border-radius: 13px;\n"
+                                                 "text-align: center;\n"
+                                                 "border: 2px solid;\n"
+                                                 "border-color: rgb(255, 148, 148);}")
         else:
-            print("startStatus: ", self.startStatus)
-            if self.startStatus:
+            if self.isListener:
                 # Set the icon to pause
-                self.startStatus = False
+                print("startStatus: ", self.isListener)
+                print("Setting icon to play.")
                 icon4 = QtGui.QIcon()
-                icon4.addPixmap(QtGui.QPixmap("Icons/Icon awesome-play@2x.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+                icon4.addPixmap(QtGui.QPixmap(".\\Icons/Icon awesome-play@2x.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
                 self.ui.btnTaskListener.setIcon(icon4)
-                self.taskListenerObject = None
+                self.ui.btnTaskListener.setIconSize(QSize(32, 32))
+                self.ui.btnTaskListener.setStyleSheet("QPushButton{\n"
+                                                      "background-color: rgb(62, 60, 84);\n"
+                                                      "border: 1px solid white;\n"
+                                                      "border-radius: 40;\n"
+                                                      "}\n"
+                                                      "QPushButton:pressed{\n"
+                                                      "    background-color: rgb(103, 100, 138);\n"
+                                                      "}")
+                self.isListener = False
+                if self.taskListenerObject is not None:
+                    print("Exiting taskListeners")
+                    self.taskListenerObject.setExit()
+                    if self.taskListenerObject.taskEntries is not None:
+                        self.taskEntries = self.taskListenerObject.taskEntries
+                        print("Task Entries from: ", self.taskEntries)
+                        self.createTask()
+            else:
+                # Set the icon to pause Start Listeners
+                print("Set the icon to pause")
+                print("startStatus: (else) ", self.isListener)
 
-            if not self.startStatus:
-                # Set the icon to play
-                self.startStatus = True
-                icon4 = QtGui.QIcon()
-                icon4.addPixmap(QtGui.QPixmap("Icons/Pause@2x.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
-                self.ui.btnTaskListener.setIcon(icon4)
+                self.startThread()
+                self.isListener = True
 
-                self.taskListenerObject = TaskListener(self.ui.txtTitle.text())
-                self.taskEntries = self.taskListenerObject.startListeners()
-                print("From startListener", self.taskEntries)
+    def startThread(self):
+        self.TaskListenerThread = threading.Thread(target=self.executeListenerThread)
+        self.TaskListenerThread.start()
+        self.TaskListenerThread.join()
+        if self.taskEntries is not None:
+            self.createTask()
 
-                if self.taskEntries is not False:
-                    icon4 = QtGui.QIcon()
-                    icon4.addPixmap(QtGui.QPixmap("Icons/Icon awesome-play@2x.png"), QtGui.QIcon.Normal,
-                                    QtGui.QIcon.Off)
-                    self.ui.btnTaskListener.setIcon(icon4)
-                    self.taskListenerObject = None
+    def executeListenerThread(self):
+        print("Setting Pause Icon")
+        self.taskListenerObject = TaskListener(self.ui.txtTitle.text(), self)
+        self.taskEntries = self.taskListenerObject.startListeners()
+        print("From startListener", self.taskEntries)
+        if self.taskEntries is not None:
+            icon4 = QtGui.QIcon()
+            icon4.addPixmap(QtGui.QPixmap("Icons/Icon awesome-play@2x.png"), QtGui.QIcon.Normal,
+                            QtGui.QIcon.Off)
+            self.ui.btnTaskListener.setIcon(icon4)
+            self.ui.btnTaskListener.setIconSize(QSize(32, 32))
+            self.ui.btnTaskListener.setStyleSheet("QPushButton{\n"
+                                                  "background-color: rgb(62, 60, 84);\n"
+                                                  "border: 1px solid white;\n"
+                                                  "border-radius: 40;\n"
+                                                  "}\n"
+                                                  "QPushButton:pressed{\n"
+                                                  "    background-color: rgb(103, 100, 138);\n"
+                                                  "}")
+            self.taskListenerObject = None
 
     def createTask(self):
         title = self.ui.txtTitle.text()
@@ -157,16 +240,17 @@ class MainWindow(QMainWindow):
         print("description: ", description)
 
         if title and description:
-            self.taskObject = tasks.Task(self, title, description).createTaskComponent()
+            self.taskObject = tasks.Task(self, title, description).createTask()
             TaskManager.TaskLists.addTask(self.taskObject.findChild(QtWidgets.QPushButton, f"btnRuntask_{title}"))
-            print(self.taskObject.findChild(QtWidgets.QPushButton, f"btnRuntask_{title}").objectName())
+            print(self.taskObject.objectName())
             self.taskObject.findChild(QtWidgets.QPushButton, f"btnRuntask_{title}").clicked.connect(self.runTask)
             self.taskObject.findChild(QtWidgets.QPushButton, f"btnDelete_{title}").clicked.connect(self.deleteTask)
-            self.ui.verticalLayout_4.addWidget(self.taskObject)
+            self.ui.verticalLayout_2.addWidget(self.taskObject)
+            print("Task added to UI")
             taskJsonObj = {'name': title, 'description': description, 'runCounter': '0'}
             user.current_user.addTask(taskJsonObj)
             print(self.taskEntries)
-            empty = bool
+            empty = False
             with open('application/config/task_bindings.yml') as fp:
                 data = yaml.load(fp, Loader=ruamel.yaml.Loader)
                 print("DATA:", data)
@@ -174,9 +258,11 @@ class MainWindow(QMainWindow):
                     print("Empty yaml file")
                     empty = True
             if empty:
+                print("Writing task to file")
                 with open('application/config/task_bindings.yml', 'w', encoding="utf-8") as yamlfile:
                     yaml.dump(self.taskEntries, yamlfile, Dumper=yaml.RoundTripDumper, default_flow_style=False)
             else:
+                print("Appending task to file")
                 with open('application/config/task_bindings.yml', 'a', encoding="utf-8") as yamlfile:
                     yaml.dump(self.taskEntries, yamlfile, Dumper=yaml.RoundTripDumper, default_flow_style=False)
 
@@ -186,7 +272,7 @@ class MainWindow(QMainWindow):
             self.ui.txtTitle.setText("")
             self.ui.txtDescription.setText("")
             print("Removing Empty Label", self.ui.TasksPage.findChild(QtWidgets.QLabel, "emptyTasksLabel"))
-            self.ui.verticalLayout_4.removeWidget(
+            self.ui.verticalLayout_2.removeWidget(
                 self.ui.TasksPage.findChild(QtWidgets.QLabel, "emptyTasksLabel"))
 
         if not title:
@@ -196,14 +282,18 @@ class MainWindow(QMainWindow):
 
         if not description:
             print("Description Empty")
-            self.ui.txtDescription.setStyleSheet("border: 2px solid;\n"
-                                                 "border-color: rgb(255, 148, 148);")
+            self.ui.txtDescription.setStyleSheet("border: none;\n"
+                                                 "background-color: #E7E7E7;\n"
+                                                 "border-radius: 13px;\n"
+                                                 "text-align: center;\n"
+                                                 "border: 2px solid;\n"
+                                                 "border-color: rgb(255, 148, 148);}")
 
     def deleteTask(self):
         print("Delete task called")
         print(str(self.sender().objectName()).replace("btnDelete_", ""))
         user.current_user.deleteTask(str(self.sender().objectName()).replace("btnDelete_", ""))
-        self.ui.verticalLayout_4.removeWidget(self.sender().parentWidget())
+        self.ui.verticalLayout_2.removeWidget(self.sender().parentWidget())
         print("User task list: ", user.current_user.task_list)
         if not user.current_user.task_list:
             emptyTasksLabel = QtWidgets.QLabel()
@@ -217,8 +307,9 @@ class MainWindow(QMainWindow):
             emptyTasksLabel.setStyleSheet("color:rgb(63, 61, 84)")
             emptyTasksLabel.setAlignment(QtCore.Qt.AlignCenter)
             emptyTasksLabel.setObjectName("emptyTasksLabel")
-            emptyTasksLabel.setText("NO tasks found!")
-            self.ui.verticalLayout_4.addWidget(emptyTasksLabel)
+            addTaskPng = QPixmap('Icons/add note.png')
+            emptyTasksLabel.setPixmap(addTaskPng)
+            self.ui.verticalLayout_2.addWidget(emptyTasksLabel)
             print("Empty Label Added")
 
     def taskListener(self):
@@ -231,12 +322,18 @@ class MainWindow(QMainWindow):
         Calls to the microphone manager class will be made from here.
         """
         if self.audioManager.isClosed is False:
-            self.ui.btnMicrophoneControl.setIcon(QIcon("Icons/Pause@2x.png"))
-            self.ui.btnMicrophoneControl.setIconSize(QSize(64, 64))
-            self.ui.btnMicrophoneControl.setStyleSheet("""
-            background-color: white;
-            border: none;
-            """)
+            icon4 = QtGui.QIcon()
+            icon4.addPixmap(QtGui.QPixmap("Icons/Pause@2x.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+            self.ui.btnTaskListener.setIcon(icon4)
+            self.ui.btnTaskListener.setIconSize(QSize(32, 32))
+            self.ui.btnTaskListener.setStyleSheet("QPushButton{\n"
+                                                  "background-color: rgb(255, 255, 255);\n"
+                                                  "border: 1px solid white;\n"
+                                                  "border-radius: 40;\n"
+                                                  "}\n"
+                                                  "QPushButton:pressed{\n"
+                                                  "    background-color: rgb(103, 100, 138);\n"
+                                                  "}")
             if self.audioManager is None:
                 # Checkbox for continuous transcription
                 audio_manager.audioManger = audio_manager.AudioManager(self)
@@ -247,13 +344,18 @@ class MainWindow(QMainWindow):
             t1.start()
             self.audioManager.isClosed = True
         else:
-            self.ui.btnMicrophoneControl.setIconSize(QSize(32, 32))
-            self.ui.btnMicrophoneControl.setIcon(QIcon("Icons/Icon ionic-ios-mic.png"))
-            self.ui.btnMicrophoneControl.setStyleSheet("""
-            background-color: rgb(62, 60, 84);
-            border: 1px solid white;
-            border-radius: 40;
-            """)
+            icon4 = QtGui.QIcon()
+            icon4.addPixmap(QtGui.QPixmap(".\\Icons/Icon awesome-play@2x.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+            self.ui.btnTaskListener.setIcon(icon4)
+            self.ui.btnTaskListener.setIconSize(QSize(32, 32))
+            self.ui.btnTaskListener.setStyleSheet("QPushButton{\n"
+                                                  "background-color: rgb(62, 60, 84);\n"
+                                                  "border: 1px solid white;\n"
+                                                  "border-radius: 40;\n"
+                                                  "}\n"
+                                                  "QPushButton:pressed{\n"
+                                                  "    background-color: rgb(103, 100, 138);\n"
+                                                  "}")
             t1 = threading.Thread(target=self.audioManager.stop)
             t1.start()
             audio_manager.audioManger = None
@@ -276,7 +378,7 @@ class MainWindow(QMainWindow):
                 self.isMenuEnabled = True
                 # self.ui.stackPanel.setCurrentIndex(2)
                 self.movetoTask()
-                self.ui.frame.lower()
+                # self.ui.frame.lower()
         try:
             if result['idtoken'] == "None":
                 print("Result is ", result)
@@ -316,12 +418,12 @@ class MainWindow(QMainWindow):
         FirebaseClientWrapper.Firebase_app.logout()
         for item in self.Ui_task_List:
             print(item.parent().objectName())
-            self.ui.verticalLayout_4.removeWidget(
+            self.ui.verticalLayout_2.removeWidget(
                 self.ui.TasksPage.findChild(QtWidgets.QFrame, item.parent().objectName()))
         user.current_user.logout()
         self.ui.stackPanel.setCurrentIndex(0)
         self.isMenuEnabled = False
-        self.ui.SubMenuFrame.lower()
+        self.ui.menu.lower()
 
     def user_signup(self):
         """
@@ -339,11 +441,11 @@ class MainWindow(QMainWindow):
                                                                             False)
                 print("Signup Result: ", result)
                 if result is True:
-                    self.ui.frame.raise_()
+                    # self.ui.frame.raise_()
                     self.RememberMe()
                     if self.isUser():
                         self.isMenuEnabled = True
-                        self.ui.frame.lower()
+                        # self.ui.frame.lower()
                         self.movetoTask()
 
                 else:
@@ -375,7 +477,7 @@ class MainWindow(QMainWindow):
         # web.setGeometry(QtCore.QRect(30, 30, 421, 571))
         # web.show()
 
-        self.ui.frame.raise_()
+        # self.ui.frame.raise_()
         import webbrowser
         import secrets
 
@@ -388,7 +490,7 @@ class MainWindow(QMainWindow):
         self.readLogin.start()
 
     def wait_forloginstate(self):
-        self.ui.frame.raise_()
+        # self.ui.frame.raise_()
         for i in range(5):
             try:
                 time.sleep(2)
@@ -408,10 +510,10 @@ class MainWindow(QMainWindow):
                     user.current_user.email = result.val()[documentId]['email']
                     user.current_user.uid = documentId
                     Sessionhandler.sessionHandler.setUserData()
-                    self.ui.frame.lower()
+                    # self.ui.frame.lower()
             except Exception as e:
                 print(e)
-        self.ui.frame.lower()
+        # self.ui.frame.lower()
 
     def user_login(self):
         """
@@ -426,7 +528,7 @@ class MainWindow(QMainWindow):
 
         if pwd and email:
 
-            self.ui.waitingSpinner.start()
+            # self.ui.waitingSpinner.start()
             # Persist login credentials pending
 
             if self.ui.chkRememberme.isChecked():
@@ -442,7 +544,7 @@ class MainWindow(QMainWindow):
                 if self.isUser():
                     self.isMenuEnabled = True
                     self.movetoTask()
-                    self.ui.frame.lower()
+                    # self.ui.frame.lower()
             else:
                 # Set the error message for the user
                 print(result)
@@ -481,8 +583,9 @@ class MainWindow(QMainWindow):
             emptyTasksLabel.setStyleSheet("color:rgb(63, 61, 84)")
             emptyTasksLabel.setAlignment(QtCore.Qt.AlignCenter)
             emptyTasksLabel.setObjectName("emptyTasksLabel")
-            emptyTasksLabel.setText("NO tasks found!")
-            self.ui.verticalLayout_4.addWidget(emptyTasksLabel)
+            addTaskPng = QPixmap('Icons/add note.png')
+            emptyTasksLabel.setPixmap(addTaskPng)
+            self.ui.verticalLayout_2.addWidget(emptyTasksLabel)
 
             print("Label", self.ui.TasksPage.findChild(QtWidgets.QLabel, "emptyTasksLabel"))
             print("Layout children: ", self.ui.TasksPage.children())
@@ -490,7 +593,7 @@ class MainWindow(QMainWindow):
 
             for item in user.current_user.task_list:
                 self.taskObject: QtWidgets.QFrame = tasks.Task(self, item['name'],
-                                                               item['description']).createTaskComponent()
+                                                               item['description']).createTask()
                 TaskManager.TaskLists.addTask(
                     self.taskObject.findChild(QtWidgets.QPushButton, f"btnRuntask_{item['name']}"))
                 print(self.taskObject.findChild(QtWidgets.QPushButton, f"btnRuntask_{item['name']}").objectName())
@@ -498,10 +601,10 @@ class MainWindow(QMainWindow):
                     self.runTask)
                 self.taskObject.findChild(QtWidgets.QPushButton, f"btnDelete_{item['name']}").clicked.connect(
                     self.deleteTask)
-                self.ui.verticalLayout_4.addWidget(self.taskObject)
+                self.ui.verticalLayout_2.addWidget(self.taskObject)
                 self.Ui_task_List.append(self.taskObject.findChild(QtWidgets.QPushButton, f"btnRuntask_{item['name']}"))
 
-        self.ui.SubMenuFrame.lower()
+        self.ui.menu.lower()
         self.isMenuOpen = False
 
     def _executeThread(self):
@@ -510,6 +613,7 @@ class MainWindow(QMainWindow):
         runTaskObject.enumerateData()
 
     def runTask(self, event):
+        self.showMinimized()
         print("Task Running:", self.sender().objectName())
         self.RuntimeTaskName = self.sender().objectName().split('_')[1]
         t1 = threading.Thread(target=self._executeThread)
@@ -542,7 +646,11 @@ class Style(QProxyStyle):
 
 def RunApp(arg):
     app = QtWidgets.QApplication(arg)
-    app.setStyle(Style())
+    dir_ = QtCore.QDir("Poppins")
+    _poppinsBold = QtGui.QFontDatabase.addApplicationFont("application/fonts/Poppins-Bold.ttf")
+    _poppinsLight = QtGui.QFontDatabase.addApplicationFont("application/fonts/Poppins-Light.ttf")
+    _poppinsExtraLight = QtGui.QFontDatabase.addApplicationFont("application/fonts/Poppins-ExtraLight.ttf")
+    # app.setStyle(Style())
     window = MainWindow()
     sys.exit(app.exec_())
 
@@ -550,42 +658,65 @@ def RunApp(arg):
 class ClientConfig(object):
     PUBLIC_KEY = 'hEh3Jy6i61sNH42U4LGwRrggIQKd6CcqfGg1E8tOGPE'
     APP_NAME = 'Ava'
-    COMPANY_NAME = 'Daemon Technologies'
+    APP_VERSION = "0.0.9"
+    COMPANY_NAME = 'Daemon Tech'
     HTTP_TIMEOUT = 30
     MAX_DOWNLOAD_RETRIES = 3
-    UPDATE_URLS = ["http://localhost:8000/",
-                   "http://localhost:3000/"]
+    UPDATE_URLS = ['http://localhost:8000']
 
 
-def print_status_info(info):
-    total = info.get(u'total')
-    downloaded = info.get(u'downloaded')
-    status = info.get(u'status')
-    print(downloaded, total, status)
+bar = None
+
+
+def check_for_update():
+    def print_status_info(info):
+        total = info.get(u'total')
+        downloaded = info.get(u'downloaded')
+        status = info.get(u'status')
+        print(downloaded, total, status)
+
+    def cb(status):
+        global bar
+
+        if bar is None:
+            bar = progressbar.ProgressBar(widgets=[progressbar.Percentage(), progressbar.Bar()], fd=sys.stdout).start()
+        zz = float(status['percent_complete'])
+
+        bar.update(zz)
+
+    # sys.stdout = open(os.devnull, 'w')
+
+    client = Client(ClientConfig(), refresh=True,
+                    headers={'basic_auth': 'brofewfefwefewef:EKAXsWkdt5H6yJEmtexN'})
+
+    client.platform = "win"
+    app_update = client.update_check(ClientConfig.APP_NAME, ClientConfig.APP_VERSION, channel='stable')
+    if app_update is not None:
+        app_update.progress_hooks.append(cb)
+        app_update.progress_hooks.append(print_status_info)
+        if app_update.download():
+            if isinstance(app_update, AppUpdate):
+                app_update.extract_restart()
+                RunApp(sys.argv)
+                return True
+            else:
+                app_update.extract()
+                return True
+    return False
 
 
 if __name__ == "__main__":
     print(sys.argv)
-    client = Client(
-        ClientConfig()
-    )
-    client.refresh()
+    print('Running Alpha build number ', ClientConfig.APP_VERSION)
+    print("Sending request to web server:  ", ClientConfig.UPDATE_URLS)
+    print("Updates are disabled for Alpha builds!")
+    RunApp(sys.argv)
+    # if check_for_update():
+    #     print('there\'s a new update :D')
+    # else:
+    #     print("Running on latest version: ", ClientConfig.APP_VERSION)
+    #     RunApp(sys.argv)
 
-    client.add_progress_hook(print_status_info)
-    print("Sending request to web server")
-    app_update = client.update_check(ClientConfig.APP_NAME, "1.0.4", channel='alpha')
-    print("Updated application")
-
-    if app_update is not None:
-        app_update.download()
-    else:
-        print("No new updates found yet!")
-
-    if app_update is not None and app_update.is_downloaded():
-        app_update.extract_overwrite()
-        if sys.argv[1] == "true":
-            RunApp(sys.argv)
-    sys.stdin.read(1)
     # app = QtWidgets.QApplication(sys.argv)
     # Now use a palette to switch to dark colors:
     # palette = QPalette()

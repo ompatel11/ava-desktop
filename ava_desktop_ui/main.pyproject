@@ -1,3 +1,3 @@
 {
-    "files": ["main.py","form.ui","FirebaseClientWrapper.py", "audio_manager.py"]
+    "files": ["main.py","FirebaseClientWrapper.py","audio_manager.py","form.ui","avaresources.qrc", "new_form_ui.ui"]
 }

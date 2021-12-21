@@ -1,7 +1,7 @@
 import os
 from configparser import ConfigParser
 
-from Model import user
+from Models import user
 import FirebaseClientWrapper
 
 

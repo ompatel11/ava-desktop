@@ -2,7 +2,7 @@
 import json
 import secrets
 
-from Model import user
+from Models import user
 import pyrebase
 
 import Sessionhandler

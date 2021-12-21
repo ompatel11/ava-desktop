@@ -1,1 +1,22 @@
-'{}'
+Open Mail:
+- timeSleep:
+    sleep: 1
+- hotKeyPress: Key.cmd
+- hotKeyRelease: Key.cmd
+- timeSleep:
+    sleep: 1
+- g
+- m
+- a
+- i
+- l
+- .
+- c
+- o
+- m
+- timeSleep:
+    sleep: 1
+- hotKeyPress: Key.enter
+- hotKeyRelease: Key.enter
+- timeSleep:
+    sleep: 1

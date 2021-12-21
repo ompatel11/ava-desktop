@@ -1,12 +1,17 @@
+import threading
 import time
 
+from PyQt5 import QtGui, QtCore
+from PyQt5.QtCore import QSize
 from pynput.keyboard import Key
 from pynput.mouse import Button
 from pynput import keyboard, mouse
 
 
 class TaskListener:
-    def __init__(self, taskName):
+    def __init__(self, taskName, main_obj):
+        self._mainObject = main_obj
+        self.isFinished = bool
         self.final_string = str
         self.taskName = taskName
         self.taskEntries = {str(self.taskName): []}
@@ -51,6 +56,33 @@ class TaskListener:
         }
         self.start_time = time.time()
         self.break_program = False
+        icon4 = QtGui.QIcon()
+        icon4.addPixmap(QtGui.QPixmap("Icons/Pause@2x.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        self._mainObject.ui.btnTaskListener.setIcon(icon4)
+        self._mainObject.ui.btnTaskListener.setIconSize(QtCore.QSize(32, 32))
+        self._mainObject.ui.btnTaskListener.setStyleSheet("QPushButton{\n"
+                                                          "background-color: rgb(255, 255, 255);\n"
+                                                          "border: 1px solid white;\n"
+                                                          "border-radius: 40;\n"
+                                                          "}\n"
+                                                          "QPushButton:pressed{\n"
+                                                          "    background-color: rgb(255, 255, 255);\n"
+                                                          "}")
+
+    def setExit(self):
+        self.break_program = True
+        icon4 = QtGui.QIcon()
+        icon4.addPixmap(QtGui.QPixmap(".\\Icons/Icon awesome-play@2x.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        self._mainObject.ui.btnTaskListener.setIcon(icon4)
+        self._mainObject.ui.btnTaskListener.setIconSize(QSize(32, 32))
+        self._mainObject.ui.btnTaskListener.setStyleSheet("QPushButton{\n"
+                                                          "background-color: rgb(62, 60, 84);\n"
+                                                          "border: 1px solid white;\n"
+                                                          "border-radius: 40;\n"
+                                                          "}\n"
+                                                          "QPushButton:pressed{\n"
+                                                          "    background-color: rgb(103, 100, 138);\n"
+                                                          "}")
 
     def elapsed_time(self):
         """
@@ -67,14 +99,21 @@ class TaskListener:
         Setup Keyboard and Mouse Listeners
         :return None:
         """
+        t1 = threading.Thread(target=self.executeListeners)
+        t1.start()
+
+    def executeListeners(self):
+        self.isFinished = False
         with keyboard.Listener(on_press=self.on_press, on_release=self.on_release) as keyboarListener, mouse.Listener(
                 on_move=self.on_move,
                 on_click=self.on_click) as mouseListener:
             keyboarListener.join()
             mouseListener.join()
         if True:
+            print("Break program:", self.break_program)
             try:
                 print("While loop ended ", self.taskEntries)
+                self.isFinished = True
                 # with open('task_bindings.yml', 'a', encoding="utf-8") as yamlfile:
                 #     yaml.dump(self.taskEntries, yamlfile, Dumper=yaml.RoundTripDumper, default_flow_style=False)
                 return self.taskEntries
@@ -106,10 +145,14 @@ class TaskListener:
         """
         # if self.lastPressedStatus == key:
         #     return
-
+        if self.break_program:
+            print('Exit called')
+            self.isFinished = True
+            return False
         if key == keyboard.Key.end:
             print('end pressed')
             self.break_program = True
+            self.isFinished = True
             return False
         self.lastPressedStatus = key
         print("Key pressed: {0}".format(key))
@@ -125,7 +168,7 @@ class TaskListener:
                 k = str(key.char)
                 bArr = bytearray()
                 bArr.extend(map(ord, k))
-                print("CTRL Pressed: ",  bArr.decode("UTF-8"))
+                print("CTRL Pressed: ", bArr.decode("UTF-8"))
                 for b in bArr:
                     print(b, hex(b), chr(b))
                 self.taskEntries[self.taskName].append(bArr.decode("UTF-8"))
@@ -135,6 +178,7 @@ class TaskListener:
 
     def on_move(self, x, y):
         if self.break_program:
+            self.isFinished = False
             return False
         # print("Mouse moved to ({0}, {1})".format(x, y))
         # i = 0
@@ -151,6 +195,10 @@ class TaskListener:
         :param pressed:
         :return:
         """
+        if self.break_program:
+            print('Exit called')
+            self.isFinished = True
+            return False
         if pressed:
             print('Mouse clicked at ({0}, {1}) with {2}'.format(x, y, button))
             cliked = {"x": x, "y": y}
@@ -172,6 +220,5 @@ class TaskListener:
 
     def on_scroll(self, x, y, dx, dy):
         print('Mouse scrolled at ({0}, {1})({2}, {3})'.format(x, y, dx, dy))
-
 
 # TaskListener("TEST2").startListeners()

@@ -1,1 +1,32 @@
-'{}'
+Demo1:
+- timeSleep:
+    sleep: 1
+- hotKeyPress: Key.cmd
+- hotKeyRelease: Key.cmd
+- timeSleep:
+    sleep: 1
+- m
+- a
+- i
+- timeSleep:
+    sleep: 1
+- hotKeyPress: Key.enter
+- hotKeyRelease: Key.enter
+- timeSleep:
+    sleep: 1
+- timeSleep:
+    sleep: 3.435518503189087
+- moveTo:
+    x: 1298
+    y: 1063
+- leftClick:
+    x: 1298
+    y: 1063
+- timeSleep:
+    sleep: 0.8081765174865723
+- moveTo:
+    x: 948
+    y: 698
+- leftClick:
+    x: 948
+    y: 698

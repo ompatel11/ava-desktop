@@ -1,0 +1,71 @@
+<RCC>
+    <qresource prefix="/appfonts/fonts">
+        <file>application/fonts/OFL.txt</file>
+        <file>application/fonts/Poppins-Black.ttf</file>
+        <file>application/fonts/Poppins-BlackItalic.ttf</file>
+        <file>application/fonts/Poppins-Bold.ttf</file>
+        <file>application/fonts/Poppins-BoldItalic.ttf</file>
+        <file>application/fonts/Poppins-ExtraBold.ttf</file>
+        <file>application/fonts/Poppins-ExtraBoldItalic.ttf</file>
+        <file>application/fonts/Poppins-ExtraLight.ttf</file>
+        <file>application/fonts/Poppins-ExtraLightItalic.ttf</file>
+        <file>application/fonts/Poppins-Italic.ttf</file>
+        <file>application/fonts/Poppins-Light.ttf</file>
+        <file>application/fonts/Poppins-LightItalic.ttf</file>
+        <file>application/fonts/Poppins-Medium.ttf</file>
+        <file>application/fonts/Poppins-MediumItalic.ttf</file>
+        <file>application/fonts/Poppins-Regular.ttf</file>
+        <file>application/fonts/Poppins-SemiBold.ttf</file>
+        <file>application/fonts/Poppins-SemiBoldItalic.ttf</file>
+        <file>application/fonts/Poppins-Thin.ttf</file>
+        <file>application/fonts/Poppins-ThinItalic.ttf</file>
+    </qresource>
+    <qresource prefix="/"/>
+    <qresource prefix="/Icons">
+        <file>Icons/add note.png</file>
+        <file>Icons/Delete Task Icon.png</file>
+        <file>Icons/Icon awesome-arrow-left White.png</file>
+        <file>Icons/Icon awesome-arrow-left White@2x.png</file>
+        <file>Icons/Icon awesome-arrow-left.png</file>
+        <file>Icons/Icon awesome-arrow-left@2x.png</file>
+        <file>Icons/Icon awesome-play.png</file>
+        <file>Icons/Icon awesome-play@2x.png</file>
+        <file>Icons/Icon awesome-window-maximize.png</file>
+        <file>Icons/Icon awesome-window-maximize@2x.png</file>
+        <file>Icons/Icon awesome-window-minimize.png</file>
+        <file>Icons/Icon awesome-window-minimize@2x.png</file>
+        <file>Icons/Icon feather-edit.png</file>
+        <file>Icons/Icon feather-edit@2x.png</file>
+        <file>Icons/Icon feather-edit-1.png</file>
+        <file>Icons/Icon feather-edit-2.png</file>
+        <file>Icons/Icon feather-edit-3.png</file>
+        <file>Icons/Icon feather-edit-4.png</file>
+        <file>Icons/Icon feather-edit-5.png</file>
+        <file>Icons/Icon feather-edit-6.png</file>
+        <file>Icons/Icon feather-edit-7.png</file>
+        <file>Icons/Icon ionic-ios-add.png</file>
+        <file>Icons/Icon ionic-ios-add@2x.png</file>
+        <file>Icons/Icon ionic-ios-close.png</file>
+        <file>Icons/Icon ionic-ios-close@2x.png</file>
+        <file>Icons/Icon ionic-ios-close-circle-outline.png</file>
+        <file>Icons/Icon ionic-ios-close-circle-outline@2x.png</file>
+        <file>Icons/Icon ionic-ios-mic.png</file>
+        <file>Icons/Icon ionic-ios-mic@2x.png</file>
+        <file>Icons/Icon ionic-ios-settings.png</file>
+        <file>Icons/Icon ionic-ios-settings@2x.png</file>
+        <file>Icons/Icon open-account-logout.png</file>
+        <file>Icons/Icon open-account-logout@2x.png</file>
+        <file>Icons/icons8-facebook-circled-48.png</file>
+        <file>Icons/icons8-github-48.png</file>
+        <file>Icons/icons8-google-48.png</file>
+        <file>Icons/Menu Icon.png</file>
+        <file>Icons/Pause.png</file>
+        <file>Icons/Pause@2x.png</file>
+        <file>Icons/Rectangle 142.png</file>
+        <file>Icons/Run Task Icon.png</file>
+        <file>Icons/Run Task.png</file>
+        <file>Icons/Task Close.png</file>
+        <file>Icons/Task Icons.png</file>
+        <file>Icons/user icon.png</file>
+    </qresource>
+</RCC>
