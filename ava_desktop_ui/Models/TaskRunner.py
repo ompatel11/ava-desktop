@@ -137,7 +137,7 @@ class RunTask:
 
     def timeSleep(self, data):
         print("Sleeping")
-        time.sleep(int(data["sleep"]))
+        time.sleep(float(data["sleep"]))
 
     def hotKeyPress(self, data):
         keyboard.press(self.ReversekeyMapping[data])

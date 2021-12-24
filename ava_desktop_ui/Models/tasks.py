@@ -3,6 +3,7 @@ import time
 from PyQt5 import QtCore, QtWidgets, QtGui
 import yaml
 from yaml import SafeLoader
+import qtawesome as qta
 
 from .Appfonts import appFonts
 
@@ -50,8 +51,7 @@ class Task:
                                                              "    background-color: rgb(103, 100, 138);\n"
                                                              "}")
         globals()["btnRuntask_" + self.taskId].setText("")
-        icon5 = QtGui.QIcon()
-        icon5.addPixmap(QtGui.QPixmap(".\\Icons/Icon awesome-play@2x.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        icon5 = QtGui.QIcon(qta.icon('fa5s.play', color='white'))
         globals()["btnRuntask_" + self.taskId].setIcon(icon5)
         globals()["btnRuntask_" + self.taskId].setIconSize(QtCore.QSize(32, 32))
         globals()["btnRuntask_" + self.taskId].setObjectName(f"btnRuntask_{self.taskName}")
@@ -72,8 +72,7 @@ class Task:
         globals()["btnDelete_" + self.taskId].setFocusPolicy(QtCore.Qt.NoFocus)
         globals()["btnDelete_" + self.taskId].setGeometry(QtCore.QRect(455, 5, 21, 21))
         globals()["btnDelete_" + self.taskId].setText("")
-        icon6 = QtGui.QIcon()
-        icon6.addPixmap(QtGui.QPixmap(".\\Icons/Task Close.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        icon6 = QtGui.QIcon(qta.icon('fa5s.times', color='#707070'))
         globals()["btnDelete_" + self.taskId].setIcon(icon6)
         globals()["btnDelete_" + self.taskId].setObjectName(f"btnDelete_{self.taskName}")
         self.lbltaskTitle.setText(self.translate("MainWindow", self.taskName))

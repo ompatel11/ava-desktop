@@ -17,6 +17,7 @@ from Models.TaskRunner import RunTask
 from task_listener import TaskListener
 from ui import Ui_MainWindow
 from pyupdater.client import Client, AppUpdate
+import qtawesome as qta
 
 
 class MainWindow(QMainWindow):
@@ -34,6 +35,7 @@ class MainWindow(QMainWindow):
         self.ui.btnWindowMinimize.clicked.connect(self.minimizeWindow)
         self.ui.btnWindowClose.clicked.connect(self.closeWindow)
         self.ui.btnMenu.clicked.connect(self.openMenu)
+
         self.isMenuOpen = None
         self.isMenuEnabled = False
         # self.ui.SubMenuFrame_2.lower()
@@ -129,30 +131,14 @@ class MainWindow(QMainWindow):
     def openMenu(self):
         if self.isMenuEnabled:
             if self.isMenuOpen:
-                # Raise state
+                # Lower state
                 print("Inside true")
-                # self.closeMenuAnim = QPropertyAnimation(self.ui.menu, b"geometry")
-                # self.closeMenuAnim.setDuration(600)
-                # self.closeMenuAnim.setStartValue(QtCore.QRect(0, 30, 509, 681))
-                # self.closeMenuAnim.setEndValue(QtCore.QRect(0, 0, 0, 0))
-                # self.closeMenuAnim.setEasingCurve(QtCore.QEasingCurve.BezierSpline)
-                # self.closeMenuAnim.start()
-                # self.closeMenuAnim.finished.connect(self.closeMenu)
-                # self.ui.menu.setGeometry(QtCore.QRect(0, 0, 0, 0))
                 self.ui.menu.lower()
                 self.isMenuOpen = False
             else:
-                # Lower state
+                # Raise state
                 print("Inside false")
                 self.ui.menu.raise_()
-                # self.openMenuAnim = QPropertyAnimation(self.ui.menu, b"geometry")
-                # self.openMenuAnim.setDuration(600)
-                # self.openMenuAnim.setStartValue(QtCore.QRect(0, 0, 0, 0))
-                # self.openMenuAnim.setEndValue(QtCore.QRect(0, 30, 509, 681))
-                # self.openMenuAnim.setEasingCurve(QtCore.QEasingCurve.BezierSpline)
-                # self.openMenuAnim.start()
-                # self.ui.menu.setGeometry(QtCore.QRect(0, 30, 509, 681))
-
                 self.isMenuOpen = True
 
     def starTaskListener(self):
@@ -174,21 +160,13 @@ class MainWindow(QMainWindow):
                                                  "border-color: rgb(255, 148, 148);}")
         else:
             if self.isListener:
-                # Set the icon to pause
+                # Set the icon to stop
                 print("startStatus: ", self.isListener)
-                print("Setting icon to play.")
-                icon4 = QtGui.QIcon()
-                icon4.addPixmap(QtGui.QPixmap(".\\Icons/Icon awesome-play@2x.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+                print("Setting icon to stop.")
+                icon4 = QtGui.QIcon(qta.icon('fa5s.stop', color='white'))
                 self.ui.btnTaskListener.setIcon(icon4)
                 self.ui.btnTaskListener.setIconSize(QSize(32, 32))
-                self.ui.btnTaskListener.setStyleSheet("QPushButton{\n"
-                                                      "background-color: rgb(62, 60, 84);\n"
-                                                      "border: 1px solid white;\n"
-                                                      "border-radius: 40;\n"
-                                                      "}\n"
-                                                      "QPushButton:pressed{\n"
-                                                      "    background-color: rgb(103, 100, 138);\n"
-                                                      "}")
+                self.ui.lblStartStopRec.setText("Click here to STOP recording task")
                 self.isListener = False
                 if self.taskListenerObject is not None:
                     print("Exiting taskListeners")
@@ -198,8 +176,8 @@ class MainWindow(QMainWindow):
                         print("Task Entries from: ", self.taskEntries)
                         self.createTask()
             else:
-                # Set the icon to pause Start Listeners
-                print("Set the icon to pause")
+                # Set the icon to play Start Listeners
+                print("Set the icon to play")
                 print("startStatus: (else) ", self.isListener)
 
                 self.startThread()
@@ -218,9 +196,8 @@ class MainWindow(QMainWindow):
         self.taskEntries = self.taskListenerObject.startListeners()
         print("From startListener", self.taskEntries)
         if self.taskEntries is not None:
-            icon4 = QtGui.QIcon()
-            icon4.addPixmap(QtGui.QPixmap("Icons/Icon awesome-play@2x.png"), QtGui.QIcon.Normal,
-                            QtGui.QIcon.Off)
+            self.ui.lblStartStopRec.setText("Click here to STOP recording task")
+            icon4 = QtGui.QIcon(qta.icon('fa5s.play', color='#3e3c54'))
             self.ui.btnTaskListener.setIcon(icon4)
             self.ui.btnTaskListener.setIconSize(QSize(32, 32))
             self.ui.btnTaskListener.setStyleSheet("QPushButton{\n"
@@ -322,8 +299,7 @@ class MainWindow(QMainWindow):
         Calls to the microphone manager class will be made from here.
         """
         if self.audioManager.isClosed is False:
-            icon4 = QtGui.QIcon()
-            icon4.addPixmap(QtGui.QPixmap("Icons/Pause@2x.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+            icon4 = QtGui.QIcon(qta.icon('fa5s.stop', color='#3e3c54'))
             self.ui.btnTaskListener.setIcon(icon4)
             self.ui.btnTaskListener.setIconSize(QSize(32, 32))
             self.ui.btnTaskListener.setStyleSheet("QPushButton{\n"
@@ -344,8 +320,8 @@ class MainWindow(QMainWindow):
             t1.start()
             self.audioManager.isClosed = True
         else:
-            icon4 = QtGui.QIcon()
-            icon4.addPixmap(QtGui.QPixmap(".\\Icons/Icon awesome-play@2x.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+            self.ui.lblStartStopRec.setText("Click here to STOP recording task")
+            icon4 = QtGui.QIcon(qta.icon('fa5s.play', color='#3e3c54'))
             self.ui.btnTaskListener.setIcon(icon4)
             self.ui.btnTaskListener.setIconSize(QSize(32, 32))
             self.ui.btnTaskListener.setStyleSheet("QPushButton{\n"
@@ -417,9 +393,11 @@ class MainWindow(QMainWindow):
     def logout(self):
         FirebaseClientWrapper.Firebase_app.logout()
         for item in self.Ui_task_List:
+            print("Deleting Tasks Nodes in UI")
             print(item.parent().objectName())
             self.ui.verticalLayout_2.removeWidget(
                 self.ui.TasksPage.findChild(QtWidgets.QFrame, item.parent().objectName()))
+
         user.current_user.logout()
         self.ui.stackPanel.setCurrentIndex(0)
         self.isMenuEnabled = False
@@ -658,7 +636,8 @@ def RunApp(arg):
 class ClientConfig(object):
     PUBLIC_KEY = 'hEh3Jy6i61sNH42U4LGwRrggIQKd6CcqfGg1E8tOGPE'
     APP_NAME = 'Ava'
-    APP_VERSION = "0.0.9"
+    APP_CHANNEL = 'stable'
+    APP_VERSION = "0.1.1"
     COMPANY_NAME = 'Daemon Tech'
     HTTP_TIMEOUT = 30
     MAX_DOWNLOAD_RETRIES = 3
@@ -707,33 +686,13 @@ def check_for_update():
 
 if __name__ == "__main__":
     print(sys.argv)
-    print('Running Alpha build number ', ClientConfig.APP_VERSION)
-    print("Sending request to web server:  ", ClientConfig.UPDATE_URLS)
-    print("Updates are disabled for Alpha builds!")
-    RunApp(sys.argv)
-    # if check_for_update():
-    #     print('there\'s a new update :D')
-    # else:
-    #     print("Running on latest version: ", ClientConfig.APP_VERSION)
-    #     RunApp(sys.argv)
+    print(f"Running on {ClientConfig.APP_CHANNEL} channel")
+    print(f"App version: {ClientConfig.APP_VERSION}")
 
-    # app = QtWidgets.QApplication(sys.argv)
-    # Now use a palette to switch to dark colors:
-    # palette = QPalette()
-    # palette.setColor(QPalette.Window, QColor(53, 53, 53))
-    # palette.setColor(QPalette.WindowText, QColor(63, 61, 84))
-    # palette.setColor(QPalette.Base, QColor(25, 25, 25))
-    # palette.setColor(QPalette.AlternateBase, QColor(53, 53, 53))
-    # palette.setColor(QPalette.ToolTipBase, Qt.black)
-    # palette.setColor(QPalette.ToolTipText, Qt.white)
-    # palette.setColor(QPalette.Text, QColor(63, 61, 84))
-    # palette.setColor(QPalette.Button, QColor(53, 53, 53))
-    # palette.setColor(QPalette.ButtonText, QColor(63, 61, 84))
-    # palette.setColor(QPalette.BrightText, Qt.red)
-    # palette.setColor(QPalette.Link, QColor(42, 130, 218))
-    # palette.setColor(QPalette.Highlight, QColor(42, 130, 218))
-    # palette.setColor(QPalette.HighlightedText, Qt.black)
-    # app.setPalette(palette)
-    # app.setStyle(Style())
-    # window = MainWindow()
-    # sys.exit(app.exec_())
+    print("Checking for Updates please wait!")
+
+    if check_for_update():
+        print('there\'s a new update :D')
+    else:
+        print("Running on latest version: ", ClientConfig.APP_VERSION)
+        RunApp(sys.argv)

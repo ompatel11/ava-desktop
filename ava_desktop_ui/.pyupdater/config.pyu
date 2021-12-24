@@ -108,24 +108,44 @@
             "patch_hash": "f9631e04f0b5c18a83dcf61efc5408c69da32db40106879ca6681c4c36d77cd6",
             "patch_size": 1183625
           }
+        },
+        "0.1.0.2.0": {
+          "win": {
+            "file_hash": "eca93baf3864023be73815e68bb63044a07588a6c83fafda6597caf22dc2fd67",
+            "file_size": 65453705,
+            "filename": "Ava-win-0.1.0.zip",
+            "patch_name": "Ava-win-stable-10",
+            "patch_hash": "f8f35d36110fd06e842b12eba737963e73c0f7b59bd24acc4b02f916fe2af6c2",
+            "patch_size": 3205985
+          }
+        },
+        "0.1.1.2.0": {
+          "win": {
+            "file_hash": "6f36e5575131dee39cd2a6c57bb0337dfcae8981944891c598a77839d03aa21e",
+            "file_size": 65453847,
+            "filename": "Ava-win-0.1.1.zip",
+            "patch_name": "Ava-win-stable-11",
+            "patch_hash": "3d1b70b7347c7eddddb4aee998b2314ef2691d547517cbfda1030f38ba00fc90",
+            "patch_size": 1196097
+          }
         }
       }
     },
     "latest": {
       "Ava": {
         "stable": {
-          "win": "0.0.8.2.0"
+          "win": "0.1.1.2.0"
         }
       }
     }
   },
   "py_repo_config": {
     "patches": {
-      "Ava": 9
+      "Ava": 11
     },
     "package": {
       "Ava": {
-        "win": "0.0.8.2.0"
+        "win": "0.1.1.2.0"
       }
     }
   }

@@ -6,6 +6,7 @@ from PyQt5.QtCore import QSize
 from pynput.keyboard import Key
 from pynput.mouse import Button
 from pynput import keyboard, mouse
+import qtawesome as qta
 
 
 class TaskListener:
@@ -56,23 +57,21 @@ class TaskListener:
         }
         self.start_time = time.time()
         self.break_program = False
-        icon4 = QtGui.QIcon()
-        icon4.addPixmap(QtGui.QPixmap("Icons/Pause@2x.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        icon4 = QtGui.QIcon(qta.icon('fa5s.stop', color='#3e3c54'))
         self._mainObject.ui.btnTaskListener.setIcon(icon4)
         self._mainObject.ui.btnTaskListener.setIconSize(QtCore.QSize(32, 32))
         self._mainObject.ui.btnTaskListener.setStyleSheet("QPushButton{\n"
                                                           "background-color: rgb(255, 255, 255);\n"
-                                                          "border: 1px solid white;\n"
+                                                          "border: 2px solid rgb(62, 60, 84);\n"
                                                           "border-radius: 40;\n"
                                                           "}\n"
                                                           "QPushButton:pressed{\n"
-                                                          "    background-color: rgb(255, 255, 255);\n"
+                                                          "    background-color: rgb(103, 100, 138);\n"
                                                           "}")
 
     def setExit(self):
         self.break_program = True
-        icon4 = QtGui.QIcon()
-        icon4.addPixmap(QtGui.QPixmap(".\\Icons/Icon awesome-play@2x.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        icon4 = QtGui.QIcon(qta.icon('fa5s.play', color='white'))
         self._mainObject.ui.btnTaskListener.setIcon(icon4)
         self._mainObject.ui.btnTaskListener.setIconSize(QSize(32, 32))
         self._mainObject.ui.btnTaskListener.setStyleSheet("QPushButton{\n"
@@ -130,7 +129,7 @@ class TaskListener:
         #  he
         try:
             self.taskEntries[self.taskName].append({"hotKeyRelease": self.keyMapping[key]})
-            self.taskEntries[self.taskName].append({"timeSleep": {"sleep": 1}})
+            self.taskEntries[self.taskName].append({"timeSleep": {"sleep": 0.9}})
 
         except Exception as e:
             pass
@@ -160,7 +159,7 @@ class TaskListener:
 
         try:
             if self.keyMapping[key]:
-                self.taskEntries[self.taskName].append({"timeSleep": {"sleep": 1}})
+                self.taskEntries[self.taskName].append({"timeSleep": {"sleep": 0.9}})
             self.taskEntries[self.taskName].append({"hotKeyPress": self.keyMapping[key]})
 
         except Exception as e:

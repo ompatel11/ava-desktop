@@ -10,11 +10,29 @@
 
 from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtWidgets import QGraphicsDropShadowEffect
+import qtawesome as qta
 
 from Models.Appfonts import appFonts
 
 
 class Ui_MainWindow(object):
+    def __init__(self):
+        self.visibleIcon = qta.icon('fa5.eye-slash')
+        # self.visibleIcon.addPixmap(QtGui.QPixmap(".\\Icons/Icon ionic-md-eye-off.svg"))
+        self.hiddenIcon = qta.icon('fa5.eye')
+        # self.hiddenIcon.addPixmap(QtGui.QPixmap(".\\Icons/Icon ionic-md-eye.svg"))
+        self.password_shown = False
+
+    def on_toggle_password_Action(self):
+        if not self.password_shown:
+            self.txtPassword_login.setEchoMode(QtWidgets.QLineEdit.Normal)
+            self.password_shown = True
+            self.togglepasswordAction.setIcon(self.hiddenIcon)
+        else:
+            self.txtPassword_login.setEchoMode(QtWidgets.QLineEdit.Password)
+            self.password_shown = False
+            self.togglepasswordAction.setIcon(self.visibleIcon)
+
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
         MainWindow.setWindowFlag(QtCore.Qt.FramelessWindowHint)
@@ -65,9 +83,10 @@ class Ui_MainWindow(object):
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.btnMenu.sizePolicy().hasHeightForWidth())
         self.btnMenu.setSizePolicy(sizePolicy)
+        self.btnMenu.setIcon(qta.icon('fa5s.bars', color='white'))
+        self.btnMenu.setIconSize(QtCore.QSize(24, 24))
         self.btnMenu.setMinimumSize(QtCore.QSize(35, 30))
         self.btnMenu.setStyleSheet("QPushButton{\n"
-                                   "background:  url(Icons/Menu Icon.png) no-repeat center center fixed;\n"
                                    "background-color: rgb(63, 61, 85);\n"
                                    "border: 0px solid rgb(63, 61, 85);\n"
                                    "}\n"
@@ -75,8 +94,7 @@ class Ui_MainWindow(object):
                                    "    background-color: rgb(103, 100, 138);\n"
                                    "}\n"
                                    "")
-        self.btnMenu.setText("")
-        self.btnMenu.setIconSize(QtCore.QSize(12, 12))
+        self.btnMenu.setText("\t")
         self.btnMenu.setObjectName("btnMenu")
         self.horizontalLayout_5.addWidget(self.btnMenu)
         self.frame_title = QtWidgets.QFrame(self.title_bar)
@@ -128,8 +146,7 @@ class Ui_MainWindow(object):
                                              "}\n"
                                              "")
         self.btnWindowMinimize.setText("")
-        icon = QtGui.QIcon()
-        icon.addPixmap(QtGui.QPixmap(".\\Icons/Icon awesome-window-minimize.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        icon = QtGui.QIcon(qta.icon('fa5s.window-minimize', color='white'))
         self.btnWindowMinimize.setIcon(icon)
         self.btnWindowMinimize.setIconSize(QtCore.QSize(8, 8))
         self.btnWindowMinimize.setObjectName("btnWindowMinimize")
@@ -151,10 +168,9 @@ class Ui_MainWindow(object):
                                           "    background-color: rgb(255, 0, 0);\n"
                                           "}")
         self.btnWindowClose.setText("")
-        icon1 = QtGui.QIcon()
-        icon1.addPixmap(QtGui.QPixmap(".\\Icons/Icon ionic-ios-close.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        icon1 = QtGui.QIcon(qta.icon('fa5s.times', color='white'))
         self.btnWindowClose.setIcon(icon1)
-        self.btnWindowClose.setIconSize(QtCore.QSize(8, 8))
+        self.btnWindowClose.setIconSize(QtCore.QSize(12, 12))
         self.btnWindowClose.setFlat(False)
         self.btnWindowClose.setObjectName("btnWindowClose")
         self.horizontalLayout_6.addWidget(self.btnWindowClose)
@@ -367,7 +383,7 @@ class Ui_MainWindow(object):
                                           "background-color: rgb(231, 231, 231);\n"
                                           "border-radius: 8px;\n"
                                           "border-color: rgb(194,194,194);\n"
-                                          
+
                                           "padding: 4px;")
         self.txtEmail_login.setText("")
         self.txtEmail_login.setObjectName("txtEmail_login")
@@ -386,9 +402,16 @@ class Ui_MainWindow(object):
                                              "background-color: rgb(231, 231, 231);\n"
                                              "border-radius: 8px;\n"
                                              "border-color: rgb(194,194,194);\n"
-                                             
+
                                              "padding: 4px;")
         self.txtPassword_login.setText("")
+        self.txtPassword_login.setEchoMode(QtWidgets.QLineEdit.Password)
+        self.togglepasswordAction = self.txtPassword_login.addAction(
+            self.visibleIcon,
+            QtWidgets.QLineEdit.TrailingPosition
+        )
+        self.togglepasswordAction.triggered.connect(self.on_toggle_password_Action)
+
         self.txtPassword_login.setObjectName("txtPassword_login")
         self.formLayout_2.setWidget(3, QtWidgets.QFormLayout.LabelRole, self.txtPassword_login)
         self.horizontalLayout_13 = QtWidgets.QHBoxLayout()
@@ -439,9 +462,9 @@ class Ui_MainWindow(object):
                                     "}\n"
                                     "QPushButton:pressed{\n"
                                     "background-color: rgb(103, 100, 138);\n"
-                                     "border: 2px solid  rgb(103, 100, 138);\n"
-                                     "border-radius: 8px;\n"
-                                     "padding: 4px;\n"
+                                    "border: 2px solid  rgb(103, 100, 138);\n"
+                                    "border-radius: 8px;\n"
+                                    "padding: 4px;\n"
                                     "}")
         self.btnLogin.setObjectName("btnLogin")
         self.formLayout_2.setWidget(5, QtWidgets.QFormLayout.LabelRole, self.btnLogin)
@@ -700,9 +723,10 @@ class Ui_MainWindow(object):
                                               "background-color: rgb(231, 231, 231);\n"
                                               "border-radius: 8px;\n"
                                               "border-color: rgb(194,194,194);\n"
-                                              
+
                                               "padding: 4px;")
         self.txtPassword_signup.setText("")
+        self.txtPassword_signup.setEchoMode(QtWidgets.QLineEdit.Password)
         self.txtPassword_signup.setObjectName("txtPassword_signup")
         self.formLayout.setWidget(3, QtWidgets.QFormLayout.LabelRole, self.txtPassword_signup)
         self.lblConfirmPassword = QtWidgets.QLabel(self.signupMainFrame)
@@ -718,9 +742,10 @@ class Ui_MainWindow(object):
                                                      "border-width: 1px;\n"
                                                      "background-color: rgb(231, 231, 231);\n"
                                                      "border-radius: 8px;\n"
-                                                     "border-color: rgb(194,194,194);\n"         
+                                                     "border-color: rgb(194,194,194);\n"
                                                      "padding: 4px;")
         self.txtConfirmPassword_signup.setText("")
+        self.txtConfirmPassword_signup.setEchoMode(QtWidgets.QLineEdit.Password)
         self.txtConfirmPassword_signup.setObjectName("txtConfirmPassword_signup")
         self.formLayout.setWidget(5, QtWidgets.QFormLayout.LabelRole, self.txtConfirmPassword_signup)
         self.btnSignup = QtWidgets.QPushButton(self.signupMainFrame)
@@ -880,8 +905,7 @@ class Ui_MainWindow(object):
         self.btnCreateTask.setText("")
         shadow = QGraphicsDropShadowEffect(blurRadius=5, xOffset=3, yOffset=3)
         self.btnCreateTask.setGraphicsEffect(shadow)
-        icon7 = QtGui.QIcon()
-        icon7.addPixmap(QtGui.QPixmap(".\\Icons/Icon ionic-ios-add@2x.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        icon7 = QtGui.QIcon(qta.icon('fa5s.plus', color='white'))
         self.btnCreateTask.setIcon(icon7)
         self.btnCreateTask.setIconSize(QtCore.QSize(32, 32))
         self.btnCreateTask.setObjectName("btnCreateTask")
@@ -929,8 +953,7 @@ class Ui_MainWindow(object):
                                            "    background-color: rgb(103, 100, 138);\n"
                                            "}")
         self.btnTaskListener.setText("")
-        icon8 = QtGui.QIcon()
-        icon8.addPixmap(QtGui.QPixmap(".\\Icons/Icon awesome-play@2x.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        icon8 = QtGui.QIcon(qta.icon('fa5s.play', color='white'))
         self.btnTaskListener.setIcon(icon8)
         self.btnTaskListener.setIconSize(QtCore.QSize(32, 32))
         self.btnTaskListener.setAutoDefault(False)
@@ -985,8 +1008,7 @@ class Ui_MainWindow(object):
                                           "}\n"
                                           "")
         self.btnBackToTasks.setText("")
-        icon9 = QtGui.QIcon()
-        icon9.addPixmap(QtGui.QPixmap(".\\Icons/Icon awesome-arrow-left.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        icon9 = QtGui.QIcon(qta.icon('fa5s.chevron-left', color='#3e3c54'))
         self.btnBackToTasks.setIcon(icon9)
         self.btnBackToTasks.setIconSize(QtCore.QSize(32, 32))
         self.btnBackToTasks.setObjectName("btnBackToTasks")
@@ -1003,6 +1025,7 @@ class Ui_MainWindow(object):
                                            "letter-spacing: 1px;\n"
                                            "}")
         self.lblStartStopRec.setTextFormat(QtCore.Qt.MarkdownText)
+        self.lblStartStopRec.setWordWrap(True)
         self.lblStartStopRec.setObjectName("lblStartStopRec")
         self.layoutWidget = QtWidgets.QWidget(self.AddTaskPage)
         self.layoutWidget.setGeometry(QtCore.QRect(190, 380, 132, 23))
@@ -1073,12 +1096,12 @@ class Ui_MainWindow(object):
         self.btnAccount.setSizePolicy(sizePolicy)
         self.btnAccount.setMinimumSize(QtCore.QSize(0, 60))
         self.btnAccount.setFont(appFonts.getMenuButtonFont())
+        # "background-image: url(Icons/user icon.png);\n"
+        #                                       "background-repeat: no-repeat;\n"
+        #                                       "background-repeat: no-repeat;\n"
+        #                                       "background-position: left center;\n"
+        #                                       "background-origin: content;\n"
         self.btnAccount.setStyleSheet("QPushButton{\n"
-                                      "background-image: url(Icons/user icon.png);\n"
-                                      "background-repeat: no-repeat;\n"
-                                      "background-repeat: no-repeat;\n"
-                                      "background-position: left center;\n"
-                                      "background-origin: content;\n"
                                       "text-align: left center;\n"
                                       "padding: 0 0 0 20;\n"
                                       "color: rgb(63, 61, 86);\n"
@@ -1086,6 +1109,9 @@ class Ui_MainWindow(object):
                                       "border-bottom: 1px solid rgb(63, 61, 86);\n"
                                       "\n"
                                       "}")
+        iconAccount = QtGui.QIcon(qta.icon('fa5.user', color='#3e3c54'))
+        self.btnAccount.setIcon(iconAccount)
+        self.btnAccount.setIconSize(QtCore.QSize(32, 32))
         self.btnAccount.setObjectName("btnAccount")
         self.verticalLayout.addWidget(self.btnAccount)
         self.btnDocumentation = QtWidgets.QPushButton(self.verticalLayoutWidget)
@@ -1098,10 +1124,6 @@ class Ui_MainWindow(object):
         self.btnDocumentation.setMinimumSize(QtCore.QSize(0, 60))
         self.btnDocumentation.setFont(appFonts.getMenuButtonFont())
         self.btnDocumentation.setStyleSheet("QPushButton{\n"
-                                            "background-image: url(Icons/file icon.png);\n"
-                                            "background-repeat: no-repeat;\n"
-                                            "background-position: left center;\n"
-                                            "background-origin: content;\n"
                                             "text-align: left center;\n"
                                             "padding: 0 0 0 20;\n"
                                             "color: rgb(63, 61, 86);\n"
@@ -1109,6 +1131,9 @@ class Ui_MainWindow(object):
                                             "border-bottom: 1px solid rgb(63, 61, 86);\n"
                                             "\n"
                                             "}")
+        iconAccount = QtGui.QIcon(qta.icon('fa5.file', color='#3e3c54'))
+        self.btnDocumentation.setIcon(iconAccount)
+        self.btnDocumentation.setIconSize(QtCore.QSize(32, 32))
         self.btnDocumentation.setObjectName("btnDocumentation")
         self.verticalLayout.addWidget(self.btnDocumentation)
         self.btnFAQ = QtWidgets.QPushButton(self.verticalLayoutWidget)
@@ -1121,10 +1146,6 @@ class Ui_MainWindow(object):
         self.btnFAQ.setMinimumSize(QtCore.QSize(0, 60))
         self.btnFAQ.setFont(appFonts.getMenuButtonFont())
         self.btnFAQ.setStyleSheet("QPushButton{\n"
-                                  "background-image: url(Icons/question icon.png);\n"
-                                  "background-repeat: no-repeat;\n"
-                                  "background-position: left center;\n"
-                                  "background-origin: content;\n"
                                   "text-align: left center;\n"
                                   "padding: 0 0 0 20;\n"
                                   "color: rgb(63, 61, 86);\n"
@@ -1132,6 +1153,9 @@ class Ui_MainWindow(object):
                                   "border-bottom: 1px solid rgb(63, 61, 86);\n"
                                   "\n"
                                   "}")
+        iconAccount = QtGui.QIcon(qta.icon('fa5.question-circle', color='#3e3c54'))
+        self.btnFAQ.setIcon(iconAccount)
+        self.btnFAQ.setIconSize(QtCore.QSize(32, 32))
         self.btnFAQ.setObjectName("btnFAQ")
         self.verticalLayout.addWidget(self.btnFAQ)
         self.btnLogout = QtWidgets.QPushButton(self.verticalLayoutWidget)
@@ -1144,16 +1168,15 @@ class Ui_MainWindow(object):
         self.btnLogout.setMinimumSize(QtCore.QSize(0, 60))
         self.btnLogout.setFont(appFonts.getMenuButtonFont())
         self.btnLogout.setStyleSheet("QPushButton{\n"
-                                     "background-image: url(Icons/logout icon.png);\n"
-                                     "background-repeat: no-repeat;\n"
-                                     "background-position: left center;\n"
-                                            "background-origin: content;\n"
-                                            "text-align: left center;\n"
-                                            "padding: 0 0 0 20;\n"
+                                     "text-align: left center;\n"
+                                     "padding: 0 0 0 20;\n"
                                      "color: rgb(63, 61, 86);\n"
                                      "background-color: rgb(255, 255, 255);\n"
                                      "border-bottom: 1px solid rgb(63, 61, 86);\n"
                                      "}")
+        iconAccount = QtGui.QIcon(qta.icon('mdi6.logout', color='#3e3c54'))
+        self.btnLogout.setIcon(iconAccount)
+        self.btnLogout.setIconSize(QtCore.QSize(32, 32))
         self.btnLogout.setObjectName("btnLogout")
         self.verticalLayout.addWidget(self.btnLogout)
         self.menu.lower()
@@ -1204,7 +1227,7 @@ class Ui_MainWindow(object):
         self.lblStartStopRec.setText(_translate("MainWindow", "Click here to START recording task"))
         self.lblTutorial.setText(_translate("MainWindow", "<html><head/><body><p>See Tutorial </p></body></html>"))
         self.btnTutorial.setText(_translate("MainWindow", "Here"))
-        self.btnAccount.setText(_translate("MainWindow", "            Account"))
-        self.btnDocumentation.setText(_translate("MainWindow", "            Documentation"))
-        self.btnFAQ.setText(_translate("MainWindow", "            FAQ"))
-        self.btnLogout.setText(_translate("MainWindow", "            Logout"))
+        self.btnAccount.setText(_translate("MainWindow", "  Account"))
+        self.btnDocumentation.setText(_translate("MainWindow", "  Documentation"))
+        self.btnFAQ.setText(_translate("MainWindow", "  FAQ"))
+        self.btnLogout.setText(_translate("MainWindow", "  Logout"))
