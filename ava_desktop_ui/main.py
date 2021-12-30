@@ -641,7 +641,7 @@ class ClientConfig(object):
     COMPANY_NAME = 'Daemon Tech'
     HTTP_TIMEOUT = 30
     MAX_DOWNLOAD_RETRIES = 3
-    UPDATE_URLS = ['http://localhost:3000']
+    UPDATE_URLS = ['']
 
 
 bar = None
