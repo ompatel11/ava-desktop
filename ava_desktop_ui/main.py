@@ -637,11 +637,11 @@ class ClientConfig(object):
     PUBLIC_KEY = 'hEh3Jy6i61sNH42U4LGwRrggIQKd6CcqfGg1E8tOGPE'
     APP_NAME = 'Ava'
     APP_CHANNEL = 'stable'
-    APP_VERSION = "0.1.1"
+    APP_VERSION = "0.1.2"
     COMPANY_NAME = 'Daemon Tech'
     HTTP_TIMEOUT = 30
     MAX_DOWNLOAD_RETRIES = 3
-    UPDATE_URLS = ['http://localhost:8000']
+    UPDATE_URLS = ['http://localhost:3000']
 
 
 bar = None
@@ -690,6 +690,7 @@ if __name__ == "__main__":
     print(f"App version: {ClientConfig.APP_VERSION}")
 
     print("Checking for Updates please wait!")
+    # print("Updates are disabled for now! :(")
 
     if check_for_update():
         print('there\'s a new update :D')

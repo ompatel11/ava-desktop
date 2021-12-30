@@ -1,4 +1,3 @@
-import os
 from configparser import ConfigParser
 
 from Models import user
@@ -10,6 +9,9 @@ class SessionHandler:
         # Get the configparser object
         self.config_object = ConfigParser()
         self.fileName = "application/config/config.ini"
+
+    def checkforupdates(self):
+        pass
 
     def deleteUserData(self):
         try:
@@ -102,7 +104,7 @@ class SessionHandler:
                 print("Token=", user.current_user.idtoken)
                 print("Uid=", user.current_user.uid)
                 documentId = ""
-                print("Firebase result=",result.val())
+                print("Firebase result=", result.val())
                 for key in result.val().keys():
                     documentId = key
                 print("Here", result.val()[documentId])
@@ -132,7 +134,7 @@ class SessionHandler:
             boolean_result = self.deleteUserData()
             print("Token from logout=", user.current_user.idtoken)
             print("Uid from logout=", user.current_user.uid)
-            result = FirebaseClientWrapper.Firebase_app.database.child("users_authenticated").child(
+            FirebaseClientWrapper.Firebase_app.database.child("users_authenticated").child(
                 user.current_user.idtoken).remove()
             # .child(
             #     user.current_user.uid).update(login_data)

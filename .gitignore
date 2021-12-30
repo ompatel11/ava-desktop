@@ -1,5 +1,4 @@
-venv
 ava.spec
-/ava_desktop_ui/Dockerfile
+/Dockerfile
 /ava_desktop_ui/Model/demo2.py
 /ava_desktop_ui/secrets

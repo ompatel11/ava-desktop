@@ -56,3 +56,12 @@ Demo2:
 - leftClick:
     x: 953
     y: 685
+Demo4:
+- timeSleep:
+    sleep: 0.12708377838134766
+- moveTo:
+    x: -362
+    y: 742
+- leftClick:
+    x: -362
+    y: 742
