@@ -166,7 +166,8 @@ class MainWindow(QMainWindow):
                 icon4 = QtGui.QIcon(qta.icon('fa5s.stop', color='white'))
                 self.ui.btnTaskListener.setIcon(icon4)
                 self.ui.btnTaskListener.setIconSize(QSize(32, 32))
-                self.ui.lblStartStopRec.setText("Click here to STOP recording task")
+                self.ui.lblStartStopRec.setText(
+                    "Click here to STOP recording task")
                 self.isListener = False
                 if self.taskListenerObject is not None:
                     print("Exiting taskListeners")
@@ -184,7 +185,8 @@ class MainWindow(QMainWindow):
                 self.isListener = True
 
     def startThread(self):
-        self.TaskListenerThread = threading.Thread(target=self.executeListenerThread)
+        self.TaskListenerThread = threading.Thread(
+            target=self.executeListenerThread)
         self.TaskListenerThread.start()
         self.TaskListenerThread.join()
         if self.taskEntries is not None:
@@ -196,7 +198,8 @@ class MainWindow(QMainWindow):
         self.taskEntries = self.taskListenerObject.startListeners()
         print("From startListener", self.taskEntries)
         if self.taskEntries is not None:
-            self.ui.lblStartStopRec.setText("Click here to STOP recording task")
+            self.ui.lblStartStopRec.setText(
+                "Click here to STOP recording task")
             icon4 = QtGui.QIcon(qta.icon('fa5s.play', color='#3e3c54'))
             self.ui.btnTaskListener.setIcon(icon4)
             self.ui.btnTaskListener.setIconSize(QSize(32, 32))
@@ -218,37 +221,45 @@ class MainWindow(QMainWindow):
 
         if title and description:
             self.taskObject = tasks.Task(self, title, description).createTask()
-            TaskManager.TaskLists.addTask(self.taskObject.findChild(QtWidgets.QPushButton, f"btnRuntask_{title}"))
+            TaskManager.TaskLists.addTask(self.taskObject.findChild(
+                QtWidgets.QPushButton, f"btnRuntask_{title}"))
             print(self.taskObject.objectName())
-            self.taskObject.findChild(QtWidgets.QPushButton, f"btnRuntask_{title}").clicked.connect(self.runTask)
-            self.taskObject.findChild(QtWidgets.QPushButton, f"btnDelete_{title}").clicked.connect(self.deleteTask)
+            self.taskObject.findChild(
+                QtWidgets.QPushButton, f"btnRuntask_{title}").clicked.connect(self.runTask)
+            self.taskObject.findChild(
+                QtWidgets.QPushButton, f"btnDelete_{title}").clicked.connect(self.deleteTask)
             self.ui.verticalLayout_2.addWidget(self.taskObject)
             print("Task added to UI")
-            taskJsonObj = {'name': title, 'description': description, 'runCounter': '0'}
+            taskJsonObj = {'name': title,
+                           'description': description, 'runCounter': '0'}
             user.current_user.addTask(taskJsonObj)
             print(self.taskEntries)
             empty = False
-            with open('application/config/task_bindings.yml') as fp:
-                data = yaml.load(fp, Loader=ruamel.yaml.Loader)
+            with open("application/config/task_bindings.yml") as fp:
+                data = yaml.load_all(fp, Loader=ruamel.yaml.Loader)
                 print("DATA:", data)
                 if data is None:
                     print("Empty yaml file")
                     empty = True
             if empty:
                 print("Writing task to file")
-                with open('application/config/task_bindings.yml', 'w', encoding="utf-8") as yamlfile:
-                    yaml.dump(self.taskEntries, yamlfile, Dumper=yaml.RoundTripDumper, default_flow_style=False)
+                with open("application/config/task_bindings.yml", 'w', encoding="utf-8") as yamlfile:
+                    yaml.dump_all(self.taskEntries, yamlfile,
+                              Dumper=yaml.RoundTripDumper, default_flow_style=False)
             else:
                 print("Appending task to file")
                 with open('application/config/task_bindings.yml', 'a', encoding="utf-8") as yamlfile:
-                    yaml.dump(self.taskEntries, yamlfile, Dumper=yaml.RoundTripDumper, default_flow_style=False)
+                    yaml.dump(self.taskEntries, yamlfile,
+                              Dumper=yaml.RoundTripDumper, default_flow_style=False)
 
-            self.Ui_task_List.append(self.taskObject.findChild(QtWidgets.QPushButton, f"btnRuntask_{title}"))
+            self.Ui_task_List.append(self.taskObject.findChild(
+                QtWidgets.QPushButton, f"btnRuntask_{title}"))
             self.taskObject = None
             self.ui.stackPanel.setCurrentIndex(3)
             self.ui.txtTitle.setText("")
             self.ui.txtDescription.setText("")
-            print("Removing Empty Label", self.ui.TasksPage.findChild(QtWidgets.QLabel, "emptyTasksLabel"))
+            print("Removing Empty Label", self.ui.TasksPage.findChild(
+                QtWidgets.QLabel, "emptyTasksLabel"))
             self.ui.verticalLayout_2.removeWidget(
                 self.ui.TasksPage.findChild(QtWidgets.QLabel, "emptyTasksLabel"))
 
@@ -269,7 +280,8 @@ class MainWindow(QMainWindow):
     def deleteTask(self):
         print("Delete task called")
         print(str(self.sender().objectName()).replace("btnDelete_", ""))
-        user.current_user.deleteTask(str(self.sender().objectName()).replace("btnDelete_", ""))
+        user.current_user.deleteTask(
+            str(self.sender().objectName()).replace("btnDelete_", ""))
         self.ui.verticalLayout_2.removeWidget(self.sender().parentWidget())
         print("User task list: ", user.current_user.task_list)
         if not user.current_user.task_list:
@@ -320,7 +332,8 @@ class MainWindow(QMainWindow):
             t1.start()
             self.audioManager.isClosed = True
         else:
-            self.ui.lblStartStopRec.setText("Click here to STOP recording task")
+            self.ui.lblStartStopRec.setText(
+                "Click here to STOP recording task")
             icon4 = QtGui.QIcon(qta.icon('fa5s.play', color='#3e3c54'))
             self.ui.btnTaskListener.setIcon(icon4)
             self.ui.btnTaskListener.setIconSize(QSize(32, 32))
@@ -510,12 +523,14 @@ class MainWindow(QMainWindow):
             # Persist login credentials pending
 
             if self.ui.chkRememberme.isChecked():
-                result = FirebaseClientWrapper.Firebase_app.login_email_password(email, pwd, True)
+                result = FirebaseClientWrapper.Firebase_app.login_email_password(
+                    email, pwd, True)
 
                 self.RememberMe()
                 print("Remember me")
             else:
-                result = FirebaseClientWrapper.Firebase_app.login_email_password(email, pwd, False)
+                result = FirebaseClientWrapper.Firebase_app.login_email_password(
+                    email, pwd, False)
             if result is True:
                 # Navigate to home page
 
@@ -529,7 +544,8 @@ class MainWindow(QMainWindow):
                 self.ui.lblError_login.setText(result)
         else:
             print('Else part')
-            self.ui.lblError_login.setText("Email and Password fields cannot be empty.")
+            self.ui.lblError_login.setText(
+                "Email and Password fields cannot be empty.")
 
     def backToTask(self):
         """
@@ -565,7 +581,8 @@ class MainWindow(QMainWindow):
             emptyTasksLabel.setPixmap(addTaskPng)
             self.ui.verticalLayout_2.addWidget(emptyTasksLabel)
 
-            print("Label", self.ui.TasksPage.findChild(QtWidgets.QLabel, "emptyTasksLabel"))
+            print("Label", self.ui.TasksPage.findChild(
+                QtWidgets.QLabel, "emptyTasksLabel"))
             print("Layout children: ", self.ui.TasksPage.children())
         else:
 
@@ -574,13 +591,15 @@ class MainWindow(QMainWindow):
                                                                item['description']).createTask()
                 TaskManager.TaskLists.addTask(
                     self.taskObject.findChild(QtWidgets.QPushButton, f"btnRuntask_{item['name']}"))
-                print(self.taskObject.findChild(QtWidgets.QPushButton, f"btnRuntask_{item['name']}").objectName())
+                print(self.taskObject.findChild(QtWidgets.QPushButton,
+                      f"btnRuntask_{item['name']}").objectName())
                 self.taskObject.findChild(QtWidgets.QPushButton, f"btnRuntask_{item['name']}").clicked.connect(
                     self.runTask)
                 self.taskObject.findChild(QtWidgets.QPushButton, f"btnDelete_{item['name']}").clicked.connect(
                     self.deleteTask)
                 self.ui.verticalLayout_2.addWidget(self.taskObject)
-                self.Ui_task_List.append(self.taskObject.findChild(QtWidgets.QPushButton, f"btnRuntask_{item['name']}"))
+                self.Ui_task_List.append(self.taskObject.findChild(
+                    QtWidgets.QPushButton, f"btnRuntask_{item['name']}"))
 
         self.ui.menu.lower()
         self.isMenuOpen = False
@@ -625,9 +644,12 @@ class Style(QProxyStyle):
 def RunApp(arg):
     app = QtWidgets.QApplication(arg)
     dir_ = QtCore.QDir("Poppins")
-    _poppinsBold = QtGui.QFontDatabase.addApplicationFont("application/fonts/Poppins-Bold.ttf")
-    _poppinsLight = QtGui.QFontDatabase.addApplicationFont("application/fonts/Poppins-Light.ttf")
-    _poppinsExtraLight = QtGui.QFontDatabase.addApplicationFont("application/fonts/Poppins-ExtraLight.ttf")
+    _poppinsBold = QtGui.QFontDatabase.addApplicationFont(
+        "application/fonts/Poppins-Bold.ttf")
+    _poppinsLight = QtGui.QFontDatabase.addApplicationFont(
+        "application/fonts/Poppins-Light.ttf")
+    _poppinsExtraLight = QtGui.QFontDatabase.addApplicationFont(
+        "application/fonts/Poppins-ExtraLight.ttf")
     # app.setStyle(Style())
     window = MainWindow()
     sys.exit(app.exec_())
@@ -641,7 +663,7 @@ class ClientConfig(object):
     COMPANY_NAME = 'Daemon Tech'
     HTTP_TIMEOUT = 30
     MAX_DOWNLOAD_RETRIES = 3
-    UPDATE_URLS = ['']
+    UPDATE_URLS = ['http://localhost:80']
 
 
 bar = None
@@ -658,7 +680,8 @@ def check_for_update():
         global bar
 
         if bar is None:
-            bar = progressbar.ProgressBar(widgets=[progressbar.Percentage(), progressbar.Bar()], fd=sys.stdout).start()
+            bar = progressbar.ProgressBar(
+                widgets=[progressbar.Percentage(), progressbar.Bar()], fd=sys.stdout).start()
         zz = float(status['percent_complete'])
 
         bar.update(zz)
@@ -669,7 +692,8 @@ def check_for_update():
                     headers={'basic_auth': 'brofewfefwefewef:EKAXsWkdt5H6yJEmtexN'})
 
     client.platform = "win"
-    app_update = client.update_check(ClientConfig.APP_NAME, ClientConfig.APP_VERSION, channel='stable')
+    app_update = client.update_check(
+        ClientConfig.APP_NAME, ClientConfig.APP_VERSION, channel='stable')
     if app_update is not None:
         app_update.progress_hooks.append(cb)
         app_update.progress_hooks.append(print_status_info)
@@ -691,9 +715,9 @@ if __name__ == "__main__":
 
     print("Checking for Updates please wait!")
     # print("Updates are disabled for now! :(")
-
-    if check_for_update():
-        print('there\'s a new update :D')
-    else:
-        print("Running on latest version: ", ClientConfig.APP_VERSION)
-        RunApp(sys.argv)
+    RunApp(sys.argv)
+    # if check_for_update():
+    #     print('there\'s a new update :D')
+    # else:
+    #     print("Running on latest version: ", ClientConfig.APP_VERSION)
+    #     RunApp(sys.argv)

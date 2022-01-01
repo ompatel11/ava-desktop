@@ -81,7 +81,7 @@ class Task:
 
     def fetch_tasks(self):
         # Open the file and load the file
-        with open("application/config/task_bindings.yml") as f:
+        with open("../application/config/task_bindings.yml") as f:
             data = yaml.load(f, Loader=SafeLoader)
             # print(data[self.taskName].clear())
             del data[self.taskName]

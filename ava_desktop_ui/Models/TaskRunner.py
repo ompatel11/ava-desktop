@@ -1,3 +1,4 @@
+import os
 import time
 import pyautogui
 import yaml
@@ -9,6 +10,9 @@ keyboard = Controller()
 
 class RunTask:
     def __init__(self, transcript):
+        ROOT_DIR = os.path.dirname(os.path.abspath(__file__))
+        self.taskJsonFilePath = os.path.join(ROOT_DIR, '../application/config/tasks.json')
+        self.taskBindingsFilePath = os.path.join(ROOT_DIR, '../application/config/task_bindings.yml')
         self.transcript = transcript
         self.functionMapping = {"moveTo": self.moveTo, "leftClick": self.leftClick, "rightClick": self.rightClick,
                                 "keys": self.keys,
@@ -105,11 +109,11 @@ class RunTask:
     def fetch_commands(self, ext):
         # Open the file and load the file
         if ext == "word":
-            with open("application/config/task_bindings.yml") as f:
+            with open(self.taskBindingsFilePath) as f:
                 data = yaml.load(f, Loader=SafeLoader)
                 commands = data[ext]
         else:
-            with open('application/config/task_bindings.yml') as f:
+            with open(self.taskBindingsFilePath) as f:
                 data = yaml.load(f, Loader=SafeLoader)
                 commands = data[ext]
                 print(commands)

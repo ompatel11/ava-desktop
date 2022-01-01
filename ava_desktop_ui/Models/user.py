@@ -1,4 +1,6 @@
 import json
+import os
+
 from ruamel import yaml
 
 
@@ -8,6 +10,11 @@ class User:
     prime_status = bool
     idtoken = str
     task_list = list
+    ROOT_DIR = os.path.dirname(os.path.abspath(__file__))
+    taskJsonFilePath = os.path.join(ROOT_DIR, '../application/config/tasks.json')
+    taskBindingsFilePath = os.path.join(ROOT_DIR, '../application/config/task_bindings.yml')
+    print(taskBindingsFilePath)
+    print(taskJsonFilePath)
 
     def __init__(self):
         self.email = ""
@@ -18,12 +25,12 @@ class User:
 
     def addTask(self, data):
         self.task_list.append(data)
-        with open('application/config/tasks.json', 'w') as data_file:
+        with open(self.taskJsonFilePath, 'w') as data_file:
             print("Task List after adding:", self.task_list)
             json.dump(self.task_list, data_file)
 
     def deleteTask(self, taskname):
-        with open('application/config/tasks.json') as data_file:
+        with open(self.taskJsonFilePath) as data_file:
             data = json.load(data_file)
         print(data)
         index = 0
@@ -35,17 +42,17 @@ class User:
                 self.task_list.remove(i)
             index += 1
 
-        with open('application/config/tasks.json', 'w') as data_file:
+        with open(self.taskJsonFilePath, 'w') as data_file:
             print("Task List after deleting:", data)
             json.dump(data, data_file)
 
         yamlObj = yaml.YAML()
-        with open('application/config/task_bindings.yml') as fp:
+        with open(self.taskBindingsFilePath) as fp:
             data = yamlObj.load(fp)
             new_data = data
             del data
 
-        with open('application/config/task_bindings.yml', 'w') as file:
+        with open(self.taskBindingsFilePath, 'w') as file:
             del new_data[taskname]
             yamlObj.dump(new_data, file)
         print(new_data)
@@ -53,7 +60,7 @@ class User:
     def getTasks(self):
 
         try:
-            f = open("application/config/tasks.json")
+            f = open(self.taskJsonFilePath)
             data = json.load(f)
             print(data)
             for i in data:
@@ -72,14 +79,14 @@ class User:
         self.task_list = None
 
     def logout(self):
-        data = json.load(open('application/config/tasks.json'))
+        data = json.load(open(self.taskJsonFilePath))
 
-        with open('application/config/tasks.json', 'w') as data_file:
+        with open(self.taskJsonFilePath, 'w') as data_file:
             print("Task List after deleting:", data)
             json.dump('{}', data_file, indent=4)
 
         yamlObj = yaml.YAML()
-        with open('application/config/task_bindings.yml', 'w') as file:
+        with open(self.taskBindingsFilePath, 'w') as file:
             yamlObj.dump('{}', file)
 
 
