@@ -1,3 +1,4 @@
+import os
 from configparser import ConfigParser
 
 from Models import user
@@ -8,6 +9,7 @@ class SessionHandler:
     def __init__(self):
         # Get the configparser object
         self.config_object = ConfigParser()
+        ROOT_DIR = os.path.dirname(os.path.abspath(__file__))
         self.fileName = "application/config/config.ini"
 
     def checkforupdates(self):
@@ -31,7 +33,7 @@ class SessionHandler:
             return True
 
         except Exception as e:
-            print(e)
+            print("Directory error while DeleteUserData()")
             return False
 
     def readUserData(self):
@@ -42,7 +44,7 @@ class SessionHandler:
             return userdata_object
 
         except Exception as e:
-            print(e)
+            print("Directory error while readUserData()")
             return False
 
     def setUserData(self):
@@ -63,7 +65,7 @@ class SessionHandler:
             return True
 
         except Exception as e:
-            print(e)
+            print("Directory error while setUserData()")
             return False
 
     def setloginstate(self):

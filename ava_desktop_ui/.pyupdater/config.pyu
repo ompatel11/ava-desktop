@@ -1,0 +1,32 @@
+{
+  "config_dir": "C:\\Users\\Om\\Desktop\\ava-desktop\\ava_desktop_ui\\.pyupdater",
+  "filename": "C:\\Users\\Om\\Desktop\\ava-desktop\\ava_desktop_ui\\.pyupdater\\config.pyu",
+  "count": 0,
+  "app_config": {
+    "APP_NAME": "Ava",
+    "CLIENT_CONFIG_PATH": [
+      "client_config.py"
+    ],
+    "COMPANY_NAME": "Daemon Technologies",
+    "PLUGIN_CONFIGS": {},
+    "UPDATE_PATCHES": true,
+    "MAX_DOWNLOAD_RETRIES": 3,
+    "HTTP_TIMEOUT": 30,
+    "UPDATE_URLS": [
+      ""
+    ],
+    "DATA_DIR": "C:\\Users\\Om\\Desktop\\ava-desktop\\ava_desktop_ui"
+  },
+  "keypack": {
+    "client": {
+      "offline_public": "hEh3Jy6i61sNH42U4LGwRrggIQKd6CcqfGg1E8tOGPE"
+    },
+    "repo": {
+      "app_private": "bw07crUvj8fPzsl9tmlaOKk6hUjAsyH3RDMI1G2T564"
+    },
+    "upload": {
+      "app_public": "xt0dtvXLXDzMcVXc/ctD+tfVGUE1Xo7XfR9zXj8wFcU",
+      "signature": "ymQPcXhaUMeEllXVu9n9VAM5RNSqysknzPJJml+iEbRIPU0x+GnyUt+fS3l7kCuO7Zb3L1ue0hRS+HH94GzeCA"
+    }
+  }
+}

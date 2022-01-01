@@ -235,7 +235,8 @@ class MainWindow(QMainWindow):
             user.current_user.addTask(taskJsonObj)
             print(self.taskEntries)
             empty = False
-            with open("application/config/task_bindings.yml") as fp:
+            # Check if files are created
+            with open("application/config/task_bindings.yml", 'w+') as fp:
                 data = yaml.load_all(fp, Loader=ruamel.yaml.Loader)
                 print("DATA:", data)
                 if data is None:
@@ -243,7 +244,7 @@ class MainWindow(QMainWindow):
                     empty = True
             if empty:
                 print("Writing task to file")
-                with open("application/config/task_bindings.yml", 'w', encoding="utf-8") as yamlfile:
+                with open("application/config/task_bindings.yml", 'w+', encoding="utf-8") as yamlfile:
                     yaml.dump_all(self.taskEntries, yamlfile,
                               Dumper=yaml.RoundTripDumper, default_flow_style=False)
             else:

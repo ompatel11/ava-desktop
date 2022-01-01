@@ -25,7 +25,7 @@ class User:
 
     def addTask(self, data):
         self.task_list.append(data)
-        with open(self.taskJsonFilePath, 'w') as data_file:
+        with open(self.taskJsonFilePath, 'w+') as data_file:
             print("Task List after adding:", self.task_list)
             json.dump(self.task_list, data_file)
 
@@ -41,21 +41,24 @@ class User:
                 del data[index]
                 self.task_list.remove(i)
             index += 1
+        if len(self.task_list) == 0:
+            os.remove(self.taskJsonFilePath)
+            os.remove(self.taskBindingsFilePath)
+        else:
+            with open(self.taskJsonFilePath, 'w+') as data_file:
+                print("Task List after deleting:", data)
+                json.dump(data, data_file)
 
-        with open(self.taskJsonFilePath, 'w') as data_file:
-            print("Task List after deleting:", data)
-            json.dump(data, data_file)
+            yamlObj = yaml.YAML()
+            with open(self.taskBindingsFilePath, "w+") as fp:
+                data = yamlObj.load(fp)
+                new_data = data
+                del data
 
-        yamlObj = yaml.YAML()
-        with open(self.taskBindingsFilePath) as fp:
-            data = yamlObj.load(fp)
-            new_data = data
-            del data
-
-        with open(self.taskBindingsFilePath, 'w') as file:
-            del new_data[taskname]
-            yamlObj.dump(new_data, file)
-        print(new_data)
+            with open(self.taskBindingsFilePath, 'w+') as file:
+                del new_data[taskname]
+                yamlObj.dump(new_data, file)
+            print(new_data)
 
     def getTasks(self):
 
@@ -81,12 +84,12 @@ class User:
     def logout(self):
         data = json.load(open(self.taskJsonFilePath))
 
-        with open(self.taskJsonFilePath, 'w') as data_file:
+        with open(self.taskJsonFilePath, 'w+') as data_file:
             print("Task List after deleting:", data)
             json.dump('{}', data_file, indent=4)
 
         yamlObj = yaml.YAML()
-        with open(self.taskBindingsFilePath, 'w') as file:
+        with open(self.taskBindingsFilePath, 'w+') as file:
             yamlObj.dump('{}', file)
 
 
