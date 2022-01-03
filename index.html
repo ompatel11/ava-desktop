@@ -1,17 +1,21 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <!-- Theme Made By www.w3schools.com -->
   <title>Ava</title>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
-  <link href="https://fonts.googleapis.com/css?family=Montserrat" rel="stylesheet" type="text/css">
-  <link href="https://fonts.googleapis.com/css?family=Lato" rel="stylesheet" type="text/css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;700&display=swap" rel="stylesheet">
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
-  <link rel="stylesheet" href="index.css">
+  <script src="https://unpkg.com/aos@next/dist/aos.js"></script>
   <script src="https://kit.fontawesome.com/291f2b315f.js" crossorigin="anonymous"></script>
+  <script src="https://cdn.rawgit.com/michalsnik/aos/2.1.1/dist/aos.js"></script>
+  <link rel="stylesheet" href="index.css">
+  <link rel="stylesheet" href="https://unpkg.com/aos@next/dist/aos.css" />
+  
 </head>
 <body id="ava-main">
     <nav class="navbar navbar-default navbar-fixed-top ">
@@ -41,13 +45,13 @@
 <section>
 <div id="about" class="container-fluid section-scroll">
   <div class="row" >
-    <div class="col-sm-6 col-xs-12 svg-heading slidetoright">
+    <div class="col-sm-6 col-xs-12 svg-heading" data-aos="fade-right">
       <h2>Increase Productivity</h2><br>
       <p>Ava is productive tool to automate applications and websites on the go.</p>
       <br><button class="btn btn-primary  btn-download">Download for Free</button>
     </div>
     <div class="col-sm-6 col-xs-12 svg-images">
-        <span class="glyphicon slidetoleft">
+        <span class="glyphicon" data-aos="fade-left">
             <svg width="810" height="826" viewBox="0 0 810 826" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <circle cx="419" cy="436" r="279" fill="url(#paint0_linear_4_4)"/>
                 <path d="M729.946 559.259H95.209C90.123 559.259 86 563.382 86 568.468C86 573.554 90.123 577.677 95.209 577.677H729.946C735.032 577.677 739.155 573.554 739.155 568.468C739.155 563.382 735.032 559.259 729.946 559.259Z" fill="#C9C9C9"/>
@@ -185,7 +189,7 @@
 <div class="container-fluid section-scroll" >
   <div class="row">
     <div class="col-sm-6 col-xs-12 svg-images">
-      <span class="glyphicon slidetorightanim"> <svg width="528" height="454" viewBox="0 0 528 454" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <span class="glyphicon" data-aos="fade-right"> <svg width="528" height="454" viewBox="0 0 528 454" fill="none" xmlns="http://www.w3.org/2000/svg">
         <g clip-path="url(#clip0_9_7)">
         <ellipse cx="257.5" cy="218.5" rx="227.5" ry="218.5" fill="url(#paint0_linear_9_7)"/>
         <path d="M200.916 44.7267C195.36 53.1141 203.841 58.0966 203.841 58.0966C203.841 58.0966 197.439 68.4078 209.434 72.2937C209.434 72.2937 207.042 89.2803 218.761 93.4547L290.142 87.8759C290.142 87.8759 299.727 28.5481 272.555 17.6791C245.382 6.80999 212.083 33.2805 209.158 42.4759C209.176 42.4952 204.08 39.9558 200.916 44.7267Z" fill="#35174D"/>
@@ -323,7 +327,7 @@
         </svg>
         </span>
     </div>
-    <div class="col-sm-6 col-xs-12 svg-heading slidetoleftanim">
+    <div class="col-sm-6 col-xs-12 svg-heading" data-aos="fade-left">
       <h2>Why Ava?</h2><br>
       <p>
         Ava is an easy to use application to automate desktop  <br>tasks or websites on a system. Plus it's free to use.
@@ -338,13 +342,13 @@
 <section >
 <div class="container-fluid section-scroll">
     <div class="row" >
-        <div class="col-sm-6 col-xs-12 svg-heading slidetorightanim">
+        <div class="col-sm-6 col-xs-12 svg-heading" data-aos="fade-right">
           <h2>How to use?</h2><br>
           <p>Just create a task template and do the task that you wish to automate and let Ava handle the rest. When finished you will have an automated task created for you that can be run anytime.</p>
           <br><button class="btn btn-primary  btn-download">Check tutorial</button>
         </div>
-        <div class="col-sm-6 col-xs-12 svg-images">
-            <span class="glyphicon slidetoleftanim">
+        <div class="col-sm-6 col-xs-12 svg-images" data-aos="fade-left">
+            <span class="glyphicon">
                 <svg width="679" height="523" viewBox="0 0 679 523" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <ellipse cx="376.5" cy="277.5" rx="227.5" ry="218.5" fill="url(#paint0_linear_14_5)"/>
                     <path d="M575.175 433.387C573.288 431.283 571.173 429.379 569.825 426.854C568.539 424.441 568.042 421.54 568.457 418.794C568.726 416.978 569.556 415.052 571.173 414.41C572.583 413.856 574.2 414.476 575.362 415.517C576.523 416.558 577.332 417.953 578.223 419.237C581.396 423.732 585.958 427.076 591.017 428.67C596.968 422.404 602.298 414.366 606.279 404.822C606.528 404.224 606.756 403.648 606.984 403.05C606.092 401.988 604.952 401.102 603.77 400.415C601.634 399.22 599.291 398.577 596.989 397.847C594.688 397.116 592.365 396.275 590.437 394.725C589.255 393.772 588.197 392.444 588.073 390.849C587.907 388.79 589.462 386.886 591.308 386.244C593.153 385.602 595.185 386 596.989 386.753C598.793 387.506 600.473 388.591 602.256 389.388C604.89 390.562 607.793 391.093 610.654 390.916C612.521 382.346 612.956 373.976 612.686 366.138C612.272 366.093 611.836 366.116 611.421 366.16C609.991 366.315 608.581 366.802 607.15 366.891C604.682 367.068 602.152 366.027 600.411 364.145C599.747 363.414 599.187 362.55 598.938 361.576C598.71 360.58 598.814 359.473 599.415 358.675C600.141 357.679 601.406 357.325 602.588 357.391C603.77 357.435 604.89 357.834 606.051 358.055C608.083 358.454 610.177 358.321 612.147 357.679C611.484 350.726 610.468 344.327 609.659 338.769C609.306 338.747 608.975 338.747 608.622 338.747C607.793 338.747 606.943 338.769 606.196 338.37C605.45 337.994 604.89 337.086 605.118 336.222C605.284 335.602 605.864 335.182 606.424 334.96C607.005 334.739 607.627 334.694 608.207 334.517C608.477 334.429 608.767 334.318 609.016 334.185C608.249 328.007 608.062 323.158 609.555 320.124L532.77 405.043C538.783 411.243 534.076 425.171 546.435 437.926C554.356 446.097 566.673 445.765 578.617 438.723C577.891 436.73 576.564 434.937 575.175 433.387ZM583.262 396.784C584.195 397.847 585.253 398.865 585.564 400.327C585.854 401.744 585.294 403.383 584.091 404.025C583.366 404.401 582.515 404.401 581.748 404.158C580.981 403.914 580.276 403.471 579.612 402.984C578.244 402.01 576.958 400.88 575.797 399.64C574.76 398.555 573.765 397.138 573.972 395.61C574.159 394.282 575.299 393.241 576.523 392.997C577.767 392.732 579.053 393.152 580.131 393.861C581.313 394.614 582.308 395.699 583.262 396.784ZM592.925 368.064C593.485 367.931 594.086 368.086 594.605 368.374C595.6 368.928 596.969 370.234 597.404 371.363C597.694 372.094 597.57 373.069 596.948 373.467C596.263 373.91 595.393 373.533 594.729 373.068C593.983 372.559 593.277 371.961 592.655 371.319C592.137 370.766 591.619 370.057 591.743 369.282C591.847 368.662 592.365 368.197 592.925 368.064ZM595.724 349.552C595.061 348.999 594.625 348.047 594.874 347.205C595.061 346.541 595.621 346.054 596.201 345.722C597.674 344.858 599.685 344.747 601.033 345.965C602.215 347.05 603.148 349.176 601.634 350.416C601.136 350.815 600.494 350.97 599.851 350.947C599.229 350.925 598.607 350.77 598.005 350.593C597.217 350.35 596.388 350.106 595.724 349.552ZM582.764 374.53C581.935 373.91 581.105 373.157 580.94 372.094C580.753 370.943 581.479 369.769 582.474 369.282C583.469 368.795 584.651 368.906 585.667 369.304C586.704 369.725 587.554 370.411 588.446 371.076C589.462 371.851 590.561 372.404 591.245 373.556C591.95 374.729 591.93 376.501 590.872 377.32C589.898 378.073 588.529 377.696 587.409 377.209C585.771 376.523 584.195 375.615 582.764 374.53ZM556.056 430.22C554.937 429.866 554.003 429.024 553.216 428.094C551.909 426.5 550.997 424.529 550.582 422.448C550.416 421.606 550.333 420.721 550.499 419.879C550.665 419.038 551.142 418.241 551.847 417.842C552.925 417.222 553.713 417.842 554.522 418.551C555.6 419.525 556.699 420.411 557.632 421.54C558.69 422.802 559.54 424.286 559.872 425.924C560.1 427.12 560.017 428.471 559.27 429.379C558.503 430.309 557.176 430.552 556.056 430.22Z" fill="white"/>
@@ -482,8 +486,8 @@
 <!-- Container (Platforms Section) -->
 <div id="platforms" class="container-fluid text-center section-scroll">
   <h2 style="color: #2D425E;">Supported Platforms</h2>
-  <div class="row slideanim">
-    <div class="platformIcons">
+  <div class="row">
+    <div class="platformIcons" data-aos="zoom-in">
 
     <div class="col-xs-12 col-sm-4">
       <span class="logo-small"><i class="fab fa-windows"></i></span>
@@ -498,7 +502,7 @@
       <h4>OSX</h4>
     </div>
   </div>
-    <div class="footerIcon">
+    <div class="footerIcon" data-aos="fade-up">
       <a href="#ava-main" title="Back to top">
         <span class="glyphicon glyphicon-chevron-up"></span>
     </div>
@@ -577,9 +581,64 @@
 </div>
 -->
 </div>
+<!-- <script>
+$(document).ready(function(){
+  // Add smooth scrolling to all links in navbar + footer link
+  $(".navbar a, .footerIcon a[href='#ava-main']").on('click', function(event) {
+    // Make sure this.hash has a value before overriding default behavior
+    if (this.hash !== "") {
+      // Prevent default anchor click behavior
+      event.preventDefault();
+
+      // Store hash
+      var hash = this.hash;
+
+      $('.main-container').animate({
+        scrollTop: $(hash).offset().top
+      }, 1000, function(){
+        window.location.hash = hash;
+      });
+    } // End if
+  });
+  
+  $(".main-container").scroll(function() {
+    $(".slidetorightanim").each(function(){
+      var pos = $(this).offset().top;
+
+      var winTop = $(window).scrollTop();
+        if (pos < winTop + 600) {
+          $(this).addClass("slidetoright");
+        }
+        else{
+          $(this).removeClass("slidetoright");
+        }
+    });
+    $(".slidetoleftanim").each(function(){
+      var pos = $(this).offset().top;
+
+      var winTop = $(window).scrollTop();
+        if (pos < winTop + 600) {
+          $(this).addClass("slidetoleft");
+        }
+        else{
+          $(this).removeClass("slidetoleft");
+        }
+    });
+    $(".slideanim").each(function(){
+      var pos = $(this).offset().top;
+
+      var winTop = $(window).scrollTop();
+        if (pos < winTop + 600) {
+          $(this).addClass("slide");
+        }
+        
+    });
+  });
+})
+</script> -->
 <style>
   body {
-    font: 400 15px Lato, sans-serif;
+    font: 400 15px Poppins sans-serif;
     line-height: 1.8;
     color: #818181;
 }
@@ -601,14 +660,16 @@
     position: relative;
     width: 100vw;
     height: 100vh;
+    overflow-y: scroll;
     scroll-snap-type: y mandatory;
-    scroll-behavior: smooth;
-    overflow-y: auto;
 }
 
 .main-container section {
     scroll-snap-align: center;
     height: 100vh;
+    width: 100vw;
+    max-height: 100vh;
+    max-width: 100vw;
 }
 
 .svg-heading {
@@ -637,7 +698,7 @@
 
 
 .svg-heading p {
-    font-family: Roboto Slab;
+    font-family: 'Poppins', sans-serif;    
     font-style: normal;
     font-weight: normal;
     font-size: 2rem;
@@ -650,7 +711,7 @@
 }
 
 .svg-heading h2 {
-    font-family: Roboto Slab;
+    font-family: 'Poppins', sans-serif;
     font-style: normal;
     font-weight: 500;
     font-size: 3.2vw;
@@ -697,12 +758,6 @@
 }
 
 .btn-learn-more:hover {
-    width: 60%;
-    font-family: Roboto Slab;
-    font-style: normal;
-    font-weight: 500;
-    font-size: 2rem;
-    line-height: 138.69%;
     border: 2px solid #2D425E;
     background-color: #2D425E !important;
     color: #fff;
@@ -893,83 +948,6 @@ h4 {
     color: #2D425E;
 }
 
-.slideanim {
-    visibility: hidden;
-}
-
-.slide {
-    animation-name: slide;
-    -webkit-animation-name: slide;
-    animation-duration: 1s;
-    -webkit-animation-duration: 1s;
-    visibility: visible;
-}
-
-
-.slidetoleftanim {
-    visibility: hidden;
-}
-
-.slidetoleft {
-    animation-name: slidetoleft;
-    -webkit-animation-name: slidetoleft;
-    animation-duration: 1s;
-    -webkit-animation-duration: 1s;
-    visibility: visible;
-}
-
-.slidetorightanim {
-    visibility: hidden;
-}
-
-.slidetoright {
-    animation-name: slidetoright;
-    -webkit-animation-name: slidetoright;
-    animation-duration: 1s;
-    -webkit-animation-duration: 1s;
-    visibility: visible;
-}
-
-@keyframes slidetoright {
-    0% {
-        opacity: 0;
-        transform: translateX(-100%);
-    }
-
-    100% {
-        opacity: 1;
-        transform: translateX(0%);
-
-    }
-}
-
-@keyframes slidetoleft {
-    0% {
-        opacity: 0;
-        transform: translateX(100%);
-    }
-
-    100% {
-        opacity: 1;
-        transform: translateX(0%);
-
-    }
-}
-
-
-
-@-webkit-keyframes slide {
-    0% {
-        opacity: 0;
-        -webkit-transform: translateY(70%);
-    }
-
-    100% {
-        opacity: 1;
-        -webkit-transform: translateY(0%);
-    }
-}
-
 @media screen and (max-width: 768px) {
     .col-sm-4 {
         text-align: center;
@@ -1056,53 +1034,49 @@ h4 {
 }
 </style>
 <script>
-$(document).ready(function(){
-  // Add smooth scrolling to all links in navbar + footer link
-  $(".navbar a, .footerIcon a[href='#ava-main']").on('click', function(event) {
-    // Make sure this.hash has a value before overriding default behavior
-    if (this.hash !== "") {
-      // Prevent default anchor click behavior
-      event.preventDefault();
+  AOS.init({
+    // Global settings:
+    disable: false, // accepts following values: 'phone', 'tablet', 'mobile', boolean, expression or function
+    startEvent: 'DOMContentLoaded', // name of the event dispatched on the document, that AOS should initialize on
+    initClassName: 'aos-init', // class applied after initialization
+    animatedClassName: 'aos-animate', // class applied on animation
+    useClassNames: false, // if true, will add content of `data-aos` as classes on scroll
+    disableMutationObserver: false, // disables automatic mutations' detections (advanced)
+    debounceDelay: 50, // the delay on debounce used while resizing window (advanced)
+    throttleDelay: 99, // the delay on throttle used while scrolling the page (advanced)
 
-      // Store hash
-      var hash = this.hash;
 
-      $('.main-container').animate({
-        scrollTop: $(hash).offset().top
-      }, 1000, function(){
-        window.location.hash = hash;
-      });
-    } // End if
-  });
-  
-  $(".main-container").scroll(function() {
-    $(".slidetorightanim").each(function(){
-      var pos = $(this).offset().top;
+    // Settings that can be overridden on per-element basis, by `data-aos-*` attributes:
+    offset: 120, // offset (in px) from the original trigger point
+    delay: 200, // values from 0 to 3000, with step 50ms
+    duration: 800, // values from 0 to 3000, with step 50ms
+    easing: 'ease', // default easing for AOS animations
+    once: false, // whether animation should happen only once - while scrolling down
+    mirror: false, // whether elements should animate out while scrolling past them
+    anchorPlacement: 'top-bottom', // defines which position of the element regarding to window should trigger the animation
 
-      var winTop = $(window).scrollTop();
-        if (pos < winTop + 600) {
-          $(this).addClass("slidetoright");
-        }
+});
+$(document).ready(function () {
+    document.addEventListener('scroll', (event) => { AOS.refresh(); }, { capture: true, passive: true, })
+    // Add smooth scrolling to all links in navbar + footer link
+    $(".navbar a, .footerIcon a[href='#ava-main']").on('click', function (event) {
+        // Make sure this.hash has a value before overriding default behavior
+        if (this.hash !== "") {
+            // Prevent default anchor click behavior
+            event.preventDefault();
+
+            // Store hash
+            var hash = this.hash;
+            $('.main-container').animate({
+                scrollTop: $(hash).offset().top
+            }, 1000, function () {
+                window.location.hash = hash;
+            });
+            // window.scrollTo({ top: 0, behavior: 'smooth' });
+
+        } // End if
     });
-    $(".slidetoleftanim").each(function(){
-      var pos = $(this).offset().top;
-
-      var winTop = $(window).scrollTop();
-        if (pos < winTop + 600) {
-          $(this).addClass("slidetoleft");
-        }
-    });
-    $(".slideanim").each(function(){
-      var pos = $(this).offset().top;
-
-      var winTop = $(window).scrollTop();
-        if (pos < winTop + 600) {
-          $(this).addClass("slide");
-        }
-    });
-  });
 })
 </script>
-
 </body>
 </html>
