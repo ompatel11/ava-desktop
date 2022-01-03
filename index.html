@@ -14,7 +14,7 @@
   <script src="https://kit.fontawesome.com/291f2b315f.js" crossorigin="anonymous"></script>
 </head>
 <body id="ava-main">
-    <nav class="navbar navbar-default navbar-fixed-top">
+    <nav class="navbar navbar-default navbar-fixed-top ">
         <div class="container">
             <div class="navbar-header">
                 <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
@@ -26,9 +26,10 @@
             </div>
             <div class="collapse navbar-collapse" id="myNavbar">
                 <ul class="nav navbar-nav navbar-right">
-                    <li><a href="#about">ABOUT</a></li>
-                    <li><a href="#pricing">PRICING</a></li>
-                    <li><a href="#contact">CONTACT</a></li>
+                    <li><a href="#login">Login</a></li>
+                    <li>
+                      <a class="register-link" href="#">Register</a>
+                    </li>
                 </ul>
             </div>
         </div>
@@ -37,15 +38,15 @@
     
     
     <!-- Container (About Section) -->
-<section style="height: 100vh;">
-<div id="about"  class="container-fluid section-scroll">
+<section>
+<div id="about" class="container-fluid section-scroll">
   <div class="row" >
-    <div class="col-sm-6 svg-heading">
-      <h2 style="margin-top: 25rem;">Create And Build With Your VOICE.</h2><br>
+    <div class="col-sm-6 col-xs-12 svg-heading slidetoright">
+      <h2>Increase Productivity</h2><br>
       <p>Ava is productive tool to automate applications and websites on the go.</p>
-      <br><button class="btn btn-primary btn-lg btn-download">Download for Free</button>
+      <br><button class="btn btn-primary  btn-download">Download for Free</button>
     </div>
-    <div class="col-sm-6">
+    <div class="col-sm-6 col-xs-12 svg-images">
         <span class="glyphicon slidetoleft">
             <svg width="810" height="826" viewBox="0 0 810 826" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <circle cx="419" cy="436" r="279" fill="url(#paint0_linear_4_4)"/>
@@ -180,10 +181,10 @@
 </div>
 </section>
 
-<section  style="height: 80vh; margin-top: 15rem;">
+<section>
 <div class="container-fluid section-scroll" >
   <div class="row">
-    <div class="col-sm-6">
+    <div class="col-sm-6 col-xs-12 svg-images">
       <span class="glyphicon slidetorightanim"> <svg width="528" height="454" viewBox="0 0 528 454" fill="none" xmlns="http://www.w3.org/2000/svg">
         <g clip-path="url(#clip0_9_7)">
         <ellipse cx="257.5" cy="218.5" rx="227.5" ry="218.5" fill="url(#paint0_linear_9_7)"/>
@@ -322,27 +323,27 @@
         </svg>
         </span>
     </div>
-    <div class="col-sm-6 svg-heading">
+    <div class="col-sm-6 col-xs-12 svg-heading slidetoleftanim">
       <h2>Why Ava?</h2><br>
       <p>
         Ava is an easy to use application to automate desktop  <br>tasks or websites on a system. Plus it's free to use.
       </p>
       <br>
-      <button class="btn-lg btn-secondary btn-learn-more">Learn More</button>
+      <button class=" btn-secondary btn-learn-more">Learn More</button>
     </div>
   </div>
 </div>
 </section>
 
-<section style="height: 100vh;">
+<section >
 <div class="container-fluid section-scroll">
-    <div class="row" style="height: 100vh;">
-        <div class="col-sm-6 svg-heading">
-          <h2 style="margin-top: 25rem;">How to use?</h2><br>
+    <div class="row" >
+        <div class="col-sm-6 col-xs-12 svg-heading slidetorightanim">
+          <h2>How to use?</h2><br>
           <p>Just create a task template and do the task that you wish to automate and let Ava handle the rest. When finished you will have an automated task created for you that can be run anytime.</p>
-          <br><button class="btn btn-primary btn-lg btn-download">Check tutorial</button>
+          <br><button class="btn btn-primary  btn-download">Check tutorial</button>
         </div>
-        <div class="col-sm-6">
+        <div class="col-sm-6 col-xs-12 svg-images">
             <span class="glyphicon slidetoleftanim">
                 <svg width="679" height="523" viewBox="0 0 679 523" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <ellipse cx="376.5" cy="277.5" rx="227.5" ry="218.5" fill="url(#paint0_linear_14_5)"/>
@@ -479,32 +480,34 @@
 
 <section>
 <!-- Container (Platforms Section) -->
-<div id="platforms" class="container-fluid text-center" style="height: 70vh;">
-  <h2>Supported Platforms</h2>
-  <br>
+<div id="platforms" class="container-fluid text-center section-scroll">
+  <h2 style="color: #2D425E;">Supported Platforms</h2>
   <div class="row slideanim">
-    <div class="col-sm-4">
+    <div class="platformIcons">
+
+    <div class="col-xs-12 col-sm-4">
       <span class="logo-small"><i class="fab fa-windows"></i></span>
       <h4>Windows</h4>
     </div>
-    <div class="col-sm-4">
+    <div class="col-sm-12 col-sm-4">
       <span class="logo-small"><i class="fab fa-linux"></i></span>
       <h4>Linux</h4>
     </div>
-    <div class="col-sm-4">
+    <div class="col-sm-12 col-sm-4">
       <span class="logo-small"><i class="fab fa-apple"></i></span>
       <h4>OSX</h4>
     </div>
   </div>
-</div>
-</section>
-<section>
-    <footer class="container-fluid text-center">
-        <a href="#ava-main" title="Back to top">
+    <div class="footerIcon">
+      <a href="#ava-main" title="Back to top">
         <span class="glyphicon glyphicon-chevron-up"></span>
-      </a>
-    </footer> 
-    </section>
+    </div>
+  </div>
+  
+</footer> 
+</section>
+</div>
+
 </div>
 <!-- Container (Pricing Section) -->
 <!-- <div id="pricing" class="container-fluid">
@@ -572,13 +575,10 @@
     </div>    
   </div>
 </div>
-
-
-<!-- Image of location/map -->
-
+-->
 </div>
 <style>
-    body {
+  body {
     font: 400 15px Lato, sans-serif;
     line-height: 1.8;
     color: #818181;
@@ -608,12 +608,17 @@
 
 .main-container section {
     scroll-snap-align: center;
+    height: 100vh;
 }
 
 .svg-heading {
     justify-content: center;
     padding-left: 10%;
     padding-right: 10%;
+}
+
+.main-container button {
+    width: max-content;
 }
 
 .btn-download {
@@ -623,21 +628,22 @@
     font-family: Roboto Slab;
     font-style: normal;
     font-weight: 500;
-    font-size: 24px;
+    font-size: 2rem;
     line-height: 138.69%;
     /* or 33px */
 
     letter-spacing: 0.005em;
 }
 
+
 .svg-heading p {
     font-family: Roboto Slab;
     font-style: normal;
     font-weight: normal;
-    font-size: 24px;
+    font-size: 2rem;
     line-height: 164.19%;
     /* or 39px */
-    word-break: break-all;
+    word-wrap: break-word;
     letter-spacing: 0.005em;
 
     color: rgba(45, 66, 94, 0.7);
@@ -647,11 +653,35 @@
     font-family: Roboto Slab;
     font-style: normal;
     font-weight: 500;
-    font-size: 54px;
-    line-height: 138.69%;
-    /* or 75px */
+    font-size: 3.2vw;
     color: #2D425E;
     letter-spacing: 0.005em;
+}
+
+.btn-register {
+    width: 100%;
+    font-family: Roboto Slab;
+    font-style: normal;
+    font-weight: 500;
+    font-size: 2rem;
+    line-height: 138.69%;
+    border: 2px solid #2D425E;
+    background-color: #fff !important;
+    color: #2D425E;
+}
+
+.btn-register:hover {
+    width: 100%;
+    font-family: Roboto Slab;
+    font-style: normal;
+    font-weight: 500;
+    font-size: 2rem;
+    line-height: 138.69%;
+    border: 2px solid #2D425E;
+    background-color: #2D425E !important;
+    color: #fff;
+    text-align: center;
+    align-self: ce;
 }
 
 .btn-learn-more {
@@ -659,19 +689,30 @@
     font-family: Roboto Slab;
     font-style: normal;
     font-weight: 500;
-    font-size: 24px;
+    font-size: 2rem;
     line-height: 138.69%;
-    border: 4px solid #2D425E;
+    border: 2px solid #2D425E;
     background-color: #fff !important;
     color: #2D425E;
 }
 
+.btn-learn-more:hover {
+    width: 60%;
+    font-family: Roboto Slab;
+    font-style: normal;
+    font-weight: 500;
+    font-size: 2rem;
+    line-height: 138.69%;
+    border: 2px solid #2D425E;
+    background-color: #2D425E !important;
+    color: #fff;
+}
+
 h2 {
-    font-size: 24px;
+    font-size: 2rem;
     text-transform: uppercase;
     color: #303030;
     font-weight: 600;
-    margin-bottom: 30px;
 }
 
 h4 {
@@ -679,7 +720,6 @@ h4 {
     line-height: 1.375em;
     color: #303030;
     font-weight: 400;
-    margin-bottom: 30px;
 }
 
 .jumbotron {
@@ -808,7 +848,7 @@ h4 {
     font-style: normal;
     font-weight: normal;
     font-size: 18px;
-    line-height: 24px;
+    line-height: 14px;
     /* identical to box height */
 
 
@@ -817,6 +857,7 @@ h4 {
 .navbar li a,
 .navbar .navbar-brand {
     color: #2D425E !important;
+
 }
 
 .navbar-nav li a:hover,
@@ -825,12 +866,28 @@ h4 {
     background-color: #fff !important;
 }
 
+.register-link {
+    border: 2px solid #2D425E;
+    width: max-content;
+    height: max-content;
+}
+
+.register-link:hover {
+    background-color: #2D425E;
+    color: white;
+}
+
 .navbar-default .navbar-toggle {
     border-color: transparent;
     color: #fff !important;
 }
 
-footer .glyphicon {
+.platformIcons {
+    padding-top: 10%;
+}
+
+.footerIcon .glyphicon {
+    padding-top: 20%;
     font-size: 20px;
     margin-bottom: 20px;
     color: #2D425E;
@@ -843,6 +900,19 @@ footer .glyphicon {
 .slide {
     animation-name: slide;
     -webkit-animation-name: slide;
+    animation-duration: 1s;
+    -webkit-animation-duration: 1s;
+    visibility: visible;
+}
+
+
+.slidetoleftanim {
+    visibility: hidden;
+}
+
+.slidetoleft {
+    animation-name: slidetoleft;
+    -webkit-animation-name: slidetoleft;
     animation-duration: 1s;
     -webkit-animation-duration: 1s;
     visibility: visible;
@@ -863,26 +933,14 @@ footer .glyphicon {
 @keyframes slidetoright {
     0% {
         opacity: 0;
-        right: 100%;
+        transform: translateX(-100%);
     }
 
     100% {
         opacity: 1;
-        right: 0%;
+        transform: translateX(0%);
 
     }
-}
-
-.slidetoleftanim {
-    visibility: hidden;
-}
-
-.slidetoleft {
-    animation-name: slidetoleft;
-    -webkit-animation-name: slidetoleft;
-    animation-duration: 1s;
-    -webkit-animation-duration: 1s;
-    visibility: visible;
 }
 
 @keyframes slidetoleft {
@@ -898,17 +956,7 @@ footer .glyphicon {
     }
 }
 
-@keyframes slide {
-    0% {
-        opacity: 0;
-        transform: translateY(70%);
-    }
 
-    100% {
-        opacity: 1;
-        transform: translateY(0%);
-    }
-}
 
 @-webkit-keyframes slide {
     0% {
@@ -932,18 +980,85 @@ footer .glyphicon {
         width: 100%;
         margin-bottom: 35px;
     }
+
+    .main-container section {
+        height: 100vh;
+    }
+
+    .svg-images span svg {
+        height: 60vh;
+        width: 50vw;
+    }
+
+    .main-container section {
+        padding-top: 0%;
+    }
+
+    .logo-small {
+        color: #2D425E;
+        font-size: 30px;
+    }
+
+    .platformIcons {
+        padding-top: 0%;
+    }
+
+    .footerIcon .glyphicon {
+        padding-top: 0;
+    }
 }
 
 @media screen and (max-width: 480px) {
     .logo {
         font-size: 150px;
     }
+
+    .main-container section {
+        padding-top: 0%;
+
+    }
+
+    .main-container section {
+        height: 100vh;
+        align-content: center;
+    }
+
+    .main-container section div {
+        max-height: 10%;
+    }
+
+    .logo-small {
+        color: #2D425E;
+        font-size: 24px;
+    }
+
+    h2 {
+        padding-top: 10%;
+        width: 100%;
+        font-size: 2rem;
+        text-transform: uppercase;
+        text-overflow: ellipsis;
+        color: #303030;
+        font-weight: 600;
+        word-wrap: break-word;
+    }
+
+    .footerIcon .glyphicon {
+        padding-top: 0;
+        padding-bottom: 10px;
+    }
+
+    .svg-images span svg {
+        height: 30vh;
+        width: 60vw;
+    }
+
 }
 </style>
 <script>
 $(document).ready(function(){
   // Add smooth scrolling to all links in navbar + footer link
-  $(".navbar a, footer a[href='#ava-main']").on('click', function(event) {
+  $(".navbar a, .footerIcon a[href='#ava-main']").on('click', function(event) {
     // Make sure this.hash has a value before overriding default behavior
     if (this.hash !== "") {
       // Prevent default anchor click behavior
