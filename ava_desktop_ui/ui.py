@@ -9,9 +9,12 @@
 
 
 from PyQt5 import QtCore, QtGui, QtWidgets
+from PyQt5.QtGui import QMovie
 from PyQt5.QtWidgets import QGraphicsDropShadowEffect
 import qtawesome as qta
 
+from client_config import ClientConfig
+from webViewInterface import WebView
 from Models.Appfonts import appFonts
 
 
@@ -22,6 +25,17 @@ class Ui_MainWindow(object):
         self.hiddenIcon = qta.icon('fa5.eye')
         # self.hiddenIcon.addPixmap(QtGui.QPixmap(".\\Icons/Icon ionic-md-eye.svg"))
         self.password_shown = False
+        self.password_shown_signup = False
+
+    def on_toggle_password_Action_signup(self):
+        if not self.password_shown_signup:
+            self.txtPassword_signup.setEchoMode(QtWidgets.QLineEdit.Normal)
+            self.password_shown_signup = True
+            self.togglepasswordActionSignup.setIcon(self.hiddenIcon)
+        else:
+            self.txtPassword_signup.setEchoMode(QtWidgets.QLineEdit.Password)
+            self.password_shown_signup = False
+            self.togglepasswordActionSignup.setIcon(self.visibleIcon)
 
     def on_toggle_password_Action(self):
         if not self.password_shown:
@@ -35,6 +49,7 @@ class Ui_MainWindow(object):
 
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
+        MainWindow.setWindowIcon(QtGui.QIcon('Icons/logo waves dark.svg'))
         MainWindow.setWindowFlag(QtCore.Qt.FramelessWindowHint)
         MainWindow.resize(508, 701)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Preferred)
@@ -84,17 +99,23 @@ class Ui_MainWindow(object):
         sizePolicy.setHeightForWidth(self.btnMenu.sizePolicy().hasHeightForWidth())
         self.btnMenu.setSizePolicy(sizePolicy)
         self.btnMenu.setIcon(qta.icon('fa5s.bars', color='white'))
-        self.btnMenu.setIconSize(QtCore.QSize(24, 24))
+        self.btnMenu.setIconSize(QtCore.QSize(16, 16))
+        # self.btnMenu.setIcon(QIcon('Icons/logo waves.svg'))
         self.btnMenu.setMinimumSize(QtCore.QSize(35, 30))
         self.btnMenu.setStyleSheet("QPushButton{\n"
                                    "background-color: rgb(63, 61, 85);\n"
                                    "border: 0px solid rgb(63, 61, 85);\n"
+                                   "color: white;"
                                    "}\n"
                                    "QPushButton:hover{\n"
                                    "    background-color: rgb(103, 100, 138);\n"
                                    "}\n"
                                    "")
         self.btnMenu.setText("\t")
+        font = QtGui.QFont()
+        font.setFamily(appFonts.light)
+        font.setPointSize(12)
+        self.btnMenu.setFont(font)
         self.btnMenu.setObjectName("btnMenu")
         self.horizontalLayout_5.addWidget(self.btnMenu)
         self.frame_title = QtWidgets.QFrame(self.title_bar)
@@ -183,8 +204,7 @@ class Ui_MainWindow(object):
         font.setBold(False)
         font.setWeight(50)
         self.stackPanel.setFont(font)
-        self.stackPanel.setStyleSheet("border:none\n"
-                                      "")
+        self.stackPanel.setStyleSheet("border:none\n")
         self.stackPanel.setObjectName("stackPanel")
         self.LoginPage = QtWidgets.QWidget()
         self.LoginPage.setObjectName("LoginPage")
@@ -494,6 +514,15 @@ class Ui_MainWindow(object):
         self.btnSignupPage.setDefault(False)
         self.btnSignupPage.setObjectName("btnSignupPage")
         self.horizontalLayout_12.addWidget(self.btnSignupPage)
+        self.loginLoadingFrame = QtWidgets.QFrame(self.LoginPage)
+        self.loginLoadingFrame.setStyleSheet("""background: transparent;
+        """)
+        self.loginWaitingSpinner = QtWidgets.QLabel(self.loginLoadingFrame)
+        self.loginLoadingFrame.setObjectName("loginLoadingFrame")
+        self.movie = QMovie("Icons/loading animation.gif")
+        self.loginWaitingSpinner.setMovie(self.movie)
+        self.loginWaitingSpinner.setGeometry(150, 200, 200, 200)
+        self.movie.start()
         spacerItem3 = QtWidgets.QSpacerItem(60, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
         self.horizontalLayout_12.addItem(spacerItem3)
         self.formLayout_2.setLayout(6, QtWidgets.QFormLayout.LabelRole, self.horizontalLayout_12)
@@ -716,12 +745,24 @@ class Ui_MainWindow(object):
         self.txtPassword_signup = QtWidgets.QLineEdit(self.signupMainFrame)
         self.txtPassword_signup.setMinimumSize(QtCore.QSize(311, 41))
         self.txtPassword_signup.setFont(appFonts.getLineEditFont())
+        self.txtPassword_signup.setToolTip("""Password must include:
+        8 characters
+        an uppercase letter
+        a lowercase letter
+        a number
+        a special character (! # $ ? % @)
+        """)
+        self.togglepasswordActionSignup = self.txtPassword_signup.addAction(
+            self.visibleIcon,
+            QtWidgets.QLineEdit.TrailingPosition
+        )
+        self.togglepasswordActionSignup.triggered.connect(self.on_toggle_password_Action_signup)
+
         self.txtPassword_signup.setStyleSheet("border-style: outset;\n"
                                               "border-width: 1px;\n"
                                               "background-color: rgb(231, 231, 231);\n"
                                               "border-radius: 8px;\n"
                                               "border-color: rgb(194,194,194);\n"
-
                                               "padding: 4px;")
         self.txtPassword_signup.setText("")
         self.txtPassword_signup.setEchoMode(QtWidgets.QLineEdit.Password)
@@ -852,7 +893,7 @@ class Ui_MainWindow(object):
         self.lblLiveTranscript.setStyleSheet("color:rgb(63, 61, 84);\n"
                                              "")
         self.lblLiveTranscript.setObjectName("lblLiveTranscript")
-        self.stackPanel.addWidget(self.MainPage)
+        # self.stackPanel.addWidget(self.MainPage)
         self.TasksPage = QtWidgets.QWidget()
         self.TasksPage.setObjectName("TasksPage")
         self.scrollArea = QtWidgets.QScrollArea(self.TasksPage)
@@ -1065,6 +1106,47 @@ class Ui_MainWindow(object):
         self.btnTutorial.setObjectName("btnTutorial")
         self.horizontalLayout.addWidget(self.btnTutorial)
         self.stackPanel.addWidget(self.AddTaskPage)
+        self.EmailVerificationPage = QtWidgets.QWidget()
+        self.EmailVerificationPage.setObjectName("EmailVerificationPage")
+        self.emailverificationFrame = QtWidgets.QFrame(self.EmailVerificationPage)
+        self.emailverificationFrame.setGeometry(QtCore.QRect(0, 0, 511, 631))
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Fixed)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.emailverificationFrame.sizePolicy().hasHeightForWidth())
+        self.emailverificationFrame.setSizePolicy(sizePolicy)
+        # self.emailwebView = WebView(self, "http://localhost:3000/verificationsentapp")
+        # self.emailwebView.setParent(self.emailverificationFrame)
+        # self.emailwebView.setGeometry(QtCore.QRect(0, 0, 509, 550))
+        self.stackPanel.addWidget(self.EmailVerificationPage)
+        self.LoadingPage = QtWidgets.QWidget()
+        self.LoadingPage.setObjectName("LoadingPage")
+        # self.QtWaitingSpinner = QtWaitingSpinner(self.LoadingPage)
+        # self.QtWaitingSpinner.start()
+        self.QtWaitingSpinner = QtWidgets.QLabel(self.LoadingPage)
+        self.QtWaitingSpinner.setText("Test")
+        self.movie = QMovie("Icons/loading animation.gif")
+        self.QtWaitingSpinner.setMovie(self.movie)
+        self.QtWaitingSpinner.setGeometry(150,200,200,200)
+        self.movie.start()
+        self.stackPanel.addWidget(self.LoadingPage)
+        self.btnContinue = QtWidgets.QPushButton()
+        self.btnContinue.setGeometry(QtCore.QRect(150, 560, 211, 40))
+        self.btnContinue.setText("Continue")
+        self.btnContinue.setFont(appFonts.getMenuButtonFont())
+        self.btnContinue.setStyleSheet("""
+        QPushButton{
+color: rgb(255, 255, 255);
+background-color: rgb(63, 61, 84);
+border: 2px solid  rgb(63, 61, 94);
+border-radius: 8px;
+padding: 4px;
+box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.16), 0 0 0 1px rgba(0, 0, 0, 0.08);
+}
+QPushButton:pressed{
+	background-color: rgb(103, 100, 138);
+}""")
+        self.btnContinue.setParent(self.emailverificationFrame)
         self.menu = QtWidgets.QFrame(self.mainFrame)
         self.menu.setGeometry(QtCore.QRect(0, 30, 509, 681))
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Fixed)
@@ -1172,11 +1254,36 @@ class Ui_MainWindow(object):
                                      "background-color: rgb(255, 255, 255);\n"
                                      "border-bottom: 1px solid rgb(63, 61, 86);\n"
                                      "}")
-        iconAccount = QtGui.QIcon(qta.icon('mdi6.logout', color='#3e3c54'))
         self.btnLogout.setIcon(iconAccount)
         self.btnLogout.setIconSize(QtCore.QSize(32, 32))
         self.btnLogout.setObjectName("btnLogout")
         self.verticalLayout.addWidget(self.btnLogout)
+        self.btnLogo = QtWidgets.QPushButton(self.menu)
+        self.btnLogo.setGeometry(QtCore.QRect(0, 580, 519, 60))
+        self.btnLogo.setFont(appFonts.getMenuButtonFont())
+        self.btnLogo.setStyleSheet("QPushButton{\n"
+                                   "text-align: center center;\n"
+                                   "padding: 0 0 0 20;\n"
+                                   "color: rgb(63, 61, 86);\n"
+                                   "background-color: rgb(255, 255, 255);\n"
+                                   "border-bottom: 1px solid rgb(63, 61, 86);\n"
+                                   "\n"
+                                   "}\n"
+                                   "QPushButton{"
+                                   "border: none;\n"
+                                   "}")
+        icon2 = QtGui.QIcon()
+        icon2.addPixmap(QtGui.QPixmap(".\\Icons/logo waves dark.svg"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        self.btnLogo.setIcon(icon2)
+        self.btnLogo.setIconSize(QtCore.QSize(32, 32))
+        self.btnLogo.setText("AVA")
+        self.btnLogo.setObjectName("btnLogo")
+        self.lblVersion = QtWidgets.QLabel(self.menu)
+        self.lblVersion.setGeometry(QtCore.QRect(210, 640, 519, 20))
+        self.lblVersion.setStyleSheet("""
+        text-align: center center;""")
+        self.lblVersion.setFont(appFonts.getLightFont())
+        self.lblVersion.setObjectName("lblVersion")
         self.menu.lower()
         self.title_bar.raise_()
         self.stackPanel.raise_()
@@ -1188,7 +1295,8 @@ class Ui_MainWindow(object):
 
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
-        MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow"))
+        MainWindow.setWindowTitle(_translate("MainWindow", "Ava"))
+        self.lblVersion.setText(_translate("MainWindow", f"Version number: {ClientConfig.APP_VERSION}"))
         self.lblLogin.setText(_translate("MainWindow", "Log in"))
         self.lblorviaEmail_login.setText(_translate("MainWindow", "or via E-mail"))
         self.lblEmail.setText(_translate("MainWindow", "Email"))
@@ -1206,6 +1314,8 @@ class Ui_MainWindow(object):
         self.txtEmail_signup.setPlaceholderText(_translate("MainWindow", "email@example.com"))
         self.lblPassword_signup.setText(_translate("MainWindow", "Password"))
         self.txtPassword_signup.setPlaceholderText(_translate("MainWindow", "Password"))
+        self.txtPassword_signup.setToolTip(_translate("MainWindow",
+                                                      """<html><head/><body><p>Password must include:</p><p><span style=" font-weight:600;"> minimum 8 characters</span></p><p><span style=" font-weight:600;">an uppercase letter</span></p><p><span style=" font-weight:600;">a lowercase letter</span></p><p><span style=" font-weight:600;">a number</span></p><p><span style=" font-weight:600;">a special character (! # $ ? % @)</span></p></body></html>"""))
         self.lblConfirmPassword.setText(_translate("MainWindow", "Confirm Password"))
         self.txtConfirmPassword_signup.setPlaceholderText(_translate("MainWindow", "Confirm Password"))
         self.btnSignup.setText(_translate("MainWindow", "Sign Up"))
@@ -1219,7 +1329,7 @@ class Ui_MainWindow(object):
         self.txtDescription.setPlaceholderText(_translate("MainWindow", ""))
         self.lblRecordTask.setText(_translate("MainWindow",
                                               "<html><head/><body><p align=\"center\">Once you START recording, "
-                                              "Do the desired task from </p><p align=\"center\">start to finish one "
+                                              "do the desired task from </p><p align=\"center\">start to finish one "
                                               "time and than END recording. </p><p "
                                               "align=\"center\"><br/></p></body></html>"))
         self.lblStartStopRec.setText(_translate("MainWindow", "Click here to START recording task"))

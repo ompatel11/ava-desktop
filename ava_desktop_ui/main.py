@@ -1,10 +1,16 @@
+import json
+import re
 import sys
 import threading
 import time
+import webbrowser
+import os
+import socket
+from requests_oauthlib import OAuth2Session
 import ruamel.yaml
 from PyQt5 import QtCore, QtWidgets, QtGui
 from PyQt5.QtCore import Qt, QSize, QPropertyAnimation, QRect
-from PyQt5.QtGui import QIcon, QPixmap
+from PyQt5.QtGui import QIcon, QPixmap, QMovie
 from PyQt5.QtWidgets import QMainWindow, QProxyStyle, QStyle
 import progressbar
 from ruamel import yaml
@@ -14,10 +20,12 @@ import audio_manager
 import Models.user as user
 from Models import tasks, TaskManager
 from Models.TaskRunner import RunTask
+from Models import Appfonts
 from task_listener import TaskListener
 from ui import Ui_MainWindow
 from pyupdater.client import Client, AppUpdate
 import qtawesome as qta
+import requests
 
 
 class MainWindow(QMainWindow):
@@ -26,7 +34,6 @@ class MainWindow(QMainWindow):
         QMainWindow.__init__(self)
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self)
-        # self.MircophoneManager = AudioManager()
         self.client_token = ''
         # SET TITLE BAR
         self.ui.frame_title.mouseMoveEvent = self.moveWindow
@@ -36,21 +43,40 @@ class MainWindow(QMainWindow):
         self.ui.btnWindowClose.clicked.connect(self.closeWindow)
         self.ui.btnMenu.clicked.connect(self.openMenu)
 
+        # Menu control
         self.isMenuOpen = None
         self.isMenuEnabled = False
-        # self.ui.SubMenuFrame_2.lower()
 
         # Tasks UI controls
         self.Ui_task_List = []
-        # self.ui.btnAddTask.clicked.connect(self.createTask)
+
         self.ui.txtTitle.textChanged.connect(self.titleChange)
         self.ui.txtDescription.textChanged.connect(self.descriptionChange)
         self.ui.btnTaskListener.clicked.connect(self.starTaskListener)
         self.taskListenerObject = None
         self.taskEntries = None
         self.isListener = False
+
+        self.emailRegex = r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b'
+        self.passwordRegex = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*#?)(&])[A-Za-z\d@$!#%*?)(&]{8,18}$"
+        self.compliledRegex = re.compile(self.passwordRegex)
+
+        # Login LineEdit listeners
+        self.isEmailLogin = bool
+        self.ui.txtEmail_login.textChanged.connect(self.validateEmail)
+        self.isPassword = bool
+
+        # Signup LineEdit listeners
+        self.ui.txtEmail_signup.textChanged.connect(self.validateEmail)
+        self.ui.txtPassword_signup.textChanged.connect(self.validatePassword)
+        self.ui.txtConfirmPassword_signup.textChanged.connect(self.validatePasswords)
+        self.isEmailSignup = bool
+        self.isPasswordSignup = bool
+
         # SubMenu Buttons
         self.ui.btnLogout.clicked.connect(self.logout)
+        self.ui.btnAccount.clicked.connect(self.openAccount)
+        self.ui.btnFAQ.clicked.connect(self.movetoMicrophone)
 
         # Login Buttons
         self.ui.btnLoginPage.clicked.connect(self.movetoLogin)
@@ -65,8 +91,9 @@ class MainWindow(QMainWindow):
         # Social Logins
         self.ui.btnGoogle.clicked.connect(self.google_login)
 
+        # Email verification page
+        self.ui.btnContinue.clicked.connect(self.movetoTask)
         # If user remember me == True then login
-        self.is_persistent()
 
         # Speech Recognition Screen
         self.ui.btnMicrophoneControl.clicked.connect(self.pausePlayMic)
@@ -78,10 +105,86 @@ class MainWindow(QMainWindow):
         # Tasks Navigation Buttons
         self.ui.btnBackToTasks.clicked.connect(self.backToTask)
 
-        self.ui.btnCreateTask.clicked.connect(self.movetoCreateTask)
+        self.ui.btnCreateTask.clicked.connect(self.movetoCreateTask)\
 
+        self.isPerisitThread = threading.Thread(target=self.is_persistent)
+        self.isPerisitThread.start()
         # Show UI
+        self.ui.stackPanel.setCurrentIndex(5)
         self.show()
+
+    def openAccount(self):
+        webbrowser.open("http://localhost:3000/dashboard")
+
+    def validatePasswords(self):
+        print(self.sender().text(), self.ui.txtPassword_signup.text())
+        if self.sender().text() == self.ui.txtPassword_signup.text():
+            self.isPasswordSignup = True
+            self.sender().setStyleSheet("border-style: outset;\n"
+                                        "border-width: 1px;\n"
+                                        "background-color: rgb(231, 231, 231);\n"
+                                        "border-radius: 8px;\n"
+                                        "border-color: rgb(194,194,194);\n"
+                                        "padding: 4px;")
+            self.ui.lblError_signup.setText("")
+        else:
+            self.isPasswordSignup = False
+            self.ui.lblError_signup.setText("Passwords do not match")
+            self.sender().setStyleSheet("border: 2px solid;\n"
+                                        "border-color: rgb(255, 148, 148);\n"
+                                        "border-radius: 8px;\n")
+
+    def validatePassword(self):
+        print(self.sender().text())
+        # result = re.fullmatch(self.passwordRegex, self.sender().text())
+        result = re.search(self.compliledRegex, self.sender().text())
+        if result:
+            print("Valid")
+            self.sender().setStyleSheet("border-style: outset;\n"
+                                        "border-width: 1px;\n"
+                                        "background-color: rgb(231, 231, 231);\n"
+                                        "border-radius: 8px;\n"
+                                        "border-color: rgb(194,194,194);\n"
+                                        "padding: 4px;")
+        else:
+            print("Invalid")
+            self.sender().setStyleSheet("border: 2px solid;\n"
+                                        "border-color: rgb(255, 148, 148);\n"
+                                        "border-radius: 8px;\n")
+
+    def validateEmail(self):
+        print(self.sender().objectName())
+
+        if re.fullmatch(self.emailRegex, self.sender().text()):
+            print("Valid Email")
+            self.sender().setStyleSheet("border-style: outset;\n"
+                                        "background-color: rgb(231, 231, 231);\n"
+                                        "border-width: 1px;\n"
+                                        "border-radius: 8px;\n"
+                                        "border-color: rgb(194,194,194);\n"
+                                        "padding: 4px;")
+            if self.sender().objectName() == "txtEmail_login":
+                self.isEmailLogin = True
+            else:
+                self.isEmailSignup = True
+        else:
+            self.isEmailLogin = False
+            print("Invalid Email")
+            self.sender().setStyleSheet("border-style: outset;\n"
+                                        "border: 2px solid;\n"
+                                        "background-color: rgb(231, 231, 231);\n"
+                                        "border-radius: 8px;\n"
+                                        "border-color: rgb(255, 148, 148);")
+
+    def movetoMicrophone(self):
+        # self.webView = WebView(self)
+        # self.webView.setParent(self.ui.MainPage)
+        # self.webView.setGeometry(QtCore.QRect(20, 300, 550, 100))
+        # print(self.webView.mainWindow.objectName())
+        self.ui.menu.lower()
+        self.isMenuOpen = False
+        # self.webView.show()
+        # self.ui.stackPanel.setCurrentIndex(2)
 
     def titleChange(self):
         print(self.sender().text())
@@ -137,9 +240,44 @@ class MainWindow(QMainWindow):
                 self.isMenuOpen = False
             else:
                 # Raise state
-                print("Inside false")
                 self.ui.menu.raise_()
                 self.isMenuOpen = True
+                print("User is ", user.current_user.isVerified, type(user.current_user.isVerified))
+
+                if user.current_user.isVerified == "False" and self.ui.verticalLayout.findChild(QtWidgets.QPushButton,
+                                                                                                "btnEmailverification"):
+                    self.btnEmailverification = QtWidgets.QPushButton(self.ui.verticalLayoutWidget)
+                    sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Fixed)
+                    sizePolicy.setHorizontalStretch(0)
+                    sizePolicy.setVerticalStretch(0)
+                    sizePolicy.setHeightForWidth(self.btnEmailverification.sizePolicy().hasHeightForWidth())
+                    self.btnEmailverification.setSizePolicy(sizePolicy)
+                    self.btnEmailverification.setFocusPolicy(QtCore.Qt.NoFocus)
+                    self.btnEmailverification.setMinimumSize(QtCore.QSize(0, 60))
+                    self.btnEmailverification.setFont(Appfonts.appFonts.getMenuButtonFont())
+                    self.btnEmailverification.setStyleSheet("QPushButton{\n"
+                                                            "text-align: left center;\n"
+                                                            "padding: 0 0 0 20;\n"
+                                                            "color: rgb(63, 61, 86);\n"
+                                                            "background-color: rgb(255, 255, 255);\n"
+                                                            "border-bottom: 1px solid rgb(63, 61, 86);\n"
+                                                            "\n"
+                                                            "}")
+                    iconAccount = QtGui.QIcon(qta.icon('fa5s.exclamation', color='#3e3c54'))
+                    self.btnEmailverification.setIcon(iconAccount)
+                    self.btnEmailverification.setIconSize(QtCore.QSize(32, 32))
+                    self.btnEmailverification.setObjectName("btnEmailverification")
+                    self.ui.verticalLayout.addWidget(self.btnEmailverification)
+                    self.btnEmailverification.setText("Verify Email")
+                    self.btnEmailverification.clicked.connect(self.movetoEmailVerification)
+                    print(self.ui.verticalLayout.findChild(QtWidgets.QPushButton, "btnEmailverification"))
+
+                else:
+                    print("Removing Email button")
+                    user.current_user.isVerified = "True"
+                    Sessionhandler.sessionHandler.setUserData()
+                    self.ui.verticalLayout.removeWidget(
+                        self.ui.verticalLayout.findChild(QtWidgets.QPushButton, "btnEmailverification"))
 
     def starTaskListener(self):
         if not self.ui.txtTitle.text():
@@ -176,7 +314,7 @@ class MainWindow(QMainWindow):
                         self.taskEntries = self.taskListenerObject.taskEntries
                         print("Task Entries from: ", self.taskEntries)
                         self.createTask()
-            else:
+            elif not self.isListener:
                 # Set the icon to play Start Listeners
                 print("Set the icon to play")
                 print("startStatus: (else) ", self.isListener)
@@ -246,7 +384,7 @@ class MainWindow(QMainWindow):
                 print("Writing task to file")
                 with open("application/config/task_bindings.yml", 'w+', encoding="utf-8") as yamlfile:
                     yaml.dump_all(self.taskEntries, yamlfile,
-                              Dumper=yaml.RoundTripDumper, default_flow_style=False)
+                                  Dumper=yaml.RoundTripDumper, default_flow_style=False)
             else:
                 print("Appending task to file")
                 with open('application/config/task_bindings.yml', 'a', encoding="utf-8") as yamlfile:
@@ -256,7 +394,7 @@ class MainWindow(QMainWindow):
             self.Ui_task_List.append(self.taskObject.findChild(
                 QtWidgets.QPushButton, f"btnRuntask_{title}"))
             self.taskObject = None
-            self.ui.stackPanel.setCurrentIndex(3)
+            self.ui.stackPanel.setCurrentIndex(2)
             self.ui.txtTitle.setText("")
             self.ui.txtDescription.setText("")
             print("Removing Empty Label", self.ui.TasksPage.findChild(
@@ -352,70 +490,94 @@ class MainWindow(QMainWindow):
             self.audioManager.isClosed = False
 
     def is_persistent(self):
-
         result = Sessionhandler.sessionHandler.readloginstate()
         print("Result from readLoginstate() is:- ", result)
         if result is not False and result is not None:
-            self.ui.stackPanel.setCurrentIndex(2)
             self.isMenuEnabled = True
             user.current_user.email = result["email"]
             user.current_user.uid = result["uid"]
             user.current_user.idtoken = result["idtoken"]
             print("From is_persistent() ", user.current_user.email)
             if result['loginstate']:
-                user.current_user.getTasks()
-                print("Print UID", user.current_user.uid)
-                self.isMenuEnabled = True
-                # self.ui.stackPanel.setCurrentIndex(2)
-                self.movetoTask()
-                # self.ui.frame.lower()
+                if result['isverified']:
+                    user.current_user.getTasks()
+                    print("Print UID", user.current_user.uid)
+                    self.isMenuEnabled = True
+                    # self.ui.stackPanel.setCurrentIndex(2)
+                    # self.ui.loginLoadingFrame.lower()
+                    self.movetoTask()
+                    print("Moved to task")
+                else:
+                    # Move to Email Verification Page
+                    print("False")
+                    self.movetoEmailVerification()
+                    pass
         try:
             if result['idtoken'] == "None":
                 print("Result is ", result)
         except Exception as error:
             print(error)
+            self.ui.loginLoadingFrame.lower()
             self.ui.stackPanel.setCurrentIndex(0)
-        # try:
-        #     result = Sessionhandler.sessionHandler.readloginstate()
-        #     print("Result from readLoginstate() is:- ", result)
-        #     if result is not False and result is not None:
-        #         self.ui.stackPanel.setCurrentIndex(2)
-        #         self.isMenuEnabled = True
-        #         user.current_user.email = result["email"]
-        #         user.current_user.uid = result["uid"]
-        #         user.current_user.idtoken = result["idtoken"]
-        #         print("From is_persistent() ", user.current_user.email)
-        #         if result['loginstate']:
-        #             user.current_user.getTasks()
-        #             print("Print UID", user.current_user.uid)
-        #             self.isMenuEnabled = True
-        #             # self.ui.stackPanel.setCurrentIndex(2)
-        #             self.movetoTask()
-        #             self.ui.frame.lower()
-        #     try:
-        #         if result['idtoken'] == "None":
-        #             print("Result is ", result)
-        #     except Exception as error:
-        #         print(error)
-        #         self.ui.stackPanel.setCurrentIndex(0)
-        #
-        # except Exception as e:
-        #     self.isMenuEnabled = False
-        #     print("No user found as ", e)
-        #     self.ui.stackPanel.setCurrentIndex(0)
 
     def logout(self):
-        FirebaseClientWrapper.Firebase_app.logout()
-        for item in self.Ui_task_List:
-            print("Deleting Tasks Nodes in UI")
-            print(item.parent().objectName())
-            self.ui.verticalLayout_2.removeWidget(
-                self.ui.TasksPage.findChild(QtWidgets.QFrame, item.parent().objectName()))
 
+        FirebaseClientWrapper.Firebase_app.logout()
+        print(self.Ui_task_List)
+        try:
+            for item in self.Ui_task_List:
+                print("Deleting Tasks Nodes in UI")
+                self.ui.verticalLayout_2.removeWidget(
+                    self.ui.TasksPage.findChild(QtWidgets.QFrame, item.parent().objectName()))
+        except Exception as e:
+            print(e)
         user.current_user.logout()
         self.ui.stackPanel.setCurrentIndex(0)
         self.isMenuEnabled = False
         self.ui.menu.lower()
+
+    def check_if_verified(self):
+        print("Checking if verified")
+        count = 0
+        while count < 4:
+            result = FirebaseClientWrapper.Firebase_app.auth.get_account_info(user.current_user.auth_token)
+            move = False
+            print("Checking")
+            try:
+                if result["users"][0]["emailVerified"]:
+                    print("Verified")
+                    user.current_user.isVerified = True
+                    move = True
+                    count = 5
+            except Exception as e:
+                print(e)
+            if move:
+                self.movetoTask()
+            else:
+                time.sleep(3)
+                print("Sleeping")
+                count += 1
+
+    def movetoEmailVerification(self):
+        FirebaseClientWrapper.Firebase_app.send_email_verification()
+        self.ui.stackPanel.setCurrentIndex(4)
+        # count = 0
+        # while count < 5:
+        #     time.sleep(2.5)
+        #
+        #     r = requests.get(
+        #         f"https://us-central1-ava-daemon.cloudfunctions.net/app/verify?uid={user.current_user.uid}")
+        #     print(r.text)
+        #     if r.text == "Verfied":
+        #         print("True")
+        #         self.movetoTask()
+        #         break
+        # self.movetoTask()
+        # self.ui.stackPanel.setCurrentIndex(4)
+        # self.ui.emailwebView.show()
+        # FirebaseClientWrapper.Firebase_app.send_email_verification()
+        # isVerifiedThread = threading.Thread(target=self.check_if_verified)
+        # isVerifiedThread.start()
 
     def user_signup(self):
         """
@@ -437,9 +599,9 @@ class MainWindow(QMainWindow):
                     self.RememberMe()
                     if self.isUser():
                         self.isMenuEnabled = True
-                        # self.ui.frame.lower()
-                        self.movetoTask()
+                        # Move to Email Verification Page
 
+                        self.movetoEmailVerification()
                 else:
                     # Set the error message for the user
                     print(result)
@@ -462,24 +624,83 @@ class MainWindow(QMainWindow):
         return True if user.current_user.email is not None else False
 
     def google_login(self):
-        # import secrets
-        # web = PyQt5.QtWebEngineWidgets.QWebEngineView(self.ui.SettingsPage)
-        # client_token = secrets.token_hex(32)
-        # web.load(QUrl(f"http://localhost:3000/gauth/{client_token}"))
-        # web.setGeometry(QtCore.QRect(30, 30, 421, 571))
-        # web.show()
+        try:
+            client_id = "41961847947-sqpmjbbl0qnt5o3hf9hrhsem85hcd71l.apps.googleusercontent.com"
+            client_secret = "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"
+            redirect_uri = 'http://127.0.0.1:3000'
 
-        # self.ui.frame.raise_()
-        import webbrowser
-        import secrets
+            os.environ['OAUTHLIB_INSECURE_TRANSPORT'] = '1'
+            # OAuth endpoints given in the Google API documentation
+            authorization_base_url = "https://accounts.google.com/o/oauth2/v2/auth"
+            token_url = "https://www.googleapis.com/oauth2/v4/token"
+            scope = [
+                "openid",
+                "https://www.googleapis.com/auth/userinfo.email",
+                "https://www.googleapis.com/auth/userinfo.profile"
+            ]
 
-        self.client_token = secrets.token_hex(32)
+            google = OAuth2Session(client_id, scope=scope, redirect_uri=redirect_uri)
 
-        webbrowser.open(f"http://localhost:3000/gauth/{self.client_token}")
-        user.current_user.idtoken = self.client_token
-        print("Google Login idtoken=", user.current_user.idtoken)
-        self.readLogin = threading.Thread(target=self.wait_forloginstate)
-        self.readLogin.start()
+            # Redirect user to Google for authorization
+            authorization_url, state = google.authorization_url(authorization_base_url,
+                                                                # offline for refresh token
+                                                                # force to always make user click authorize
+                                                                access_type="offline", prompt="select_account")
+            print('Please go here and authorize:', authorization_url)
+            webbrowser.open(authorization_url)
+
+            HOST = '127.0.0.1'
+            PORT = 3000
+            redirect_response = ""
+
+            with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+                s.bind((HOST, PORT))
+                s.listen()
+                conn, addr = s.accept()
+                with conn:
+
+                    while True:
+                        print('Connected by', addr)
+                        data = conn.recv(1024)
+                        print(data.split())
+                        if not data:
+                            continue
+                        else:
+                            redirect_response = str(data.split()[1])
+                            break
+
+            # Fetch the access token
+            print("Redirect response: ", redirect_response)
+            google.fetch_token(token_url, client_secret=client_secret,
+                               authorization_response=redirect_response)
+
+            # Fetch a protected resource, i.e. user profile
+            r = google.get('https://www.googleapis.com/oauth2/v1/userinfo')
+            print(r.content)
+            profile = json.loads(r.content)
+            print(profile)
+            tokenResult = requests.get(f"https://us-central1-ava-daemon.cloudfunctions.net/app/gettoken")
+            tokenResult = tokenResult.json()
+            userObject = FirebaseClientWrapper.Firebase_app.auth.sign_in_with_custom_token(
+                tokenResult["customToken"])
+            tokenResult = requests.get(f"https://us-central1-ava-daemon.cloudfunctions.net/app/gettoken")
+            tokenResult = tokenResult.json()
+            userFromToken = FirebaseClientWrapper.Firebase_app.auth.sign_in_with_custom_token(
+                tokenResult["customToken"])
+            try:
+                user.current_user.uid = tokenResult["uid"]
+                user.current_user.email = profile["email"]
+                user.current_user.isVerified = "true"
+                user.current_user.auth_token = userObject["idToken"]
+                Sessionhandler.sessionHandler.setUserData()
+                # Sessionhandler.sessionHandler.setloginstate()
+            except Exception as e:
+                print(e)
+            print("User object after signup: ", userFromToken, userFromToken)
+            # user.current_user.uid = profile[""]
+            # self.movetoTask()
+        except Exception as e:
+            print(e)
 
     def wait_forloginstate(self):
         # self.ui.frame.raise_()
@@ -497,7 +718,7 @@ class MainWindow(QMainWindow):
                 if result.val()[documentId]['loginstate'] != "False":
                     print("Login Success")
                     self.isMenuEnabled = True
-                    self.ui.stackPanel.setCurrentIndex(3)
+                    self.ui.stackPanel.setCurrentIndex(2)
                     user.current_user.idtoken = self.client_token
                     user.current_user.email = result.val()[documentId]['email']
                     user.current_user.uid = documentId
@@ -517,7 +738,9 @@ class MainWindow(QMainWindow):
         pwd = self.ui.txtPassword_login.text()
         print("Email = ", email, pwd)
         print(f"PWD= {bool(pwd)}")
-
+        self.ui.btnLogin.setCursor(Qt.ForbiddenCursor)
+        self.ui.btnLogin.setEnabled(False)
+        self.ui.loginLoadingFrame.raise_()
         if pwd and email:
 
             # self.ui.waitingSpinner.start()
@@ -534,17 +757,27 @@ class MainWindow(QMainWindow):
                     email, pwd, False)
             if result is True:
                 # Navigate to home page
-
                 if self.isUser():
+                    self.ui.txtEmail_login.setText('')
+                    self.ui.txtPassword_login.setText('')
                     self.isMenuEnabled = True
+                    self.ui.btnLogin.setCursor(Qt.ArrowCursor)
+                    self.ui.btnLogin.setEnabled(True)
+                    self.ui.loginLoadingFrame.lower()
                     self.movetoTask()
                     # self.ui.frame.lower()
             else:
                 # Set the error message for the user
                 print(result)
+
+                self.ui.btnLogin.setCursor(Qt.ArrowCursor)
+                self.ui.btnLogin.setEnabled(True)
                 self.ui.lblError_login.setText(result)
         else:
             print('Else part')
+            self.ui.btnLogin.setCursor(Qt.ArrowCursor)
+            self.ui.btnLogin.setEnabled(True)
+            self.ui.loginLoadingFrame.lower()
             self.ui.lblError_login.setText(
                 "Email and Password fields cannot be empty.")
 
@@ -553,19 +786,24 @@ class MainWindow(QMainWindow):
         Navigate to Tasks Page
         :return:
         """
-        self.ui.stackPanel.setCurrentIndex(3)
+        self.ui.stackPanel.setCurrentIndex(2)
 
     def movetoCreateTask(self):
-        self.ui.stackPanel.setCurrentIndex(4)
+        self.ui.stackPanel.setCurrentIndex(3)
 
     def movetoTask(self):
         """
         Navigate to Task Page
         :return: None
         """
-        self.ui.stackPanel.setCurrentIndex(3)
-
-        if not user.current_user.task_list:
+        print("Inside movetoTask()")
+        print(f"""
+Task list: {user.current_user.task_list}
+Empty label: {self.ui.TasksPage.findChild(QtWidgets.QLabel, "emptyTasksLabel")}
+        """)
+        self.ui.stackPanel.setCurrentIndex(2)
+        if not user.current_user.task_list and self.ui.TasksPage.findChild(
+                QtWidgets.QLabel, "emptyTasksLabel") is None:
             print("Else Part")
             emptyTasksLabel = QtWidgets.QLabel()
             emptyTasksLabel.setGeometry(QtCore.QRect(110, 55, 251, 71))
@@ -584,26 +822,28 @@ class MainWindow(QMainWindow):
 
             print("Label", self.ui.TasksPage.findChild(
                 QtWidgets.QLabel, "emptyTasksLabel"))
-            print("Layout children: ", self.ui.TasksPage.children())
         else:
-
-            for item in user.current_user.task_list:
-                self.taskObject: QtWidgets.QFrame = tasks.Task(self, item['name'],
-                                                               item['description']).createTask()
-                TaskManager.TaskLists.addTask(
-                    self.taskObject.findChild(QtWidgets.QPushButton, f"btnRuntask_{item['name']}"))
-                print(self.taskObject.findChild(QtWidgets.QPushButton,
-                      f"btnRuntask_{item['name']}").objectName())
-                self.taskObject.findChild(QtWidgets.QPushButton, f"btnRuntask_{item['name']}").clicked.connect(
-                    self.runTask)
-                self.taskObject.findChild(QtWidgets.QPushButton, f"btnDelete_{item['name']}").clicked.connect(
-                    self.deleteTask)
-                self.ui.verticalLayout_2.addWidget(self.taskObject)
-                self.Ui_task_List.append(self.taskObject.findChild(
-                    QtWidgets.QPushButton, f"btnRuntask_{item['name']}"))
-
-        self.ui.menu.lower()
-        self.isMenuOpen = False
+            try:
+                for item in user.current_user.task_list:
+                    self.taskObject: QtWidgets.QFrame = tasks.Task(self, item['name'],
+                                                                   item['description']).createTask()
+                    TaskManager.TaskLists.addTask(
+                        self.taskObject.findChild(QtWidgets.QPushButton, f"btnRuntask_{item['name']}"))
+                    self.taskObject.findChild(QtWidgets.QPushButton, f"btnRuntask_{item['name']}").clicked.connect(
+                        self.runTask)
+                    self.taskObject.findChild(QtWidgets.QPushButton, f"btnDelete_{item['name']}").clicked.connect(
+                        self.deleteTask)
+                    self.ui.verticalLayout_2.addWidget(self.taskObject)
+                    self.Ui_task_List.append(self.taskObject.findChild(
+                        QtWidgets.QPushButton, f"btnRuntask_{item['name']}"))
+                    self.taskObject = None
+                    print(f"""
+                    {self.ui.verticalLayout_2.findChild(QtWidgets.QFrame, "mainTaskFrame_Demo")}
+Layout Children: {self.ui.verticalLayout_2.children()}
+Tasks UI list: {self.Ui_task_List}
+                    """)
+            except Exception as error:
+                print(error)
 
     def _executeThread(self):
         runTaskObject = RunTask(self.RuntimeTaskName)
@@ -651,6 +891,8 @@ def RunApp(arg):
         "application/fonts/Poppins-Light.ttf")
     _poppinsExtraLight = QtGui.QFontDatabase.addApplicationFont(
         "application/fonts/Poppins-ExtraLight.ttf")
+    _poppinsSemiBold = QtGui.QFontDatabase.addApplicationFont(
+        "application/fonts/Poppins-SemiBold.ttf")
     # app.setStyle(Style())
     window = MainWindow()
     sys.exit(app.exec_())
@@ -659,12 +901,12 @@ def RunApp(arg):
 class ClientConfig(object):
     PUBLIC_KEY = 'hEh3Jy6i61sNH42U4LGwRrggIQKd6CcqfGg1E8tOGPE'
     APP_NAME = 'Ava'
-    APP_CHANNEL = 'stable'
-    APP_VERSION = "0.1.2"
-    COMPANY_NAME = 'Daemon Tech'
+    APP_VERSION = "0.0.4"
+    APP_CHANNEL = "stable"
+    COMPANY_NAME = 'Daemon Technologies'
     HTTP_TIMEOUT = 30
     MAX_DOWNLOAD_RETRIES = 3
-    UPDATE_URLS = ['http://localhost:80']
+    UPDATE_URLS = ['https://ava-desktop-deploy.s3.ap-south-1.amazonaws.com/ava-deploy-app/windows/deploy/']
 
 
 bar = None
@@ -689,8 +931,7 @@ def check_for_update():
 
     # sys.stdout = open(os.devnull, 'w')
 
-    client = Client(ClientConfig(), refresh=True,
-                    headers={'basic_auth': 'brofewfefwefewef:EKAXsWkdt5H6yJEmtexN'})
+    client = Client(ClientConfig(), refresh=True)
 
     client.platform = "win"
     app_update = client.update_check(
@@ -716,9 +957,9 @@ if __name__ == "__main__":
 
     print("Checking for Updates please wait!")
     # print("Updates are disabled for now! :(")
-    RunApp(sys.argv)
-    # if check_for_update():
-    #     print('there\'s a new update :D')
-    # else:
-    #     print("Running on latest version: ", ClientConfig.APP_VERSION)
-    #     RunApp(sys.argv)
+    # RunApp(sys.argv)
+    if check_for_update():
+        print('there\'s a new update :D')
+    else:
+        print("Running on latest version: ", ClientConfig.APP_VERSION)
+        RunApp(sys.argv)

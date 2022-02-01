@@ -110,6 +110,20 @@ class TaskListener:
             mouseListener.join()
         if True:
             print("Break program:", self.break_program)
+            self._mainObject.ui.lblStartStopRec.setText(
+                "Click here to START recording task")
+            icon4 = QtGui.QIcon(qta.icon('fa5s.play', color='white'))
+            self._mainObject.ui.btnTaskListener.setIcon(icon4)
+            self._mainObject.ui.btnTaskListener.setIconSize(QSize(32, 32))
+            self._mainObject.ui.btnTaskListener.setStyleSheet("QPushButton{\n"
+                                                              "background-color: rgb(62, 60, 84);\n"
+                                                              "border: 1px solid white;\n"
+                                                              "border-radius: 40;\n"
+                                                              "}\n"
+                                                              "QPushButton:pressed{\n"
+                                                              "    background-color: rgb(103, 100, 138);\n"
+                                                              "}")
+            self._mainObject.ui.stackPanel.setCurrentIndex(3)
             try:
                 print("While loop ended ", self.taskEntries)
                 self.isFinished = True
@@ -172,7 +186,9 @@ class TaskListener:
                     print(b, hex(b), chr(b))
                 self.taskEntries[self.taskName].append(bArr.decode("UTF-8"))
                 return
+            self.taskEntries[self.taskName].append({"timeSleep": {"sleep": self.elapsed_time()}})
             self.taskEntries[self.taskName].append(key.char)
+
         print(self.taskEntries)
 
     def on_move(self, x, y):
@@ -197,6 +213,7 @@ class TaskListener:
         if self.break_program:
             print('Exit called')
             self.isFinished = True
+            self.break_program = bool
             return False
         if pressed:
             print('Mouse clicked at ({0}, {1}) with {2}'.format(x, y, button))

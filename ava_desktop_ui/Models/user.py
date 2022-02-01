@@ -3,25 +3,51 @@ import os
 
 from ruamel import yaml
 
+from .utils import get_project_root
+
 
 class User:
     email = str
+    name = str
     uid = str
+    isVerified = str
+    auth_token = str
     prime_status = bool
     idtoken = str
     task_list = list
-    ROOT_DIR = os.path.dirname(os.path.abspath(__file__))
-    taskJsonFilePath = os.path.join(ROOT_DIR, '../application/config/tasks.json')
-    taskBindingsFilePath = os.path.join(ROOT_DIR, '../application/config/task_bindings.yml')
-    print(taskBindingsFilePath)
-    print(taskJsonFilePath)
+    taskJsonFilePath = str(get_project_root()) + '/application/config/tasks.json'
+    taskBindingsFilePath = str(get_project_root()) + '/application/config/task_bindings.yml'
 
     def __init__(self):
         self.email = ""
+        self.name = ""
         self.uid = ""
         self.prime_status = False
         self.idtoken = ""
         self.task_list = []
+        self.isVerified = "False"
+        self.auth_token = ""
+
+    def checkforappend(self, taskEntries):
+        empty = bool
+        with open("application/config/task_bindings.yml", 'w+') as fp:
+            data = yaml.load_all(fp, Loader=yaml.Loader)
+            print("DATA:", data)
+            if data is None:
+                print("Empty yaml file")
+                empty = True
+        if empty:
+            print("Writing task to file")
+            with open("application/config/task_bindings.yml", 'w+', encoding="utf-8") as yamlfile:
+                yaml.dump_all(taskEntries, yamlfile,
+                              Dumper=yaml.RoundTripDumper, default_flow_style=False)
+            return False
+        else:
+            print("Appending task to file")
+            with open('application/config/task_bindings.yml', 'a', encoding="utf-8") as yamlfile:
+                yaml.dump(taskEntries, yamlfile,
+                          Dumper=yaml.RoundTripDumper, default_flow_style=False)
+            return True
 
     def addTask(self, data):
         self.task_list.append(data)
@@ -56,9 +82,12 @@ class User:
                 del data
 
             with open(self.taskBindingsFilePath, 'w+') as file:
-                del new_data[taskname]
-                yamlObj.dump(new_data, file)
-            print(new_data)
+                try:
+                    if new_data[taskname]:
+                        del new_data[taskname]
+                        yamlObj.dump(new_data, file)
+                except:
+                    return None
 
     def getTasks(self):
 
@@ -75,22 +104,18 @@ class User:
         print("Task list: ", self.task_list)
 
     def deleteData(self):
-        self.email = None
-        self.uid = None
-        self.prime_status = None
-        self.idtoken = None
-        self.task_list = None
+        self.email = ''
+        self.uid = ''
+        self.prime_status = ''
+        self.idtoken = ''
+        self.task_list = []
 
     def logout(self):
-        data = json.load(open(self.taskJsonFilePath))
-
-        with open(self.taskJsonFilePath, 'w+') as data_file:
-            print("Task List after deleting:", data)
-            json.dump('{}', data_file, indent=4)
-
-        yamlObj = yaml.YAML()
-        with open(self.taskBindingsFilePath, 'w+') as file:
-            yamlObj.dump('{}', file)
+        try:
+            os.remove(self.taskJsonFilePath)
+            os.remove(self.taskBindingsFilePath)
+        except FileNotFoundError as e:
+            print(e)
 
 
 current_user = User()

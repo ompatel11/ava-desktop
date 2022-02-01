@@ -15,13 +15,6 @@ from yaml.loader import SafeLoader
 
 from Models import user
 from Models.TaskRunner import RunTask
-from main import MainWindow
-
-if _platform.system() == "Linux":
-    import gi
-
-    gi.require_version("Wnck", "3.0")
-    from gi.repository import Wnck
 
 if _platform.system() == "Windows":
     import win32gui
@@ -86,7 +79,7 @@ class TranscriptModifier(object):
         user.current_user.getTasks()
         print("Tasks= ", user.current_user.task_list)
         for item in user.current_user.task_list:
-            print(item['name'])
+            print(item['name'].casefold())
             # str(self.transcript).casefold()
             if str(self.transcript).casefold() == str(item['name']).casefold():
                 print("Match found")
@@ -348,19 +341,6 @@ def simulatekeys(transcript):
 def checkFocus():
     """Loop to check the application focus continuously from the list"""
 
-    '''
-    # Get current focused window title in Linux 
-    import gi
-    import time
-    
-    gi.require_version("Wnck", "3.0")
-    from gi.repository import Wnck
-    
-    time.sleep(2)
-    scr = Wnck.Screen.get_default()
-    scr.force_update()
-    print(scr.get_active_window().get_name())
-    '''
     while True:
         if _platform.system() == 'Windows':
             time.sleep(2)
@@ -371,11 +351,6 @@ def checkFocus():
             print("Window Name = " + active_window_name)
             if active_window_name != 'main':
                 break
-        if _platform.system() == 'Linux':
-            time.sleep(2)
-            scr = Wnck.Screen.get_default()
-            scr.force_update()
-            print(scr.get_active_window().get_name())
     return True if active_window_name != 'main' else False
 
 
@@ -386,8 +361,9 @@ class AudioManager:
     """
 
     # noinspection PyTypeChecker
-    def __init__(self, main_obj: MainWindow):
+    def __init__(self, main_obj):
         self._mainObject = main_obj
+
         cred = {
             "type": "service_account",
             "project_id": "ava-daemon",
@@ -443,13 +419,14 @@ class AudioManager:
         self.isClosed = False
 
     def stop(self):
-        self._mainObject.ui.btnMicrophoneControl.setIconSize(QSize(32, 32))
-        self._mainObject.ui.btnMicrophoneControl.setIcon(QIcon("Icons/Icon ionic-ios-mic.png"))
-        self._mainObject.ui.btnMicrophoneControl.setStyleSheet("""
-                                background-color: rgb(62, 60, 84);
-                                border: 1px solid white;
-                                border-radius: 40;
-                                """)
+        if self._mainObject is not None:
+            self._mainObject.ui.btnMicrophoneControl.setIconSize(QSize(32, 32))
+            self._mainObject.ui.btnMicrophoneControl.setIcon(QIcon("Icons/Icon ionic-ios-mic.png"))
+            self._mainObject.ui.btnMicrophoneControl.setStyleSheet("""
+                                    background-color: rgb(62, 60, 84);
+                                    border: 1px solid white;
+                                    border-radius: 40;
+                                    """)
         self.mic_manager.setExit()
         self.isClosed = True
 
@@ -525,7 +502,8 @@ class AudioManager:
                 continue
 
             transcript = result.alternatives[0].transcript
-            self._mainObject.ui.lblLiveTranscript.setText(transcript)
+            if self._mainObject is not None:
+                self._mainObject.ui.lblLiveTranscript.setText(transcript)
             result_seconds = 0
             result_micros = 0
 
@@ -568,3 +546,7 @@ class AudioManager:
                 sys.stdout.write(str(corrected_time) + ": " + transcript + "\r")
 
                 stream.last_transcript_was_final = False
+
+
+# obj = AudioManager(None)
+# obj.start()

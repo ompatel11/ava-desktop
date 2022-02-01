@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta content="text/html;charset=utf-8" http-equiv="Content-Type" />
+  </head>
+  <body>
+    <script src="qrc:///qtwebchannel/qwebchannel.js" defer></script>
+    <p id="status">Not Connected</p>
+    <p id="media-state">Media state: Error</p>
+    <p id="transcript"></p>
+    <script language="JavaScript">
+      navigator.mediaDevices.getUserMedia({ audio: true }).then((stream) => {
+        console.log({ stream })
+        if (!MediaRecorder.isTypeSupported('audio/webm'))
+          return alert('Browser not supported')
+        const mediaRecorder = new MediaRecorder(stream, {
+          mimeType: 'audio/webm',
+        })
+        const socket = new WebSocket('wss://api.deepgram.com/v1/listen', [
+          'token',
+          '195f783f85fedcc59a673b93b252d21b8481506b',
+        ])
+        socket.onopen = () => {
+
+          document.querySelector('#status').textContent = 'Connected'
+          document.querySelector('#media-state').textContent = 'Success'
+          console.log({ event: 'onopen' })
+          new QWebChannel(qt.webChannelTransport, function (channel) {
+              window.handler = channel.objects.handler;
+              handler.Avaconnected(function(retVal) {
+                console.error(JSON.stringify(retVal));
+          })
+            });
+          mediaRecorder.addEventListener('dataavailable', async (event) => {
+            if (event.data.size > 0 && socket.readyState == 1) {
+              socket.send(event.data)
+            }
+          })
+          mediaRecorder.start(1000)
+        }
+
+        socket.onmessage = (message) => {
+          const received = JSON.parse(message.data)
+          const transcript = received.channel.alternatives[0].transcript
+          if (transcript && received.is_final) {
+            console.log(transcript)
+            document.querySelector('#transcript').textContent +=
+              transcript + ' '
+            new QWebChannel(qt.webChannelTransport, function (channel) {
+              window.handler = channel.objects.handler;
+              handler.transcriptRecieved(function(retVal) {
+                console.error(JSON.stringify(retVal));
+          },transcript)
+            });
+          }
+
+        }
+
+        socket.onclose = () => {
+          console.log({ event: 'onclose' })
+        }
+
+        socket.onerror = (error) => {
+          console.log({ event: 'onerror', error })
+        }
+      });
+
+    </script>
+  </body>
+</html>

@@ -1549,6 +1549,9 @@ padding: 4px;</string>
                 <pointsize>10</pointsize>
                </font>
               </property>
+              <property name="toolTip">
+               <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Password must contain:&lt;/p&gt;&lt;p&gt;1) A capital letter&lt;/p&gt;&lt;p&gt;2) A number&lt;/p&gt;&lt;p&gt;3) A symbol&lt;/p&gt;&lt;p&gt;&lt;br/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+              </property>
               <property name="styleSheet">
                <string notr="true">border-style: outset;
 border-width: 1px;
@@ -1829,15 +1832,31 @@ QPushButton:pressed{
         <string>boilerplate code</string>
        </property>
       </widget>
+      <widget class="QPushButton" name="pushButton">
+       <property name="geometry">
+        <rect>
+         <x>200</x>
+         <y>300</y>
+         <width>75</width>
+         <height>23</height>
+        </rect>
+       </property>
+       <property name="cursor">
+        <cursorShape>ArrowCursor</cursorShape>
+       </property>
+       <property name="text">
+        <string>PushButton</string>
+       </property>
+      </widget>
      </widget>
      <widget class="QWidget" name="TasksPage">
       <widget class="QScrollArea" name="scrollArea">
        <property name="geometry">
         <rect>
-         <x>0</x>
+         <x>20</x>
          <y>0</y>
-         <width>510</width>
-         <height>671</height>
+         <width>481</width>
+         <height>168</height>
         </rect>
        </property>
        <property name="styleSheet">
@@ -1863,7 +1882,7 @@ QScrollBar::handle:vertical{
          <rect>
           <x>0</x>
           <y>0</y>
-          <width>510</width>
+          <width>481</width>
           <height>168</height>
          </rect>
         </property>
@@ -1887,7 +1906,7 @@ QScrollBar::handle:vertical{
            </property>
            <property name="minimumSize">
             <size>
-             <width>480</width>
+             <width>350</width>
              <height>150</height>
             </size>
            </property>

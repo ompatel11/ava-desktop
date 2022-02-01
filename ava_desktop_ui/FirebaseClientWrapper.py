@@ -1,9 +1,9 @@
-# This Python file uses the following encoding: utf-
 import json
 import secrets
+import time
 
 from Models import user
-import pyrebase
+import firebase
 
 import Sessionhandler
 
@@ -37,7 +37,7 @@ class FirebaseClientWrapper:
             "EMAIL_NOT_FOUND": "Email address not found.",
 
         }
-        self.firebase_app = pyrebase.initialize_app(config)
+        self.firebase_app = firebase.Firebase(config)
         self.auth = self.firebase_app.auth()
         self.database = self.firebase_app.database()
 
@@ -50,6 +50,7 @@ class FirebaseClientWrapper:
             print(result)
             user.current_user.uid = result["localId"]
             user.current_user.email = result["email"]
+            user.current_user.auth_token = result["idToken"]
             user.current_user.idtoken = secrets.token_hex(32)
             print(user.current_user.email, user.current_user.idtoken, user.current_user.email)
             print("New user created: ")
@@ -62,6 +63,14 @@ class FirebaseClientWrapper:
             errorMessage = self.error[str(json.loads(e.args[1])['error']['message'])]
             return errorMessage
 
+    def send_email_verification(self):
+        if user.current_user.email:
+            try:
+                result = self.auth.send_email_verification(user.current_user.auth_token)
+                print(result)
+            except Exception as e:
+                print(e)
+
     def login_email_password(self, email, password, isPersist):
         """
         Returns true if user is logged in else returns error object
@@ -72,26 +81,42 @@ class FirebaseClientWrapper:
             print(result["localId"])
             user.current_user.uid = result["localId"]
             user.current_user.email = result["email"]
-            print(type(user.current_user.idtoken))
-            print(user.current_user.idtoken)
+            user.current_user.auth_token = result["idToken"]
             if user.current_user.idtoken == '':
-                user.current_user.idtoken = user.current_user.idtoken = secrets.token_hex(32)
+                user.current_user.idtoken = secrets.token_hex(32)
             print(user.current_user.email, user.current_user.uid, user.current_user.idtoken)
 
-            if isPersist:
+            if isPersist and result["email"]:
                 result = Sessionhandler.sessionHandler.setUserData()
                 print(result)
                 Sessionhandler.sessionHandler.setloginstate()
             print("Log In Success")
 
         except Exception as e:
-            print("Error occured: ",e)
+            print("Error occured: ", e)
             errorMessage = self.error[str(json.loads(e.args[1])['error']['message'])]
             print(errorMessage)
 
             return errorMessage
 
         return True
+
+    def setUserObject(self):
+        try:
+            profile = {
+                "loginstate": "True",
+                "email": user.current_user.email,
+            }
+            if True:
+                result = self.database.child("users_authenticated").child(
+                    user.current_user.uid).child("profile").set(profile)
+                print(result.val())
+                print("Writing done")
+                return True
+
+        except Exception as e:
+            print(e)
+            return False
 
     def logout(self):
         Sessionhandler.sessionHandler.logout()

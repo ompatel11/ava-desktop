@@ -6,6 +6,7 @@ class AppFonts:
     light = 'Poppins Light'
     extra_light = 'Poppins Extra Light'
     bold = 'Poppins'
+    semi_bold = 'Poppins SemiBold'
 
     def getErrorFont(self):
         font = QtGui.QFont()
@@ -75,10 +76,9 @@ class AppFonts:
 
     def getLineEditFont(self):
         font = QtGui.QFont()
-        font.setFamily(self.light)
+        font.setFamily(self.semi_bold)
         font.setPointSize(8)
-        font.setBold(True)
-        font.setLetterSpacing(QFont.PercentageSpacing, 105)
+        font.setLetterSpacing(QFont.PercentageSpacing, 108)
         return font
 
     def getAuthButtonFont(self):
