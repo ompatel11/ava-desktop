@@ -21,6 +21,7 @@ import Models.user as user
 from Models import tasks, TaskManager
 from Models.TaskRunner import RunTask
 from Models import Appfonts
+from ava_desktop_ui.Models.tasks import CheckTasks, CreateTask
 from task_listener import TaskListener
 from ui import Ui_MainWindow
 from pyupdater.client import Client, AppUpdate
@@ -105,12 +106,10 @@ class MainWindow(QMainWindow):
         # Tasks Navigation Buttons
         self.ui.btnBackToTasks.clicked.connect(self.backToTask)
 
-        self.ui.btnCreateTask.clicked.connect(self.movetoCreateTask)\
-
-        self.isPerisitThread = threading.Thread(target=self.is_persistent)
-        self.isPerisitThread.start()
+        self.ui.btnCreateTask.clicked.connect(self.movetoCreateTask)
+        self.is_persistent()
         # Show UI
-        self.ui.stackPanel.setCurrentIndex(5)
+
         self.show()
 
     def openAccount(self):
@@ -358,7 +357,7 @@ class MainWindow(QMainWindow):
         print("description: ", description)
 
         if title and description:
-            self.taskObject = tasks.Task(self, title, description).createTask()
+            self.taskObject = tasks.CreateTask(self, title, description).createTask()
             TaskManager.TaskLists.addTask(self.taskObject.findChild(
                 QtWidgets.QPushButton, f"btnRuntask_{title}"))
             print(self.taskObject.objectName())
@@ -491,6 +490,7 @@ class MainWindow(QMainWindow):
 
     def is_persistent(self):
         result = Sessionhandler.sessionHandler.readloginstate()
+        self.ui.stackPanel.setCurrentIndex(5)
         print("Result from readLoginstate() is:- ", result)
         if result is not False and result is not None:
             self.isMenuEnabled = True
@@ -505,7 +505,8 @@ class MainWindow(QMainWindow):
                     self.isMenuEnabled = True
                     # self.ui.stackPanel.setCurrentIndex(2)
                     # self.ui.loginLoadingFrame.lower()
-                    self.movetoTask()
+                    # self.movetoTask()
+                    self.checkTasks()
                     print("Moved to task")
                 else:
                     # Move to Email Verification Page
@@ -519,6 +520,24 @@ class MainWindow(QMainWindow):
             print(error)
             self.ui.loginLoadingFrame.lower()
             self.ui.stackPanel.setCurrentIndex(0)
+
+    def checkTasks(self):
+        self.chkTasks = CheckTasks(self)
+        self.chkTasks.tasks.connect(self.addTasks)
+        self.lbl = QtWidgets.QLabel("Hello")
+        # self.ui.verticalLayout_2.addWidget(self.lbl)
+        self.chkTasks.start()
+
+    def addTasks(self, data):
+        print("Task found in addTasks", type(data))
+        print(data)
+        self.ui.stackPanel.setCurrentIndex(2)
+        taskObject = CreateTask(self, data['name'], data['description']).createTask()
+        taskObject.findChild(QtWidgets.QPushButton, f"btnRuntask_{data['name']}").clicked.connect(
+            self.runTask)
+        taskObject.findChild(QtWidgets.QPushButton, f"btnDelete_{data['name']}").clicked.connect(
+            self.deleteTask)
+        self.ui.verticalLayout_2.addWidget(taskObject)
 
     def logout(self):
 
@@ -535,28 +554,6 @@ class MainWindow(QMainWindow):
         self.ui.stackPanel.setCurrentIndex(0)
         self.isMenuEnabled = False
         self.ui.menu.lower()
-
-    def check_if_verified(self):
-        print("Checking if verified")
-        count = 0
-        while count < 4:
-            result = FirebaseClientWrapper.Firebase_app.auth.get_account_info(user.current_user.auth_token)
-            move = False
-            print("Checking")
-            try:
-                if result["users"][0]["emailVerified"]:
-                    print("Verified")
-                    user.current_user.isVerified = True
-                    move = True
-                    count = 5
-            except Exception as e:
-                print(e)
-            if move:
-                self.movetoTask()
-            else:
-                time.sleep(3)
-                print("Sleeping")
-                count += 1
 
     def movetoEmailVerification(self):
         FirebaseClientWrapper.Firebase_app.send_email_verification()
@@ -825,8 +822,8 @@ Empty label: {self.ui.TasksPage.findChild(QtWidgets.QLabel, "emptyTasksLabel")}
         else:
             try:
                 for item in user.current_user.task_list:
-                    self.taskObject: QtWidgets.QFrame = tasks.Task(self, item['name'],
-                                                                   item['description']).createTask()
+                    self.taskObject: QtWidgets.QFrame = tasks.CreateTask(self, item['name'],
+                                                                         item['description']).createTask()
                     TaskManager.TaskLists.addTask(
                         self.taskObject.findChild(QtWidgets.QPushButton, f"btnRuntask_{item['name']}"))
                     self.taskObject.findChild(QtWidgets.QPushButton, f"btnRuntask_{item['name']}").clicked.connect(

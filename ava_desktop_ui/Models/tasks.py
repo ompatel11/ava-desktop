@@ -2,13 +2,16 @@ import random
 import time
 from PyQt5 import QtCore, QtWidgets, QtGui
 import yaml
+from PyQt5.QtCore import pyqtSlot
 from yaml import SafeLoader
 import qtawesome as qta
 
+from . import user
 from .Appfonts import appFonts
+from .TaskManager import TaskManager
 
 
-class Task:
+class CreateTask:
     def __init__(self, mainParent, taskHeading: str, taskDescription: str):
         self.taskDescription = taskDescription
         self.taskFrameColor = ["#A6A8BF", "#8A8B98", "#2F3041", "#A4A5AF", "#292838", "#44434d", "#282736"]
@@ -90,3 +93,30 @@ class Task:
             time.sleep(5)
 
         return self.tasks
+
+
+class CheckTasks(QtCore.QThread):
+    tasks = QtCore.pyqtSignal(dict)
+
+    def __init__(self, parent, taskList=None):
+        QtCore.QThread.__init__(self, parent)
+        if taskList is None:
+            taskList = []
+        self.parent = parent
+        self.taskList = taskList
+        print("Initialized")
+
+    @pyqtSlot()
+    def run(self):
+        print("Running: ", self.taskList)
+        user.current_user.getTasks()
+        self.taskList = user.current_user.task_list
+        for item in self.taskList:
+            print("Task found")
+            taskObject = CreateTask(self.parent, item['name'],
+                                                      item['description']).createTask()
+            time.sleep(random.randrange(2, 5))
+            print(type(taskObject))
+            self.parent.ui.verticalLayout_2.addWidget(taskObject)
+            taskObject = {'name': item['name'], 'description': item['description']}
+            self.tasks.emit(taskObject)
