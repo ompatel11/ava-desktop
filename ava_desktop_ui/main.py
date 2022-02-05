@@ -6,8 +6,9 @@ import time
 import webbrowser
 import os
 import socket
+
+import pynput.keyboard
 from requests_oauthlib import OAuth2Session
-import ruamel.yaml
 from PyQt5 import QtCore, QtWidgets, QtGui
 from PyQt5.QtCore import Qt, QSize, QPropertyAnimation, QRect
 from PyQt5.QtGui import QIcon, QPixmap, QMovie
@@ -90,7 +91,7 @@ class MainWindow(QMainWindow):
         self.ui.btnSignup.clicked.connect(self.user_signup)
 
         # Social Logins
-        self.ui.btnGoogle.clicked.connect(self.google_login)
+        self.ui.btnGoogle.clicked.connect(self.google_login_alternate)
 
         # Email verification page
         self.ui.btnContinue.clicked.connect(self.movetoTask)
@@ -241,7 +242,7 @@ class MainWindow(QMainWindow):
                 # Raise state
                 self.ui.menu.raise_()
                 self.isMenuOpen = True
-                print("User is ", user.current_user.isVerified, type(user.current_user.isVerified))
+                print("User is ", user.current_user.isVerified, user.current_user.isVerified)
 
                 if user.current_user.isVerified == "False" and self.ui.verticalLayout.findChild(QtWidgets.QPushButton,
                                                                                                 "btnEmailverification"):
@@ -306,10 +307,12 @@ class MainWindow(QMainWindow):
                 self.ui.lblStartStopRec.setText(
                     "Click here to STOP recording task")
                 self.isListener = False
+                print("Task Object: ", self.taskListenerObject.break_program)
                 if self.taskListenerObject is not None:
                     print("Exiting taskListeners")
                     self.taskListenerObject.setExit()
-                    if self.taskListenerObject.taskEntries is not None:
+
+                    if self.taskListenerObject.taskEntries is not None and self.taskListenerObject.break_program:
                         self.taskEntries = self.taskListenerObject.taskEntries
                         print("Task Entries from: ", self.taskEntries)
                         self.createTask()
@@ -332,6 +335,7 @@ class MainWindow(QMainWindow):
     def executeListenerThread(self):
         print("Setting Pause Icon")
         self.taskListenerObject = TaskListener(self.ui.txtTitle.text(), self)
+
         self.taskEntries = self.taskListenerObject.startListeners()
         print("From startListener", self.taskEntries)
         if self.taskEntries is not None:
@@ -370,25 +374,35 @@ class MainWindow(QMainWindow):
             taskJsonObj = {'name': title,
                            'description': description, 'runCounter': '0'}
             user.current_user.addTask(taskJsonObj)
-            print(self.taskEntries)
+            print(f"Task Entries for {title}", self.taskEntries[title])
             empty = False
             # Check if files are created
-            with open("application/config/task_bindings.yml", 'w+') as fp:
-                data = yaml.load_all(fp, Loader=ruamel.yaml.Loader)
-                print("DATA:", data)
-                if data is None:
-                    print("Empty yaml file")
-                    empty = True
-            if empty:
-                print("Writing task to file")
-                with open("application/config/task_bindings.yml", 'w+', encoding="utf-8") as yamlfile:
-                    yaml.dump_all(self.taskEntries, yamlfile,
-                                  Dumper=yaml.RoundTripDumper, default_flow_style=False)
-            else:
-                print("Appending task to file")
-                with open('application/config/task_bindings.yml', 'a', encoding="utf-8") as yamlfile:
-                    yaml.dump(self.taskEntries, yamlfile,
-                              Dumper=yaml.RoundTripDumper, default_flow_style=False)
+            yaml.allow_duplicate_keys = True
+            taskData = yaml.load(open("application/config/task_bindings.yml", "r"), Loader=yaml.SafeLoader)
+
+            def getList(dict):
+                return [*dict]
+
+            new_dict = {}
+
+            if taskData is not None:
+                for item in getList(taskData):
+                    print(item)
+                    new_dict.update({item: item})
+
+            # with open('application/config/task_bindings.yml', 'a', encoding="utf-8") as yamlfile:
+            #     print(f"Adding {self.taskEntries} to yaml file")
+            #     yaml.dump(self.taskEntries, yamlfile)
+
+            self.taskEntries = None
+            # if empty:
+            #     print("Writing task to file")
+            #     with open("application/config/task_bindings.yml", 'w+', encoding="utf-8") as yamlfile:
+            #         yaml.dump(self.taskEntries, yamlfile, Dumper=ruamel.yaml.SafeDumper)
+            # else:
+            #     print("Appending task to file")
+            #     with open('application/config/task_bindings.yml', 'a', encoding="utf-8") as yamlfile:
+            #         yaml.dump(self.taskEntries, yamlfile, Dumper=ruamel.yaml.SafeDumper)
 
             self.Ui_task_List.append(self.taskObject.findChild(
                 QtWidgets.QPushButton, f"btnRuntask_{title}"))
@@ -489,6 +503,11 @@ class MainWindow(QMainWindow):
             self.audioManager.isClosed = False
 
     def is_persistent(self):
+        """
+        Check if user is already logged in or not
+
+        :return: None
+        """
         result = Sessionhandler.sessionHandler.readloginstate()
         self.ui.stackPanel.setCurrentIndex(5)
         print("Result from readLoginstate() is:- ", result)
@@ -500,12 +519,10 @@ class MainWindow(QMainWindow):
             print("From is_persistent() ", user.current_user.email)
             if result['loginstate']:
                 if result['isverified']:
-                    user.current_user.getTasks()
+                    refreshAuthThread = threading.Thread(target=self.refreshToken)
+                    # refreshAuthThread.start()
                     print("Print UID", user.current_user.uid)
                     self.isMenuEnabled = True
-                    # self.ui.stackPanel.setCurrentIndex(2)
-                    # self.ui.loginLoadingFrame.lower()
-                    # self.movetoTask()
                     self.checkTasks()
                     print("Moved to task")
                 else:
@@ -521,23 +538,51 @@ class MainWindow(QMainWindow):
             self.ui.loginLoadingFrame.lower()
             self.ui.stackPanel.setCurrentIndex(0)
 
+    def refreshToken(self):
+        while True:
+            FirebaseClientWrapper.Firebase_app.updateAuthToken()
+            time.sleep(10)
+
     def checkTasks(self):
         self.chkTasks = CheckTasks(self)
         self.chkTasks.tasks.connect(self.addTasks)
-        self.lbl = QtWidgets.QLabel("Hello")
-        # self.ui.verticalLayout_2.addWidget(self.lbl)
         self.chkTasks.start()
 
     def addTasks(self, data):
-        print("Task found in addTasks", type(data))
+        """
+        Adds tasks if found or else adds "No task svg"
+
+        :param data: Object (Task Name and Description)
+        :return: None
+        """
+        print("Task found in addTasks", data)
         print(data)
-        self.ui.stackPanel.setCurrentIndex(2)
-        taskObject = CreateTask(self, data['name'], data['description']).createTask()
-        taskObject.findChild(QtWidgets.QPushButton, f"btnRuntask_{data['name']}").clicked.connect(
-            self.runTask)
-        taskObject.findChild(QtWidgets.QPushButton, f"btnDelete_{data['name']}").clicked.connect(
-            self.deleteTask)
-        self.ui.verticalLayout_2.addWidget(taskObject)
+        try:
+            if data['label']:
+                emptyTasksLabel = QtWidgets.QLabel()
+                emptyTasksLabel.setGeometry(QtCore.QRect(110, 55, 251, 71))
+                font = QtGui.QFont()
+                font.setFamily("Segoe UI")
+                font.setPointSize(27)
+                font.setBold(True)
+                font.setWeight(75)
+                emptyTasksLabel.setFont(font)
+                emptyTasksLabel.setStyleSheet("color:rgb(63, 61, 84)")
+                emptyTasksLabel.setAlignment(QtCore.Qt.AlignCenter)
+                emptyTasksLabel.setObjectName("emptyTasksLabel")
+                addTaskPng = QPixmap('Icons/add note.png')
+                emptyTasksLabel.setPixmap(addTaskPng)
+                self.ui.verticalLayout_2.addWidget(emptyTasksLabel)
+                self.ui.stackPanel.setCurrentIndex(2)
+
+        except Exception as e:
+            self.ui.stackPanel.setCurrentIndex(2)
+            taskObject = CreateTask(self, data['name'], data['description']).createTask()
+            taskObject.findChild(QtWidgets.QPushButton, f"btnRuntask_{data['name']}").clicked.connect(
+                self.runTask)
+            taskObject.findChild(QtWidgets.QPushButton, f"btnDelete_{data['name']}").clicked.connect(
+                self.deleteTask)
+            self.ui.verticalLayout_2.addWidget(taskObject)
 
     def logout(self):
 
@@ -554,6 +599,7 @@ class MainWindow(QMainWindow):
         self.ui.stackPanel.setCurrentIndex(0)
         self.isMenuEnabled = False
         self.ui.menu.lower()
+        self.ui.loginLoadingFrame.lower()
 
     def movetoEmailVerification(self):
         FirebaseClientWrapper.Firebase_app.send_email_verification()
@@ -619,6 +665,35 @@ class MainWindow(QMainWindow):
 
     def isUser(self):
         return True if user.current_user.email is not None else False
+
+    def google_login_alternate(self):
+        import uuid
+        token = str(uuid.uuid4().hex)
+        req = webbrowser.open(f"http://localhost:3000/googlelogin?id={token}")
+        print(token)
+        FirebaseClientWrapper.Firebase_app.database.child("users_authenticated").child(token).set({
+            "login": "False"
+        })
+
+        def stream_handler(data):
+            print("Data:", data['data'])
+            print("Data:", type(data['data']))
+            try:
+                print("Data:", data['data']['login'])
+                if data['data']['login'] == 'True':
+                    user.current_user.email = data['data']['email']
+                    user.current_user.auth_token = data['data']['authtoken']
+                    user.current_user.isVerified = 'True'
+                    user.current_user.uid = data['data']['uid']
+                    Sessionhandler.sessionHandler.setUserData()
+                    Sessionhandler.sessionHandler.setloginstate()
+                    self.checkTasks()
+                    FirebaseClientWrapper.Firebase_app.database.child("users_authenticated").child(token).remove()
+                    my_stream.close()
+            except KeyError as e:
+                print(e)
+
+        my_stream = FirebaseClientWrapper.Firebase_app.database.child("users_authenticated").stream(stream_handler)
 
     def google_login(self):
         try:

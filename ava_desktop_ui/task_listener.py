@@ -1,12 +1,14 @@
 import threading
 import time
 
+import pynput.keyboard
 from PyQt5 import QtGui, QtCore
 from PyQt5.QtCore import QSize
 from pynput.keyboard import Key
 from pynput.mouse import Button
 from pynput import keyboard, mouse
 import qtawesome as qta
+from ruamel import yaml
 
 
 class TaskListener:
@@ -71,6 +73,7 @@ class TaskListener:
 
     def setExit(self):
         self.break_program = True
+        print("setExit() called")
         icon4 = QtGui.QIcon(qta.icon('fa5s.play', color='white'))
         self._mainObject.ui.btnTaskListener.setIcon(icon4)
         self._mainObject.ui.btnTaskListener.setIconSize(QSize(32, 32))
@@ -103,32 +106,21 @@ class TaskListener:
 
     def executeListeners(self):
         self.isFinished = False
-        with keyboard.Listener(on_press=self.on_press, on_release=self.on_release) as keyboarListener, mouse.Listener(
-                on_move=self.on_move,
-                on_click=self.on_click) as mouseListener:
-            keyboarListener.join()
-            mouseListener.join()
-        if True:
+
+        while True:
             print("Break program:", self.break_program)
-            self._mainObject.ui.lblStartStopRec.setText(
-                "Click here to START recording task")
-            icon4 = QtGui.QIcon(qta.icon('fa5s.play', color='white'))
-            self._mainObject.ui.btnTaskListener.setIcon(icon4)
-            self._mainObject.ui.btnTaskListener.setIconSize(QSize(32, 32))
-            self._mainObject.ui.btnTaskListener.setStyleSheet("QPushButton{\n"
-                                                              "background-color: rgb(62, 60, 84);\n"
-                                                              "border: 1px solid white;\n"
-                                                              "border-radius: 40;\n"
-                                                              "}\n"
-                                                              "QPushButton:pressed{\n"
-                                                              "    background-color: rgb(103, 100, 138);\n"
-                                                              "}")
-            self._mainObject.ui.stackPanel.setCurrentIndex(3)
+            if not self.break_program:
+                with keyboard.Listener(on_press=self.on_press,
+                                       on_release=self.on_release) as self.keyboarListener, mouse.Listener(
+                        on_move=self.on_move,
+                        on_click=self.on_click) as self.mouseListener:
+                    self.keyboarListener.join()
+                    self.mouseListener.join()
             try:
                 print("While loop ended ", self.taskEntries)
                 self.isFinished = True
-                # with open('task_bindings.yml', 'a', encoding="utf-8") as yamlfile:
-                #     yaml.dump(self.taskEntries, yamlfile, Dumper=yaml.RoundTripDumper, default_flow_style=False)
+                with open('application/config/task_bindings.yml', 'a', encoding="utf-8") as yamlfile:
+                    yaml.dump(self.taskEntries, yamlfile, Dumper=yaml.RoundTripDumper, default_flow_style=False)
                 return self.taskEntries
             except Exception as e:
                 return False
@@ -159,7 +151,7 @@ class TaskListener:
         # if self.lastPressedStatus == key:
         #     return
         if self.break_program:
-            print('Exit called')
+            print('Exit called from on_press')
             self.isFinished = True
             return False
         if key == keyboard.Key.end:
@@ -186,9 +178,7 @@ class TaskListener:
                     print(b, hex(b), chr(b))
                 self.taskEntries[self.taskName].append(bArr.decode("UTF-8"))
                 return
-            self.taskEntries[self.taskName].append({"timeSleep": {"sleep": self.elapsed_time()}})
             self.taskEntries[self.taskName].append(key.char)
-
         print(self.taskEntries)
 
     def on_move(self, x, y):
@@ -211,9 +201,10 @@ class TaskListener:
         :return:
         """
         if self.break_program:
-            print('Exit called')
+            print('Exit called from on_click')
+            keyboards = pynput.keyboard.Controller()
+            keyboards.tap("e")
             self.isFinished = True
-            self.break_program = bool
             return False
         if pressed:
             print('Mouse clicked at ({0}, {1}) with {2}'.format(x, y, button))

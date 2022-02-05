@@ -15,9 +15,6 @@ class SessionHandler:
         ROOT_DIR = os.path.dirname(os.path.abspath(__file__))
         self.fileName = "application/config/config.ini"
 
-    def checkforupdates(self):
-        pass
-
     def deleteUserData(self):
         try:
             print("Before config file")
@@ -59,6 +56,7 @@ class SessionHandler:
                 "email": user.current_user.email,
                 "idtoken": user.current_user.idtoken,
                 "authtoken": user.current_user.auth_token,
+                "refreshtoken": user.current_user.refresh_token if user.current_user.refresh_token else "None",
                 "isverified": str(user.current_user.isVerified),
                 "loginstate": "True"
             }
@@ -80,18 +78,7 @@ class SessionHandler:
         :return: True if sucessfull else False
         """
         try:
-            login_data = {
-                "loginstate": "True",
-            }
-
             userData = self.readUserData()
-            # if True:
-            #     result = FirebaseClientWrapper.Firebase_app.database.child("users_authenticated").child(
-            #         user.current_user.uid).update(login_data)
-            #     print(result.val())
-            #
-            #     print("Writing done")
-            # return True
             try:
                 result = requests.get(
                     f"http://localhost:5001/ava-daemon/us-central1/app/setloginstate?email={userData['email']}&uid={userData['uid']}&authtoken={userData['authtoken']}&isverified={userData['isverified']}&loginstate={userData['loginstate']}")
@@ -127,8 +114,9 @@ class SessionHandler:
                 user.current_user.email = userData['email']
                 user.current_user.idtoken = userData['idtoken']
                 user.current_user.auth_token = userData['authtoken']
+                user.current_user.refresh_token = userData['refreshtoken']
                 user.current_user.isVerified = userData['isverified']
-                print("User email is ", userData["isverified"])
+
                 try:
                     # FirebaseClientWrapper.Firebase_app.auth.refresh(userData["authtoken"])
                     if requests.get(
@@ -141,15 +129,16 @@ class SessionHandler:
                     return False
                 print("Token=", user.current_user.idtoken)
                 print("Uid=", user.current_user.uid)
-                documentId = ""
                 print("Firebase result=", result)
                 result = result["data"]
-
+                user.current_user.lastloggedin = result['lastloggedin']
+                print("Last logged in: ", result['lastloggedin'])
                 # for key in result.val().keys():
                 #     documentId = key
                 # print("Here", result.val()[documentId])
                 if result["loginstate"] == "True" and userData['loginstate'] == "True":
                     print("User Data from if : ", userData['loginstate'])
+
                     return userData
 
             else:

@@ -1,4 +1,7 @@
 import json
+
+import schedule
+
 import secrets
 import time
 
@@ -41,6 +44,13 @@ class FirebaseClientWrapper:
         self.auth = self.firebase_app.auth()
         self.database = self.firebase_app.database()
 
+    def updateAuthToken(self):
+        print("Before refresh: ", user.current_user.auth_token)
+        print("Refreshing auth token")
+        new_user = Firebase_app.auth.refresh(user.current_user.refresh_token)
+        user.current_user.auth_token = new_user['idToken']
+        print("After refresh: ", user.current_user.auth_token)
+
     def signup_new_user(self, email, password, isPersist):
         """
         Returns true if created new user else returns error object
@@ -51,6 +61,7 @@ class FirebaseClientWrapper:
             user.current_user.uid = result["localId"]
             user.current_user.email = result["email"]
             user.current_user.auth_token = result["idToken"]
+            user.current_user.refresh_token = result['refreshToken']
             user.current_user.idtoken = secrets.token_hex(32)
             print(user.current_user.email, user.current_user.idtoken, user.current_user.email)
             print("New user created: ")
@@ -82,6 +93,8 @@ class FirebaseClientWrapper:
             user.current_user.uid = result["localId"]
             user.current_user.email = result["email"]
             user.current_user.auth_token = result["idToken"]
+            user.current_user.refresh_token = result['refreshToken']
+            print(user.current_user.refresh_token)
             if user.current_user.idtoken == '':
                 user.current_user.idtoken = secrets.token_hex(32)
             print(user.current_user.email, user.current_user.uid, user.current_user.idtoken)

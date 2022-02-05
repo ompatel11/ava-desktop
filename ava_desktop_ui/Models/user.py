@@ -1,8 +1,6 @@
 import json
 import os
-
 from ruamel import yaml
-
 from .utils import get_project_root
 
 
@@ -12,11 +10,13 @@ class User:
     uid = str
     isVerified = str
     auth_token = str
+    refresh_token = str
     prime_status = bool
     idtoken = str
     task_list = list
     taskJsonFilePath = str(get_project_root()) + '/application/config/tasks.json'
     taskBindingsFilePath = str(get_project_root()) + '/application/config/task_bindings.yml'
+    lastloggedin = str
 
     def __init__(self):
         self.email = ""
@@ -27,6 +27,7 @@ class User:
         self.task_list = []
         self.isVerified = "False"
         self.auth_token = ""
+        self.lastloggedin = ""
 
     def checkforappend(self, taskEntries):
         empty = bool
@@ -51,9 +52,12 @@ class User:
 
     def addTask(self, data):
         self.task_list.append(data)
-        with open(self.taskJsonFilePath, 'w+') as data_file:
+        with open(self.taskJsonFilePath, 'r+') as file:
+            fileData = json.load(file)
+            fileData.append(data)
+            file.seek(0)
             print("Task List after adding:", self.task_list)
-            json.dump(self.task_list, data_file)
+            json.dump(fileData, file)
 
     def deleteTask(self, taskname):
         with open(self.taskJsonFilePath) as data_file:
@@ -65,6 +69,7 @@ class User:
             if i['name'] == taskname:
                 print(i)
                 del data[index]
+                self.getTasks()
                 self.task_list.remove(i)
             index += 1
         if len(self.task_list) == 0:
@@ -76,7 +81,7 @@ class User:
                 json.dump(data, data_file)
 
             yamlObj = yaml.YAML()
-            with open(self.taskBindingsFilePath, "w+") as fp:
+            with open(self.taskBindingsFilePath, "r") as fp:
                 data = yamlObj.load(fp)
                 new_data = data
                 del data
@@ -90,6 +95,8 @@ class User:
                     return None
 
     def getTasks(self):
+        if not self.task_list:
+            """Fetch tasks from Cloud Functions"""
 
         try:
             f = open(self.taskJsonFilePath)

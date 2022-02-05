@@ -3,6 +3,7 @@ import time
 from PyQt5 import QtCore, QtWidgets, QtGui
 import yaml
 from PyQt5.QtCore import pyqtSlot
+from PyQt5.QtGui import QPixmap
 from yaml import SafeLoader
 import qtawesome as qta
 
@@ -111,11 +112,15 @@ class CheckTasks(QtCore.QThread):
         print("Running: ", self.taskList)
         user.current_user.getTasks()
         self.taskList = user.current_user.task_list
+        # time.sleep(random.randrange(2, 5))
+        # time.sleep(3)
+        if not self.taskList:
+            self.tasks.emit({'label': True})
         for item in self.taskList:
             print("Task found")
             taskObject = CreateTask(self.parent, item['name'],
                                                       item['description']).createTask()
-            time.sleep(random.randrange(2, 5))
+
             print(type(taskObject))
             self.parent.ui.verticalLayout_2.addWidget(taskObject)
             taskObject = {'name': item['name'], 'description': item['description']}
