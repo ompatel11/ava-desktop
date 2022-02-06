@@ -361,6 +361,8 @@ class MainWindow(QMainWindow):
         print("description: ", description)
 
         if title and description:
+            keyy = pynput.keyboard.Controller()
+            keyy.press("e")
             self.taskObject = tasks.CreateTask(self, title, description).createTask()
             TaskManager.TaskLists.addTask(self.taskObject.findChild(
                 QtWidgets.QPushButton, f"btnRuntask_{title}"))

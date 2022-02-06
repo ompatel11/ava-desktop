@@ -52,12 +52,25 @@ class User:
 
     def addTask(self, data):
         self.task_list.append(data)
+        if not os.path.exists(self.taskJsonFilePath):
+            with open(self.taskJsonFilePath, "w") as f:
+                pass
+            f.close()
+
+        if not os.path.exists(self.taskBindingsFilePath):
+            with open(self.taskBindingsFilePath, "w") as f:
+                pass
+            f.close()
+
         with open(self.taskJsonFilePath, 'r+') as file:
-            fileData = json.load(file)
-            fileData.append(data)
-            file.seek(0)
-            print("Task List after adding:", self.task_list)
-            json.dump(fileData, file)
+            try:
+                fileData = json.load(file)
+                fileData.append(data)
+                file.seek(0)
+                print("Task List after adding:", self.task_list)
+                json.dump(fileData, file)
+            except json.JSONDecodeError as e:
+                json.dump([data], file)
 
     def deleteTask(self, taskname):
         with open(self.taskJsonFilePath) as data_file:
@@ -71,8 +84,11 @@ class User:
                 del data[index]
                 self.getTasks()
                 self.task_list.remove(i)
+                print("List after deleting: ", self.task_list)
             index += 1
+        print("Length of task_list: ", len(self.task_list))
         if len(self.task_list) == 0:
+            print("Deleting files")
             os.remove(self.taskJsonFilePath)
             os.remove(self.taskBindingsFilePath)
         else:
@@ -90,24 +106,31 @@ class User:
                 try:
                     if new_data[taskname]:
                         del new_data[taskname]
-                        yamlObj.dump(new_data, file)
+                        if not new_data:
+                            print("Empty bindings file")
+                            os.remove(self.taskJsonFilePath)
+                            os.remove(self.taskBindingsFilePath)
+                        else:
+                            yamlObj.dump(new_data, file)
                 except:
                     return None
 
     def getTasks(self):
         if not self.task_list:
             """Fetch tasks from Cloud Functions"""
+            pass
 
         try:
             f = open(self.taskJsonFilePath)
             data = json.load(f)
-            print(data)
+            print("JSON data: ", data)
             for i in data:
-                print(i['name'])
+                print(i)
                 self.task_list.append(i)
             f.close()
         except Exception as e:
             print(e)
+            print("Inside getTaskss")
         print("Task list: ", self.task_list)
 
     def deleteData(self):
