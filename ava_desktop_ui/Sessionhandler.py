@@ -81,7 +81,7 @@ class SessionHandler:
             userData = self.readUserData()
             try:
                 result = requests.get(
-                    f"http://localhost:5001/ava-daemon/us-central1/app/setloginstate?email={userData['email']}&uid={userData['uid']}&authtoken={userData['authtoken']}&isverified={userData['isverified']}&loginstate={userData['loginstate']}")
+                    f"https://us-central1-ava-daemon.cloudfunctions.net/app/setloginstate?email={userData['email']}&uid={userData['uid']}&authtoken={userData['authtoken']}&isverified={userData['isverified']}&loginstate={userData['loginstate']}")
                 result = json.loads(result.text)
                 if result['status'] == 200:
                     print("Login state updated")
@@ -107,7 +107,7 @@ class SessionHandler:
             print("Token=", user.current_user.idtoken)
             print("Uid=", user.current_user.uid)
             result = requests.get(
-                f"http://localhost:5001/ava-daemon/us-central1/app/readloginstate?email={userData['email']}")
+                f"https://us-central1-ava-daemon.cloudfunctions.net/app/readloginstate?email={userData['email']}")
             result = json.loads(result.text)
             if userData is not False and userData['idtoken'] != "None":
                 user.current_user.uid = userData['uid']
@@ -184,11 +184,11 @@ class SessionHandler:
         try:
             boolean_result = self.deleteUserData()
             result = requests.get(
-                f"http://localhost:5001/ava-daemon/us-central1/app/setloginstate?email={user.current_user.email}&uid={user.current_user.uid}&authtoken={user.current_user.auth_token}&isverified={user.current_user.isVerified}&loginstate=False")
+                f"https://us-central1-ava-daemon.cloudfunctions.net/app/setloginstate?email={user.current_user.email}&uid={user.current_user.uid}&authtoken={user.current_user.auth_token}&isverified={user.current_user.isVerified}&loginstate=False")
             result = json.loads(result.text)
             if result['status'] == 200:
                 user.current_user.deleteData()
-
+                user.current_user.logout()
                 print(boolean_result)
                 print("Token from logout=", user.current_user.idtoken)
                 print("Uid from logout=", user.current_user.uid)

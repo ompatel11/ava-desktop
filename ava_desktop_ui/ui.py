@@ -896,6 +896,16 @@ class Ui_MainWindow(object):
         # self.stackPanel.addWidget(self.MainPage)
         self.TasksPage = QtWidgets.QWidget()
         self.TasksPage.setObjectName("TasksPage")
+        self.tasksLoadingFrame = QtWidgets.QFrame(self.LoginPage)
+        self.tasksLoadingFrame.setStyleSheet("""background: transparent;
+                """)
+        self.loginWaitingSpinner = QtWidgets.QLabel(self.tasksLoadingFrame)
+        self.tasksLoadingFrame.setObjectName("tasksLoadingFrame")
+        self.tasksLoadingFrame.lower()
+        self.movie = QMovie("Icons/loading animation.gif")
+        self.loginWaitingSpinner.setMovie(self.movie)
+        self.loginWaitingSpinner.setGeometry(150, 200, 200, 200)
+        self.movie.start()
         self.scrollArea = QtWidgets.QScrollArea(self.TasksPage)
         self.scrollArea.setGeometry(QtCore.QRect(0, 0, 508, 671))
         self.scrollArea.setStyleSheet("QScrollBar:vertical{\n"
@@ -1127,7 +1137,7 @@ class Ui_MainWindow(object):
         self.QtWaitingSpinner.setText("Test")
         self.movie = QMovie("Icons/loading animation.gif")
         self.QtWaitingSpinner.setMovie(self.movie)
-        self.QtWaitingSpinner.setGeometry(150,200,200,200)
+        self.QtWaitingSpinner.setGeometry(150, 200, 200, 200)
         self.movie.start()
         self.stackPanel.addWidget(self.LoadingPage)
         self.btnContinue = QtWidgets.QPushButton()
@@ -1296,6 +1306,12 @@ QPushButton:pressed{
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
         MainWindow.setWindowTitle(_translate("MainWindow", "Ava"))
+        self.lblError_login.setText(_translate("MainWindow", ""))
+        self.lblError_signup.setText(_translate("MainWindow", ""))
+        self.password_shown_signup = True
+        self.on_toggle_password_Action_signup()
+        self.password_shown = True
+        self.on_toggle_password_Action()
         self.lblVersion.setText(_translate("MainWindow", f"Version number: {ClientConfig.APP_VERSION}"))
         self.lblLogin.setText(_translate("MainWindow", "Log in"))
         self.lblorviaEmail_login.setText(_translate("MainWindow", "or via E-mail"))
@@ -1339,3 +1355,52 @@ QPushButton:pressed{
         self.btnDocumentation.setText(_translate("MainWindow", "  Documentation"))
         self.btnFAQ.setText(_translate("MainWindow", "  FAQ"))
         self.btnLogout.setText(_translate("MainWindow", "  Logout"))
+
+        # Login Elements Reset style
+        self.txtEmail_login.setStyleSheet("border-style: outset;\n"
+                                          "border-width: 1px;\n"
+                                          "background-color: rgb(231, 231, 231);\n"
+                                          "border-radius: 8px;\n"
+                                          "border-color: rgb(194,194,194);\n"
+
+                                          "padding: 4px;")
+        self.txtPassword_login.setStyleSheet("border-style: outset;\n"
+                                             "border-width: 1px;\n"
+                                             "background-color: rgb(231, 231, 231);\n"
+                                             "border-radius: 8px;\n"
+                                             "border-color: rgb(194,194,194);\n"
+
+                                             "padding: 4px;")
+        # Signup Elements Reset style
+        self.txtEmail_signup.setStyleSheet("border-style: outset;\n"
+                                           "background-color: rgb(231, 231, 231);\n"
+                                           "border-width: 1px;\n"
+                                           "border-radius: 8px;\n"
+                                           "border-color: rgb(194,194,194);\n"
+                                           "padding: 4px;")
+        self.txtPassword_signup.setStyleSheet("border-style: outset;\n"
+                                              "border-width: 1px;\n"
+                                              "background-color: rgb(231, 231, 231);\n"
+                                              "border-radius: 8px;\n"
+                                              "border-color: rgb(194,194,194);\n"
+                                              "padding: 4px;")
+        self.txtConfirmPassword_signup.setStyleSheet("border-style: outset;\n"
+                                                     "border-width: 1px;\n"
+                                                     "background-color: rgb(231, 231, 231);\n"
+                                                     "border-radius: 8px;\n"
+                                                     "border-color: rgb(194,194,194);\n"
+                                                     "padding: 4px;")
+
+        # Add task Elements Reset Style
+        self.txtTitle.setStyleSheet("QLineEdit{\n"
+                                    "border: none;\n"
+                                    "background-color: #E7E7E7;\n"
+                                    "border-radius: 13px;\n"
+                                    "text-align: center;\n"
+                                    "}")
+        self.txtDescription.setStyleSheet("QLineEdit{\n"
+                                          "border: none;\n"
+                                          "background-color: #E7E7E7;\n"
+                                          "border-radius: 13px;\n"
+                                          "text-align: center;\n"
+                                          "}")

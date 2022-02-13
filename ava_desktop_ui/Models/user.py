@@ -1,5 +1,7 @@
 import json
 import os
+
+import pynput.keyboard
 from ruamel import yaml
 from .utils import get_project_root
 
@@ -28,6 +30,7 @@ class User:
         self.isVerified = "False"
         self.auth_token = ""
         self.lastloggedin = ""
+        self.getTasks()
 
     def checkforappend(self, taskEntries):
         empty = bool
@@ -76,21 +79,27 @@ class User:
         with open(self.taskJsonFilePath) as data_file:
             data = json.load(data_file)
         print(data)
+
         index = 0
         for i in data:
 
             if i['name'] == taskname:
                 print(i)
                 del data[index]
-                self.getTasks()
                 self.task_list.remove(i)
                 print("List after deleting: ", self.task_list)
             index += 1
         print("Length of task_list: ", len(self.task_list))
         if len(self.task_list) == 0:
             print("Deleting files")
-            os.remove(self.taskJsonFilePath)
-            os.remove(self.taskBindingsFilePath)
+            data_file.close()
+            if os.path.exists(self.taskJsonFilePath):
+                os.remove(self.taskJsonFilePath)
+            if os.path.exists(self.taskBindingsFilePath):
+                try:
+                    os.remove(self.taskBindingsFilePath)
+                except Exception as e:
+                    print(e)
         else:
             with open(self.taskJsonFilePath, 'w+') as data_file:
                 print("Task List after deleting:", data)
@@ -108,6 +117,7 @@ class User:
                         del new_data[taskname]
                         if not new_data:
                             print("Empty bindings file")
+                            self.task_list = []
                             os.remove(self.taskJsonFilePath)
                             os.remove(self.taskBindingsFilePath)
                         else:
@@ -142,8 +152,11 @@ class User:
 
     def logout(self):
         try:
-            os.remove(self.taskJsonFilePath)
-            os.remove(self.taskBindingsFilePath)
+            if os.path.exists(self.taskJsonFilePath):
+                os.remove(self.taskJsonFilePath)
+            if os.path.exists(self.taskBindingsFilePath):
+                os.remove(self.taskBindingsFilePath)
+
         except FileNotFoundError as e:
             print(e)
 

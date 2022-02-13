@@ -512,6 +512,7 @@ class MainWindow(QMainWindow):
         """
         result = Sessionhandler.sessionHandler.readloginstate()
         self.ui.stackPanel.setCurrentIndex(5)
+        self.ui.loginLoadingFrame.lower()
         print("Result from readLoginstate() is:- ", result)
         if result is not False and result is not None:
             self.isMenuEnabled = True
@@ -535,6 +536,8 @@ class MainWindow(QMainWindow):
         try:
             if result['idtoken'] == "None":
                 print("Result is ", result)
+            self.ui.loginLoadingFrame.lower()
+            self.ui.stackPanel.setCurrentIndex(0)
         except Exception as error:
             print(error)
             self.ui.loginLoadingFrame.lower()
@@ -597,7 +600,7 @@ class MainWindow(QMainWindow):
                     self.ui.TasksPage.findChild(QtWidgets.QFrame, item.parent().objectName()))
         except Exception as e:
             print(e)
-        user.current_user.logout()
+        self.ui.retranslateUi(self)
         self.ui.stackPanel.setCurrentIndex(0)
         self.isMenuEnabled = False
         self.ui.menu.lower()
@@ -843,7 +846,6 @@ class MainWindow(QMainWindow):
             else:
                 # Set the error message for the user
                 print(result)
-
                 self.ui.btnLogin.setCursor(Qt.ArrowCursor)
                 self.ui.btnLogin.setEnabled(True)
                 self.ui.lblError_login.setText(result)
@@ -854,6 +856,7 @@ class MainWindow(QMainWindow):
             self.ui.loginLoadingFrame.lower()
             self.ui.lblError_login.setText(
                 "Email and Password fields cannot be empty.")
+        self.ui.loginLoadingFrame.lower()
 
     def backToTask(self):
         """

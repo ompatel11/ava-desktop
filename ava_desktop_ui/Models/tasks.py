@@ -110,7 +110,6 @@ class CheckTasks(QtCore.QThread):
     @pyqtSlot()
     def run(self):
         print("Running: ", self.taskList)
-        user.current_user.getTasks()
         self.taskList = user.current_user.task_list
         # time.sleep(random.randrange(2, 5))
         # time.sleep(3)

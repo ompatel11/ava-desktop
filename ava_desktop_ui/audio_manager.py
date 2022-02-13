@@ -76,7 +76,6 @@ class TranscriptModifier(object):
         pass
 
     def executetasks(self):
-        user.current_user.getTasks()
         print("Tasks= ", user.current_user.task_list)
         for item in user.current_user.task_list:
             print(item['name'].casefold())
