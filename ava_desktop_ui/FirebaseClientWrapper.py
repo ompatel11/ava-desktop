@@ -14,14 +14,14 @@ import Sessionhandler
 class FirebaseClientWrapper:
     def __init__(self):
         config = {
-            "apiKey": "AIzaSyBtitwcE_As4_dMv8GQrXOgfi2ePwiEhbQ",
+            "apiKey": "",
             "authDomain": "ava-daemon.firebaseapp.com",
-            "databaseURL": "https://ava-daemon.firebaseio.com",
-            "projectId": "ava-daemon",
-            "storageBucket": "ava-daemon.appspot.com",
-            "messagingSenderId": "41961847947",
-            "appId": "1:41961847947:web:f65107ad2f44e29c9aa88e",
-            "measurementId": "G-CY5HDPPDY5"
+            "databaseURL": "",
+            "projectId": "",
+            "storageBucket": "",
+            "messagingSenderId": "",
+            "appId": "",
+            "measurementId": ""
         }
         self.error = {
             "EMAIL_EXISTS": "Email already is use. Try logging in.",
